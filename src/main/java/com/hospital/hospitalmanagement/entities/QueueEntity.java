@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class QueueEntity {
     @Column(name = "queue_number")
     private Integer QueueNumber;
     @Column(name = "created_at")
-    private Timestamp CreatedAt;
+    private LocalDateTime CreatedAt;
 
     @OneToOne(mappedBy = "Queue")
     private OutpatientEntity Outpatient;

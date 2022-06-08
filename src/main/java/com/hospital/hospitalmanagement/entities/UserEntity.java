@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -27,9 +28,9 @@ public class UserEntity {
     @Column(name = "email")
     private String Email;
     @Column(name = "available_from")
-    private Timestamp AvailableFrom;
+    private LocalDateTime AvailableFrom;
     @Column(name = "available_to")
-    private Timestamp AvailableTo;
+    private LocalDateTime AvailableTo;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "department_id", referencedColumnName = "id")
@@ -40,7 +41,7 @@ public class UserEntity {
     private RoleEntity RoleId;
 
     @Column(name = "created_at")
-    private Timestamp CreatedAt;
+    private LocalDateTime CreatedAt;
 
     @OneToMany(mappedBy = "DoctorId",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
     private List<OutpatientEntity> Outpatient;

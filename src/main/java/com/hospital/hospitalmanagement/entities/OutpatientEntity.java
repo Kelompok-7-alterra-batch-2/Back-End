@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -44,7 +45,7 @@ public class OutpatientEntity {
     @Column(name = "date")
     private Date Date;
     @Column(name = "arrival_time")
-    private Timestamp ArrivalTime;
+    private LocalDateTime ArrivalTime;
     @Column(name = "created_at")
-    private Timestamp CreatedAt;
+    private LocalDateTime CreatedAt;
 }

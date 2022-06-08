@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class PatientEntity {
     @Column(name = "dob")
     private Date Dob;
     @Column(name = "created_at")
-    private Timestamp CreatedAt;
+    private LocalDateTime CreatedAt;
 
     @OneToMany(mappedBy = "PatientId",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
     private List<OutpatientEntity> OutpatientId;

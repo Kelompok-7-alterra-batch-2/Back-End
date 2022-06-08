@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class OutpatientConditionEntity {
     private String Conditions;
 
     @Column(name = "created_at")
-    private Timestamp CreatedAt;
+    private LocalDateTime CreatedAt;
 
     @OneToOne(mappedBy = "OutpatientCondition")
     private OutpatientEntity Outpatient;
