@@ -1,16 +1,21 @@
 package com.hospital.hospitalmanagement.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user")
 public class UserEntity {
@@ -18,32 +23,32 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id")
-    private Long Id;
+    private Long id;
     @Column(name = "name")
-    private String Name;
+    private String name;
     @Column(name = "dob")
-    private Date Dob;
+    private LocalDate dob;
     @Column(name = "password")
-    private String Password;
+    private String password;
     @Column(name = "email")
-    private String Email;
+    private String email;
     @Column(name = "available_from")
-    private LocalDateTime AvailableFrom;
+    private LocalTime availableFrom;
     @Column(name = "available_to")
-    private LocalDateTime AvailableTo;
+    private LocalTime availableTo;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "department_id", referencedColumnName = "id")
-    private DepartmentEntity DepartmentId;
+    private DepartmentEntity department;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private RoleEntity RoleId;
+    private RoleEntity role;
 
     @Column(name = "created_at")
-    private LocalDateTime CreatedAt;
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "DoctorId",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
-    private List<OutpatientEntity> Outpatient;
+    @OneToMany(mappedBy = "doctor",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
+    private List<OutpatientEntity> outpatient;
 
 }

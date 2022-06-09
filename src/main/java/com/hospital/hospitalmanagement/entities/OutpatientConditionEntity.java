@@ -17,14 +17,11 @@ public class OutpatientConditionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id")
-    private Long Id;
+    private Long id;
 
     @Column(name = "conditions")
-    private String Conditions;
+    private String conditions;
 
     @Column(name = "created_at")
-    private LocalDateTime CreatedAt;
-
-    @OneToOne(mappedBy = "OutpatientCondition")
-    private OutpatientEntity Outpatient;
+    private LocalDateTime createdAt;
 }

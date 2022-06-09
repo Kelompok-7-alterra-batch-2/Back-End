@@ -18,16 +18,16 @@ public class PatientEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id")
-    private Long Id;
+    private Long id;
     @Column(name = "name")
-    private String Name;
+    private String name;
     @Column(name = "medical_record")
-    private Long MedicalRecord;
+    private Long medicalRecord;
     @Column(name = "dob")
-    private Date Dob;
+    private Date dob;
     @Column(name = "created_at")
-    private LocalDateTime CreatedAt;
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "PatientId",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
-    private List<OutpatientEntity> OutpatientId;
+    @OneToMany(mappedBy = "patient",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
+    private List<OutpatientEntity> outpatient;
 }

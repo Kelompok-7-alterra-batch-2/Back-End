@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -18,34 +19,34 @@ public class OutpatientEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id")
-    private Long Id;
+    private Long id;
     @Column(name = "name")
-    private String Name;
+    private String name;
 
-    @ManyToOne(targetEntity = PatientEntity.class)
+    @ManyToOne(targetEntity = PatientEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
-    private PatientEntity PatientId;
+    private PatientEntity patient;
 
-    @ManyToOne(targetEntity = UserEntity.class)
+    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
-    private UserEntity DoctorId;
+    private UserEntity doctor;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "department_id", referencedColumnName = "id")
-    private DepartmentEntity DepartmentId;
+    private DepartmentEntity department;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "outpatient_condition_id", referencedColumnName = "id")
-    private OutpatientConditionEntity OutpatientCondition;
+    private OutpatientConditionEntity outpatientCondition;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "queue", referencedColumnName = "id")
-    private QueueEntity Queue;
+    private QueueEntity queue;
 
     @Column(name = "date")
-    private Date Date;
+    private LocalDate date;
     @Column(name = "arrival_time")
-    private LocalDateTime ArrivalTime;
+    private LocalDateTime arrivalTime;
     @Column(name = "created_at")
-    private LocalDateTime CreatedAt;
+    private LocalDateTime createdAt;
 }

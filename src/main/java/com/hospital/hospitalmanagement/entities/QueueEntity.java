@@ -17,12 +17,9 @@ public class QueueEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id")
-    private Long Id;
+    private Long id;
     @Column(name = "queue_number")
-    private Integer QueueNumber;
+    private Integer queueNumber;
     @Column(name = "created_at")
-    private LocalDateTime CreatedAt;
-
-    @OneToOne(mappedBy = "Queue")
-    private OutpatientEntity Outpatient;
+    private LocalDateTime createdAt;
 }

@@ -1,7 +1,6 @@
 package com.hospital.hospitalmanagement.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -10,6 +9,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "department")
 public class DepartmentEntity {
 
@@ -17,15 +19,9 @@ public class DepartmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id")
-    private Long Id;
+    private Long id;
     @Column(name = "name")
-    private String Name;
+    private String name;
     @Column(name = "created_at")
-    private LocalDateTime CreatedAt;
-
-    @OneToOne(mappedBy = "DepartmentId")
-    private UserEntity User;
-
-    @OneToOne(mappedBy = "DepartmentId")
-    private OutpatientEntity Outpatient;
+    private LocalDateTime createdAt;
 }
