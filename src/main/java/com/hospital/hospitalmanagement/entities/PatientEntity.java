@@ -1,16 +1,19 @@
 package com.hospital.hospitalmanagement.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "patient")
 public class PatientEntity {
@@ -24,7 +27,7 @@ public class PatientEntity {
     @Column(name = "medical_record")
     private Long medicalRecord;
     @Column(name = "dob")
-    private Date dob;
+    private LocalDate dob;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
