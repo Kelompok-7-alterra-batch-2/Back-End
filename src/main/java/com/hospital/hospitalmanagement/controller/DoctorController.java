@@ -46,7 +46,7 @@ public class DoctorController {
     }
 
     @GetMapping("/names/{name}")
-    public UserEntity getDoctorByName(@PathVariable("name") String name){
+    public List<UserEntity> getDoctorByName(@PathVariable("name") String name){
         return this.userService.getDoctorByName(name);
     }
 

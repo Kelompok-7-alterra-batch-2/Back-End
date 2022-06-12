@@ -100,10 +100,10 @@ public class UserServiceImpl {
         return this.userRepository.findByIdAndRole(id, existRole);
     }
 
-    public UserEntity getDoctorByName(String name){
+    public List<UserEntity> getDoctorByName(String name){
         RoleEntity existRole = this.roleService.getRoleById(2L);
 
-        return this.userRepository.findByNameAndRole(name, existRole);
+        return this.userRepository.findByNameContainsAndRole(name, existRole);
     }
 
 
@@ -151,6 +151,8 @@ public class UserServiceImpl {
     }
 
     public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
-        return this.userRepository.fin(PageRequest.of(index, element));
+        RoleEntity role = roleService.getRoleById(2L);
+//        return this.userRepository.findAll(PageRequest.of(index, element));
+        return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
     }
 }

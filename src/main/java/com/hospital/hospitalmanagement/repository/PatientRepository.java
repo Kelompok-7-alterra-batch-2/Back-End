@@ -5,7 +5,9 @@ import com.hospital.hospitalmanagement.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
-    UserEntity findByName(String name);
+    List<PatientEntity> findByNameContains(String name);
 }

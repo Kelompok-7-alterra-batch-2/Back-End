@@ -2,6 +2,8 @@ package com.hospital.hospitalmanagement.repository;
 
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,8 +18,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByEmailAndRole(String email, RoleEntity role);
 
-    UserEntity findByName(String name);
+    UserEntity findByNameContains(String name);
 
-    UserEntity findByNameAndRole(String name, RoleEntity role);
+    List<UserEntity> findByNameContainsAndRole(String name, RoleEntity role);
+
+    Page<UserEntity> findAllByRole(RoleEntity role, Pageable pageable);
 
 }
