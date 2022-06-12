@@ -8,6 +8,8 @@ import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -43,6 +45,12 @@ public class UserServiceImpl {
         RoleEntity existRole = this.roleService.getRoleById(1L);
 
         return this.userRepository.findByIdAndRole(id, existRole);
+    }
+
+    public UserEntity getAdminByEmail(String email){
+        RoleEntity existRole = this.roleService.getRoleById(1L);
+
+        return this.userRepository.findByEmailAndRole(email, existRole);
     }
 
     public UserEntity createAdmin(AdminDTO adminDTO) {
@@ -92,6 +100,13 @@ public class UserServiceImpl {
         return this.userRepository.findByIdAndRole(id, existRole);
     }
 
+    public UserEntity getDoctorByName(String name){
+        RoleEntity existRole = this.roleService.getRoleById(2L);
+
+        return this.userRepository.findByNameAndRole(name, existRole);
+    }
+
+
     public UserEntity createDoctor(DoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
@@ -133,5 +148,9 @@ public class UserServiceImpl {
     public void deleteDoctor(Long id) {
         UserEntity existDoctor = this.getDoctorById(id);
         this.userRepository.delete(existDoctor);
+    }
+
+    public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
+        return this.userRepository.fin(PageRequest.of(index, element));
     }
 }
