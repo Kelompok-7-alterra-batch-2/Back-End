@@ -4,6 +4,8 @@ import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,5 +53,13 @@ public class PatientServiceImpl {
     public void deletePatient(Long id){
         PatientEntity existPatient = this.getPatientById(id);
         this.patientRepository.delete(existPatient);
+    }
+
+    public List<PatientEntity> getPatientByName(String name) {
+        return this.patientRepository.findByNameContains(name);
+    }
+
+    public Page<PatientEntity> getAllPatientPaginate(int index, int element) {
+        return this.patientRepository.findAll(PageRequest.of(index, element));
     }
 }

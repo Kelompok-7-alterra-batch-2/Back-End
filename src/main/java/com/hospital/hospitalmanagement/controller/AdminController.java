@@ -1,7 +1,9 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
+import com.hospital.hospitalmanagement.repository.OutpatientRepository;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -18,6 +21,9 @@ public class AdminController {
 
     @Autowired
     UserServiceImpl userService;
+
+    @Autowired
+    OutpatientRepository outpatientRepository;
 
     @GetMapping("/users")
     public List<UserEntity> getAllUsers(){
@@ -49,5 +55,17 @@ public class AdminController {
     public void deleteAdminById(@PathVariable("id")Long id){
         this.userService.deleteAdmin(id);
     }
+
+    @GetMapping("/emails/{email}")
+    public UserEntity getAdminByEmail(@PathVariable("email") String email){
+        return this.userService.getAdminByEmail(email);
+    }
+
+    @GetMapping("/schedules")
+    public List<OutpatientEntity> getTodaySchedules(){
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findByDate(now);
+    }
+
 
 }

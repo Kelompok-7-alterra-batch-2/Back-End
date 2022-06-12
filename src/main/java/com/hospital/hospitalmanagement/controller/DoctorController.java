@@ -2,8 +2,10 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.entities.UserEntity;
+import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.print.Doc;
@@ -14,6 +16,9 @@ import java.util.List;
 public class DoctorController {
     @Autowired
     UserServiceImpl userService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @GetMapping
     public List<UserEntity> getAllDoctor(){
@@ -39,4 +44,16 @@ public class DoctorController {
     public void deleteDoctorById(@PathVariable("id") Long id){
         this.userService.deleteDoctor(id);
     }
+
+    @GetMapping("/names/{name}")
+    public List<UserEntity> getDoctorByName(@PathVariable("name") String name){
+        return this.userService.getDoctorByName(name);
+    }
+
+    @GetMapping("/page/{index}/{element}")
+    public Page<UserEntity> getAllDoctorPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
+        return this.userService.getAllDoctorPaginate(index, element);
+    }
+
+
 }
