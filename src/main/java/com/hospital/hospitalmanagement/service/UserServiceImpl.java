@@ -83,26 +83,26 @@ public class UserServiceImpl {
         this.userRepository.delete(existAdmin);
     }
 
-    public List<GetDoctorDTO> getAllDoctor(){
-        List<GetDoctorDTO> doctors = new ArrayList<>();
+        public List<UserEntity> getAllDoctor(){
+//        List<GetDoctorDTO> doctors = new ArrayList<>();
         RoleEntity role = this.roleService.getRoleById(2L);
 
-        List<UserEntity>doctor = this.userRepository.findAllByRole(role);
-
-        for (UserEntity data : doctor){
-            GetDoctorDTO obj = new GetDoctorDTO();
-
-            obj.setId(data.getId());
-            obj.setId(data.getId());
-            obj.setName(data.getName());
-            obj.setEmail(data.getEmail());
-            obj.setDob(data.getDob().toString());
-            obj.setAvailableFrom(data.getAvailableFrom());
-            obj.setAvailableTo(data.getAvailableTo());
-
-            doctors.add(obj);
-        }
-        return doctors;
+//        List<UserEntity> doctor = this.userRepository.findAllByRole(role);
+//
+//        for (UserEntity data : doctor){
+//            GetDoctorDTO obj = new GetDoctorDTO();
+//
+//            obj.setId(data.getId());
+//            obj.setId(data.getId());
+//            obj.setName(data.getName());
+//            obj.setEmail(data.getEmail());
+//            obj.setDob(data.getDob().toString());
+//            obj.setAvailableFrom(data.getAvailableFrom());
+//            obj.setAvailableTo(data.getAvailableTo());
+//
+//            doctors.add(obj);
+//        }
+        return this.userRepository.findAllByRole(role);
     }
 
     public GetDoctorDTO getById(Long id){
@@ -133,6 +133,13 @@ public class UserServiceImpl {
 
         return this.userRepository.findByIdAndRole(id, existRole);
     }
+
+    public List<UserEntity> getDoctorByDepartment(Long departmentId){
+        DepartmentEntity existDepartment = this.departmentService.getDepartmentById(departmentId);
+
+        return this.userRepository.findAllByDepartment(existDepartment);
+    }
+
 
     public UserEntity createDoctor(DoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());

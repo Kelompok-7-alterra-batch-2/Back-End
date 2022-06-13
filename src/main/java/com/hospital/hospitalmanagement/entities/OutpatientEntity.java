@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,10 +27,12 @@ public class OutpatientEntity {
     @Column(name = "name")
     private String name;
 
+    @JsonBackReference
     @ManyToOne(targetEntity = PatientEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientEntity patient;
 
+    @JsonBackReference
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private UserEntity doctor;

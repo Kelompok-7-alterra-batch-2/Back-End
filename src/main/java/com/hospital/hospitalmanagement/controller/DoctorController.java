@@ -17,13 +17,18 @@ public class DoctorController {
     UserServiceImpl userService;
 
     @GetMapping
-    public List<GetDoctorDTO> getAllDoctor(){
+    public List<UserEntity> getAllDoctor(){
         return this.userService.getAllDoctor();
     }
 
     @GetMapping("/{id}")
-    public GetDoctorDTO getById(@PathVariable("id") Long id){
-        return this.userService.getById(id);
+    public UserEntity getDoctorById(@PathVariable("id") Long id){
+        return this.userService.getDoctorById(id);
+    }
+
+    @GetMapping("/departments/{departmentId}")
+    public List<UserEntity> getAllDoctorByDepartment(@PathVariable("departmentId") Long departmentId){
+        return this.userService.getDoctorByDepartment(departmentId);
     }
 
     @PostMapping

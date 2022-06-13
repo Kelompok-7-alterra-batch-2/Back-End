@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.repository;
 
+import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findAllByRole(RoleEntity role);
 
     UserEntity findByIdAndRole(Long id, RoleEntity role);
+
+    List<UserEntity> findAllByDepartment(DepartmentEntity department);
 }
