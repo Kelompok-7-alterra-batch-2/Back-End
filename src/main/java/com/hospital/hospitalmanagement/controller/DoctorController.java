@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,13 @@ public class DoctorController {
     UserServiceImpl userService;
 
     @GetMapping
-    public List<UserEntity> getAllDoctor(){
+    public List<GetDoctorDTO> getAllDoctor(){
         return this.userService.getAllDoctor();
     }
 
     @GetMapping("/{id}")
-    public UserEntity getDoctorById(@PathVariable("id") Long id){
-        return this.userService.getDoctorById(id);
+    public GetDoctorDTO getById(@PathVariable("id") Long id){
+        return this.userService.getById(id);
     }
 
     @PostMapping

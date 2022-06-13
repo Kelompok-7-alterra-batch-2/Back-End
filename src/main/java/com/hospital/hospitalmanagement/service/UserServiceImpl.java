@@ -2,6 +2,7 @@ package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
@@ -15,8 +16,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl {
@@ -80,10 +83,49 @@ public class UserServiceImpl {
         this.userRepository.delete(existAdmin);
     }
 
-    public List<UserEntity> getAllDoctor(){
+    public List<GetDoctorDTO> getAllDoctor(){
+        List<GetDoctorDTO> doctors = new ArrayList<>();
         RoleEntity role = this.roleService.getRoleById(2L);
 
-        return this.userRepository.findAllByRole(role);
+        List<UserEntity>doctor = this.userRepository.findAllByRole(role);
+
+        for (UserEntity data : doctor){
+            GetDoctorDTO obj = new GetDoctorDTO();
+
+            obj.setId(data.getId());
+            obj.setId(data.getId());
+            obj.setName(data.getName());
+            obj.setEmail(data.getEmail());
+            obj.setDob(data.getDob().toString());
+            obj.setAvailableFrom(data.getAvailableFrom());
+            obj.setAvailableTo(data.getAvailableTo());
+
+            doctors.add(obj);
+        }
+        return doctors;
+    }
+
+    public GetDoctorDTO getById(Long id){
+        RoleEntity existRole = this.roleService.getRoleById(2L);
+        UserEntity optional = this.userRepository.findByIdAndRole(id, existRole);
+
+        Optional<UserEntity> exist = this.userRepository.findById(id);
+
+        if (exist.isEmpty()){
+            return null;
+        }
+
+        GetDoctorDTO obj = new GetDoctorDTO();
+
+        obj.setId(optional.getId());
+        obj.setId(optional.getId());
+        obj.setName(optional.getName());
+        obj.setEmail(optional.getEmail());
+        obj.setDob(optional.getDob().toString());
+        obj.setAvailableFrom(optional.getAvailableFrom());
+        obj.setAvailableTo(optional.getAvailableTo());
+
+        return obj;
     }
 
     public UserEntity getDoctorById(Long id){
