@@ -9,6 +9,8 @@ import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -46,6 +48,12 @@ public class UserServiceImpl {
         RoleEntity existRole = this.roleService.getRoleById(1L);
 
         return this.userRepository.findByIdAndRole(id, existRole);
+    }
+
+    public UserEntity getAdminByEmail(String email){
+        RoleEntity existRole = this.roleService.getRoleById(1L);
+
+        return this.userRepository.findByEmailAndRole(email, existRole);
     }
 
     public UserEntity createAdmin(AdminDTO adminDTO) {
@@ -139,6 +147,12 @@ public class UserServiceImpl {
 
         return this.userRepository.findAllByDepartment(existDepartment);
     }
+  
+    public List<UserEntity> getDoctorByName(String name){
+        RoleEntity existRole = this.roleService.getRoleById(2L);
+
+        return this.userRepository.findByNameContainsAndRole(name, existRole);
+    }
 
 
     public UserEntity createDoctor(DoctorDTO doctorDTO) {
@@ -182,5 +196,11 @@ public class UserServiceImpl {
     public void deleteDoctor(Long id) {
         UserEntity existDoctor = this.getDoctorById(id);
         this.userRepository.delete(existDoctor);
+    }
+
+    public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
+        RoleEntity role = roleService.getRoleById(2L);
+//        return this.userRepository.findAll(PageRequest.of(index, element));
+        return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
     }
 }

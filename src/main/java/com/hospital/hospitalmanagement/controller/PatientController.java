@@ -5,6 +5,7 @@ import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.service.PatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,5 +39,15 @@ public class PatientController {
     @DeleteMapping("/{id}")
     public void deletePatientById(@PathVariable("id") Long id){
         this.patientService.deletePatient(id);
+    }
+
+    @GetMapping("/names/{name}")
+    public List<PatientEntity> getPatientByName(@PathVariable("name") String name){
+        return this.patientService.getPatientByName(name);
+    }
+
+    @GetMapping("/page/{index}/{element}")
+    public Page<PatientEntity> getAllPatientPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
+        return this.patientService.getAllPatientPaginate(index, element);
     }
 }
