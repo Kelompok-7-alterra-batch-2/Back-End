@@ -1,5 +1,7 @@
 package com.hospital.hospitalmanagement.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,6 +33,7 @@ public class PatientEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "patient",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
     private List<OutpatientEntity> outpatient;
 }
