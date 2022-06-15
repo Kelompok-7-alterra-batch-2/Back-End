@@ -26,14 +26,24 @@ public class PatientEntity {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "medical_record")
-    private Long medicalRecord;
     @Column(name = "dob")
     private LocalDate dob;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    private String phoneNumber;
+    private String city;
+    private String address;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "patient",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
     private List<OutpatientEntity> outpatient;
+
+    @OneToOne
+    @JoinColumn(name = "blood_type_id", referencedColumnName = "id")
+    private BloodTypeEntity bloodType;
+
+    @OneToOne
+    @JoinColumn(name = "gender_id", referencedColumnName = "id")
+    private GenderEntity gender;
 }
