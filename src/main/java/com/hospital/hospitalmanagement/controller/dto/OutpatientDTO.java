@@ -11,5 +11,5 @@ public class OutpatientDTO {
     private Long doctor_id;
     private Long department_id;
     private Long outpatientCondition_id;
-    private Long queue_id;
+    private int queue;
 }

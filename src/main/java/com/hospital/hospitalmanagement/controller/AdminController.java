@@ -22,9 +22,6 @@ public class AdminController {
     @Autowired
     UserServiceImpl userService;
 
-    @Autowired
-    OutpatientRepository outpatientRepository;
-
     @GetMapping("/users")
     public List<UserEntity> getAllUsers(){
         return this.userService.getAllUser();
@@ -60,12 +57,4 @@ public class AdminController {
     public UserEntity getAdminByEmail(@PathVariable("email") String email){
         return this.userService.getAdminByEmail(email);
     }
-
-    @GetMapping("/schedules")
-    public List<OutpatientEntity> getTodaySchedules(){
-        LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findByDate(now);
-    }
-
-
 }

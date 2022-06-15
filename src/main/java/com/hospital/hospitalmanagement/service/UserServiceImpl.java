@@ -203,4 +203,9 @@ public class UserServiceImpl {
 //        return this.userRepository.findAll(PageRequest.of(index, element));
         return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
     }
+
+    public Long countDoctor() {
+        RoleEntity role = this.roleService.getRoleById(2L);
+        return this.userRepository.countByRole(role);
+    }
 }

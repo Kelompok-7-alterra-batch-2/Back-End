@@ -70,9 +70,6 @@ public class OutpatientServiceImpl {
             outpatientCondition.setId(data.getOutpatientCondition().getId());
             outpatientCondition.setConditions(data.getOutpatientCondition().getConditions());
 
-            queue.setId(data.getQueue().getId());
-            queue.setQueueNumber(data.getQueue().getQueueNumber());
-
             obj.setId(data.getId());
             obj.setName(data.getName());
             obj.setDate(data.getDate());
@@ -83,7 +80,7 @@ public class OutpatientServiceImpl {
             obj.setDoctor(doctor);
             obj.setDepartment(department);
             obj.setOutpatientCondition(outpatientCondition);
-            obj.setQueue(queue);
+            obj.setQueue(data.getQueue());
 
 
             outpatients.add(obj);
@@ -125,9 +122,6 @@ public class OutpatientServiceImpl {
         outpatientCondition.setId(data.get().getOutpatientCondition().getId());
         outpatientCondition.setConditions(data.get().getOutpatientCondition().getConditions());
 
-        queue.setId(data.get().getQueue().getId());
-        queue.setQueueNumber(data.get().getQueue().getQueueNumber());
-
         obj.setId(data.get().getId());
         obj.setName(data.get().getName());
         obj.setDate(data.get().getDate());
@@ -138,7 +132,7 @@ public class OutpatientServiceImpl {
         obj.setDoctor(doctor);
         obj.setDepartment(department);
         obj.setOutpatientCondition(outpatientCondition);
-        obj.setQueue(queue);
+        obj.setQueue(data.get().getQueue());
 
         return obj;
     }
@@ -161,9 +155,7 @@ public class OutpatientServiceImpl {
                 getDepartmentById(outpatientDTO.getDepartment_id());
 
         OutpatientConditionEntity existOutpatientCondition = outpatientConditionService
-                .getOutpatientById(outpatientDTO.getOutpatientCondition_id());
-
-        QueueEntity existQueue = queueService.getQueueById(outpatientDTO.getQueue_id());
+                .getOutpatientById(1L);
 
         OutpatientEntity newOutpatient = OutpatientEntity.builder()
                 .name(outpatientDTO.getName())
@@ -171,7 +163,7 @@ public class OutpatientServiceImpl {
                 .doctor(existDoctor)
                 .department(existDepartment)
                 .outpatientCondition(existOutpatientCondition)
-                .queue(existQueue)
+                .queue(outpatientDTO.getQueue())
                 .date(LocalDate.now())
                 .arrivalTime(LocalTime.now())
                 .createdAt(LocalDateTime.now())
@@ -191,15 +183,13 @@ public class OutpatientServiceImpl {
         OutpatientConditionEntity existOutpatientCondition = outpatientConditionService
                 .getOutpatientById(outpatientDTO.getOutpatientCondition_id());
 
-        QueueEntity existQueue = queueService.getQueueById(outpatientDTO.getQueue_id());
-
         OutpatientEntity existOutpatient = this.getOutpatientById(id);
         existOutpatient.setName(outpatientDTO.getName());
         existOutpatient.setPatient(existPatient);
         existOutpatient.setDoctor(existDoctor);
         existOutpatient.setDepartment(existDepartment);
         existOutpatient.setOutpatientCondition(existOutpatientCondition);
-        existOutpatient.setQueue(existQueue);
+        existOutpatient.setQueue(outpatientDTO.getQueue());
         existOutpatient.setDate(LocalDate.now());
         existOutpatient.setArrivalTime(LocalTime.now());
 

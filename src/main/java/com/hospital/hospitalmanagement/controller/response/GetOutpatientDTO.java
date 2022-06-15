@@ -21,7 +21,7 @@ public class GetOutpatientDTO {
     GetDoctorDTO doctor;
     DepartmentEntity department;
     OutpatientConditionEntity outpatientCondition;
-    QueueEntity queue;
+    int queue;
     private LocalDate date;
     private LocalTime arrivalTime;
     private LocalDateTime createAt;
