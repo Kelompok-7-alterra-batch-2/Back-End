@@ -200,4 +200,7 @@ public class OutpatientServiceImpl {
         OutpatientEntity existPatient = this.getOutpatientById(id);
         this.outpatientRepository.delete(existPatient);
     }
+
+    public List<OutpatientEntity> findAllTodayOutpatient() {
+    }
 }

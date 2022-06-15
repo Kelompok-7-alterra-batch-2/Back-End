@@ -45,11 +45,6 @@ public class OutpatientEntity {
     @JoinColumn(name = "outpatient_condition_id", referencedColumnName = "id")
     private OutpatientConditionEntity outpatientCondition;
 
-//    @OneToOne()
-//    @JoinColumn(name = "queue", referencedColumnName = "id")
-//    private QueueEntity queue;
-
-
     private int queue;
     @Column(name = "date")
     private LocalDate date;

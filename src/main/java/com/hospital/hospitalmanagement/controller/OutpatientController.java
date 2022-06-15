@@ -38,8 +38,7 @@ public class OutpatientController {
 
     @GetMapping("/today")
     public List<OutpatientEntity> getAllTodayOutpatient(){
-        LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findAllByDate(now);
+        return this.outpatientService.findAllTodayOutpatient();
     }
 
     @GetMapping("/count/today")
