@@ -93,4 +93,9 @@ public class OutpatientController {
     public OutpatientEntity updateDiagnosisOutpatient(@PathVariable("id") Long outpatient_id, @RequestBody DiagnosisDTO diagnosisDTO){
         return this.outpatientService.diagnosisOutpatient(outpatient_id, diagnosisDTO);
     }
+
+    @GetMapping("/doctors/{id}")
+    public List<OutpatientEntity> getAllOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
+        return this.outpatientService.getAllOutpatientByDoctor(doctor_id);
+    }
 }
