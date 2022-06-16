@@ -28,9 +28,9 @@ public class DoctorController {
 
     @GetMapping("/count")
     public Long countAllDoctor(){
-        RoleEntity role = this.roleRepository.findById(2L).get();
-        Long count = this.userRepository.countByRole(role);
-        return count;
+//        RoleEntity role = this.roleRepository.findById(2L).get();
+//        Long count = this.userRepository.countByRole(role);
+        return this.userService.countDoctor();
     }
 
     @GetMapping

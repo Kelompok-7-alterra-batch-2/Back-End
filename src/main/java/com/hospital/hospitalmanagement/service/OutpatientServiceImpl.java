@@ -37,56 +37,56 @@ public class OutpatientServiceImpl {
     QueueServiceImpl queueService;
 
 
-    public List<GetOutpatientDTO>getAllOutpatient(){
-        List<GetOutpatientDTO> outpatients = new ArrayList<>();
+    public List<OutpatientEntity>getAllOutpatient(){
+//        List<GetOutpatientDTO> outpatients = new ArrayList<>();
+//
+//        List<OutpatientEntity> outpatient = outpatientRepository.findAll();
+//
+//        for (OutpatientEntity data : outpatient){
+//
+//            GetOutpatientDTO obj = new GetOutpatientDTO();
+//
+//            GetPatientDTO patient = new GetPatientDTO();
+//            GetDoctorDTO doctor = new GetDoctorDTO();
+//            DepartmentEntity department = new DepartmentEntity();
+//            OutpatientConditionEntity outpatientCondition = new OutpatientConditionEntity();
+//            QueueEntity queue = new QueueEntity();
+//
+//            patient.setId(data.getPatient().getId());
+//            patient.setName(data.getPatient().getName());
+//            patient.setMedicalRecord(data.getPatient().getMedicalRecord());
+//            patient.setDob(data.getPatient().getDob());
+//
+//            doctor.setId(data.getDoctor().getId());
+//            doctor.setName(data.getDoctor().getName());
+//            doctor.setEmail(data.getDoctor().getEmail());
+//            doctor.setDob(data.getDoctor().getDob().toString());
+//            doctor.setAvailableFrom(data.getDoctor().getAvailableFrom());
+//            doctor.setAvailableTo(data.getDoctor().getAvailableTo());
+//
+//            department.setId(data.getDepartment().getId());
+//            department.setName(data.getDepartment().getName());
+//
+//            outpatientCondition.setId(data.getOutpatientCondition().getId());
+//            outpatientCondition.setConditions(data.getOutpatientCondition().getConditions());
+//
+//            obj.setId(data.getId());
+//            obj.setName(data.getName());
+//            obj.setDate(data.getDate());
+//            obj.setArrivalTime(data.getArrivalTime());
+//            obj.setCreateAt(data.getCreatedAt());
+//
+//            obj.setPatient(patient);
+//            obj.setDoctor(doctor);
+//            obj.setDepartment(department);
+//            obj.setOutpatientCondition(outpatientCondition);
+//            obj.setQueue(data.getQueue());
+//
+//
+//            outpatients.add(obj);
+//        }
 
-        List<OutpatientEntity> outpatient = outpatientRepository.findAll();
-
-        for (OutpatientEntity data : outpatient){
-
-            GetOutpatientDTO obj = new GetOutpatientDTO();
-
-            GetPatientDTO patient = new GetPatientDTO();
-            GetDoctorDTO doctor = new GetDoctorDTO();
-            DepartmentEntity department = new DepartmentEntity();
-            OutpatientConditionEntity outpatientCondition = new OutpatientConditionEntity();
-            QueueEntity queue = new QueueEntity();
-
-            patient.setId(data.getPatient().getId());
-            patient.setName(data.getPatient().getName());
-            patient.setMedicalRecord(data.getPatient().getMedicalRecord());
-            patient.setDob(data.getPatient().getDob());
-
-            doctor.setId(data.getDoctor().getId());
-            doctor.setName(data.getDoctor().getName());
-            doctor.setEmail(data.getDoctor().getEmail());
-            doctor.setDob(data.getDoctor().getDob().toString());
-            doctor.setAvailableFrom(data.getDoctor().getAvailableFrom());
-            doctor.setAvailableTo(data.getDoctor().getAvailableTo());
-
-            department.setId(data.getDepartment().getId());
-            department.setName(data.getDepartment().getName());
-
-            outpatientCondition.setId(data.getOutpatientCondition().getId());
-            outpatientCondition.setConditions(data.getOutpatientCondition().getConditions());
-
-            obj.setId(data.getId());
-            obj.setName(data.getName());
-            obj.setDate(data.getDate());
-            obj.setArrivalTime(data.getArrivalTime());
-            obj.setCreateAt(data.getCreatedAt());
-
-            obj.setPatient(patient);
-            obj.setDoctor(doctor);
-            obj.setDepartment(department);
-            obj.setOutpatientCondition(outpatientCondition);
-            obj.setQueue(data.getQueue());
-
-
-            outpatients.add(obj);
-        }
-
-        return outpatients;
+        return this.outpatientRepository.findAll();
     }
 
     public GetOutpatientDTO getById(Long id){
@@ -199,5 +199,15 @@ public class OutpatientServiceImpl {
     public void deleteOutpatient(Long id){
         OutpatientEntity existPatient = this.getOutpatientById(id);
         this.outpatientRepository.delete(existPatient);
+    }
+
+    public Long countTodayOutpatient(){
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.countByDate(now);
+    }
+
+    public List<OutpatientEntity> getAllTodayOutpatient(){
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findAllByDate(now);
     }
 }

@@ -2,22 +2,13 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
-import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
-import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
-import com.hospital.hospitalmanagement.repository.DepartmentRepository;
-import com.hospital.hospitalmanagement.repository.OutpatientRepository;
-import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
-import org.apache.tomcat.jni.Local;
+import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.DocFlavor;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -28,41 +19,33 @@ public class OutpatientController {
     OutpatientServiceImpl outpatientService;
 
     @Autowired
-    OutpatientRepository outpatientRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    DepartmentRepository departmentRepository;
+    UserServiceImpl userService;
 
     @GetMapping("/today")
     public List<OutpatientEntity> getAllTodayOutpatient(){
-        LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findAllByDate(now);
+        return this.outpatientService.getAllTodayOutpatient();
     }
 
     @GetMapping("/count/today")
     public Long countTodayOutpatient(){
-        LocalDate now = LocalDate.now();
-        return this.outpatientRepository.countByDate(now);
+        return this.outpatientService.countTodayOutpatient();
     }
 
     @GetMapping("/doctors")
     public List<UserEntity> getAllAvailableDoctor(@RequestBody DoctorDTO doctorDTO){
 //        LocalTime parseArrivalTime = LocalTime.parse(arrivalTime);
 //        DepartmentEntity department = this.departmentRepository.findById(doctorDTO.getDepartment_id()).get();
-        return this.userRepository.findAllAvailableDoctor(doctorDTO.getAvailableTo(), doctorDTO.getDepartment_id());
+        return this.userService.getAllAvailableDoctor(doctorDTO);
     }
 
     @GetMapping
-    public List<GetOutpatientDTO> getAllOutpatient(){
+    public List<OutpatientEntity> getAllOutpatient(){
         return this.outpatientService.getAllOutpatient();
     }
 
     @GetMapping("/{id}")
-    public GetOutpatientDTO getOutpatientById(@PathVariable("id") Long id){
-        return this.outpatientService.getById(id);
+    public OutpatientEntity getOutpatientById(@PathVariable("id") Long id){
+        return this.outpatientService.getOutpatientById(id);
     }
 
     @PostMapping

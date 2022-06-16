@@ -208,4 +208,8 @@ public class UserServiceImpl {
         RoleEntity role = this.roleService.getRoleById(2L);
         return this.userRepository.countByRole(role);
     }
+
+    public List<UserEntity> getAllAvailableDoctor(DoctorDTO doctorDTO){
+        return this.userRepository.findAllAvailableDoctor(doctorDTO.getAvailableTo(), doctorDTO.getDepartment_id());
+    }
 }
