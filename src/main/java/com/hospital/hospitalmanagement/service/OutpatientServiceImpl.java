@@ -66,23 +66,22 @@ public class OutpatientServiceImpl {
         OutpatientConditionEntity existOutpatientCondition = outpatientConditionService.getOutpatientById(1L);
 
         OutpatientEntity newOutpatient = OutpatientEntity.builder()
-                .name(outpatientDTO.getName())
                 .patient(existPatient)
                 .doctor(existDoctor)
+                .dokter(existDoctor.getId())
                 .department(existDepartment)
                 .outpatientCondition(existOutpatientCondition)
                 .queue(outpatientDTO.getQueue())
-                .date(LocalDate.now())
-                .arrivalTime(LocalTime.now())
+                .appointmentReason(outpatientDTO.getAppointmentReason())
+                .medicalRecord(outpatientDTO.getMedicalRecord())
+                .date(outpatientDTO.getDate())
+                .arrivalTime(outpatientDTO.getArrivalTime())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(newOutpatient);
 
-        this.userService.creatOutpatient(savedOutpatient, outpatientDTO.getDoctor_id());
-        this.patientService.createOutpatient(savedOutpatient, outpatientDTO.getPatient_id());
-
-        return this.outpatientRepository.save(savedOutpatient);
+        return savedOutpatient;
     }
 
     public OutpatientEntity updateOutpatient(Long id, OutpatientDTO outpatientDTO){
@@ -97,24 +96,20 @@ public class OutpatientServiceImpl {
                 .getOutpatientById(outpatientDTO.getOutpatientCondition_id());
 
         OutpatientEntity existOutpatient = this.getOutpatientById(id);
-        existOutpatient.setName(outpatientDTO.getName());
         existOutpatient.setPatient(existPatient);
         existOutpatient.setDoctor(existDoctor);
+        existOutpatient.setDokter(existDoctor.getId());
         existOutpatient.setDepartment(existDepartment);
         existOutpatient.setOutpatientCondition(existOutpatientCondition);
         existOutpatient.setQueue(outpatientDTO.getQueue());
-        existOutpatient.setDate(LocalDate.now());
-        existOutpatient.setArrivalTime(LocalTime.now());
+        existOutpatient.setDate(outpatientDTO.getDate());
+        existOutpatient.setAppointmentReason(outpatientDTO.getAppointmentReason());
+        existOutpatient.setMedicalRecord(outpatientDTO.getMedicalRecord());
+        existOutpatient.setArrivalTime(outpatientDTO.getArrivalTime());
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(existOutpatient);
 
-        existPatient.setOutpatient(List.of(savedOutpatient));
-        existDoctor.setOutpatient(List.of(savedOutpatient));
-
-        this.userService.save(existDoctor);
-        this.patientService.save(existPatient);
-
-        return this.outpatientRepository.save(savedOutpatient);
+        return savedOutpatient;
     }
 
     public void deleteOutpatient(Long id){
@@ -134,5 +129,52 @@ public class OutpatientServiceImpl {
 
     public List<UserEntity> getAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
         return this.userService.findAllAvailableDoctor(arrivalTime, department_id);
+    }
+
+    public List<OutpatientEntity> getAllPendingOutpatient(){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);
+        return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+    }
+
+    public OutpatientEntity processOutpatient(Long outpatient_id){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
+
+        OutpatientEntity existOutpatient = this.getById(outpatient_id);
+        existOutpatient.setOutpatientCondition(existCondition);
+
+        return this.outpatientRepository.save(existOutpatient);
+    }
+
+    public List<OutpatientEntity> getAllProcessOutpatient(){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
+        return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+    }
+
+    public OutpatientEntity doneOutpatient(Long outpatient_id){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
+
+        OutpatientEntity existOutpatient = this.getById(outpatient_id);
+        existOutpatient.setOutpatientCondition(existCondition);
+
+        return this.outpatientRepository.save(existOutpatient);
+    }
+
+    public List<OutpatientEntity> getAllDoneOutpatient(){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
+        return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+    }
+
+    public List<OutpatientEntity> getAllTodayOutpatientByDepartment(Long department_id){
+        DepartmentEntity existDepartment = this.departmentService.getDepartmentById(department_id);
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findAllByDepartmentAndDate(existDepartment, now);
+    }
+
+    public OutpatientEntity diagnosisOutpatient(Long outpatient_id, DiagnosisDTO diagnosisDTO) {
+        OutpatientEntity existOutpatient = this.getById(outpatient_id);
+        existOutpatient.setDiagnosis(diagnosisDTO.getDiagnosis());
+        existOutpatient.setPrescription(diagnosisDTO.getPrescription());
+
+        return this.outpatientRepository.save(existOutpatient);
     }
 }

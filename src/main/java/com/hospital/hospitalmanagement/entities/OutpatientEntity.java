@@ -24,8 +24,6 @@ public class OutpatientEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "name")
-    private String name;
 
     @JsonBackReference
     @ManyToOne(targetEntity = PatientEntity.class)
@@ -45,6 +43,11 @@ public class OutpatientEntity {
     @JoinColumn(name = "outpatient_condition_id", referencedColumnName = "id")
     private OutpatientConditionEntity outpatientCondition;
 
+    private String diagnosis;
+    private String prescription;
+    private String medicalRecord;
+    private String appointmentReason;
+    private Long dokter;
     private int queue;
     @Column(name = "date")
     private LocalDate date;
