@@ -1,11 +1,10 @@
 package com.hospital.hospitalmanagement.controller;
 
-import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
+import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
-import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +17,9 @@ public class OutpatientController {
     @Autowired
     OutpatientServiceImpl outpatientService;
 
-    @Autowired
-    UserServiceImpl userService;
-
     @GetMapping("/today")
     public List<OutpatientEntity> getAllTodayOutpatient(){
-        return this.outpatientService.getAllTodayOutpatient();
+        return this.outpatientService.findAllTodayOutpatient();
     }
 
     @GetMapping("/count/today")
@@ -32,10 +28,8 @@ public class OutpatientController {
     }
 
     @GetMapping("/doctors")
-    public List<UserEntity> getAllAvailableDoctor(@RequestBody DoctorDTO doctorDTO){
-//        LocalTime parseArrivalTime = LocalTime.parse(arrivalTime);
-//        DepartmentEntity department = this.departmentRepository.findById(doctorDTO.getDepartment_id()).get();
-        return this.userService.getAllAvailableDoctor(doctorDTO);
+    public List<UserEntity> getAllAvailableDoctor(@RequestBody AvailDoctorDTO availDoctorDTO){
+        return this.outpatientService.getAllAvailableDoctor(availDoctorDTO.getArrival_time(), availDoctorDTO.getDepartment_id());
     }
 
     @GetMapping
@@ -45,7 +39,7 @@ public class OutpatientController {
 
     @GetMapping("/{id}")
     public OutpatientEntity getOutpatientById(@PathVariable("id") Long id){
-        return this.outpatientService.getOutpatientById(id);
+        return this.outpatientService.getById(id);
     }
 
     @PostMapping

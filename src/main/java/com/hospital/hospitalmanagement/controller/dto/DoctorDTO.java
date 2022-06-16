@@ -15,4 +15,6 @@ public class DoctorDTO {
     private LocalTime availableFrom;
     private LocalTime availableTo;
     private Long department_id;
+    private String nid;
+    private String phoneNumber;
 }

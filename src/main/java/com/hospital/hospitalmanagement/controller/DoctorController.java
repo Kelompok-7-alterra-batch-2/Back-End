@@ -20,16 +20,8 @@ public class DoctorController {
     @Autowired
     UserServiceImpl userService;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
     @GetMapping("/count")
     public Long countAllDoctor(){
-//        RoleEntity role = this.roleRepository.findById(2L).get();
-//        Long count = this.userRepository.countByRole(role);
         return this.userService.countDoctor();
     }
 
