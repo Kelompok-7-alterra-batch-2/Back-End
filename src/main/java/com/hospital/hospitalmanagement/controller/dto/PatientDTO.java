@@ -9,6 +9,10 @@ import java.util.Date;
 @Setter
 public class PatientDTO {
     private String name;
-    private Long medicalRecord;
     private String dob;
+    private Long blood_type_id;
+    private Long gender_id;
+    private String phoneNumber;
+    private String city;
+    private String address;
 }

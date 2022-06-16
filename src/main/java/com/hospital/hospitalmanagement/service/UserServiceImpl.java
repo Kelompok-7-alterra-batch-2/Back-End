@@ -4,22 +4,18 @@ import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +38,10 @@ public class UserServiceImpl {
         RoleEntity role = this.roleService.getRoleById(1L);
 
         return this.userRepository.findAllByRole(role);
+    }
+
+    public UserEntity getUserById(Long id){
+        return this.userRepository.findById(id).get();
     }
 
     public UserEntity getAdminById(Long id){
@@ -91,25 +91,8 @@ public class UserServiceImpl {
         this.userRepository.delete(existAdmin);
     }
 
-        public List<UserEntity> getAllDoctor(){
-//        List<GetDoctorDTO> doctors = new ArrayList<>();
+    public List<UserEntity> getAllDoctor(){
         RoleEntity role = this.roleService.getRoleById(2L);
-
-//        List<UserEntity> doctor = this.userRepository.findAllByRole(role);
-//
-//        for (UserEntity data : doctor){
-//            GetDoctorDTO obj = new GetDoctorDTO();
-//
-//            obj.setId(data.getId());
-//            obj.setId(data.getId());
-//            obj.setName(data.getName());
-//            obj.setEmail(data.getEmail());
-//            obj.setDob(data.getDob().toString());
-//            obj.setAvailableFrom(data.getAvailableFrom());
-//            obj.setAvailableTo(data.getAvailableTo());
-//
-//            doctors.add(obj);
-//        }
         return this.userRepository.findAllByRole(role);
     }
 
@@ -170,6 +153,8 @@ public class UserServiceImpl {
                 .department(existDepartment)
                 .availableFrom(doctorDTO.getAvailableFrom())
                 .availableTo(doctorDTO.getAvailableTo())
+                .nid(doctorDTO.getNid())
+                .phoneNumber(doctorDTO.getPhoneNumber())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -189,6 +174,8 @@ public class UserServiceImpl {
         existDoctor.setDepartment(existDepartment);
         existDoctor.setAvailableFrom(doctorDTO.getAvailableFrom());
         existDoctor.setAvailableTo(doctorDTO.getAvailableTo());
+        existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
+        existDoctor.setNid(doctorDTO.getNid());
 
         return this.userRepository.save(existDoctor);
     }
@@ -200,7 +187,25 @@ public class UserServiceImpl {
 
     public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
         RoleEntity role = roleService.getRoleById(2L);
-//        return this.userRepository.findAll(PageRequest.of(index, element));
         return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
+    }
+
+    public Long countDoctor() {
+        RoleEntity role = this.roleService.getRoleById(2L);
+        return this.userRepository.countByRole(role);
+    }
+
+    public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
+        return this.userRepository.findAllAvailableDoctor(arrivalTime, department_id);
+    }
+
+    public void save(UserEntity user){
+        this.userRepository.save(user);
+    }
+
+    public void creatOutpatient(OutpatientEntity savedOutpatient, Long doctor_id) {
+        UserEntity doctor = this.getUserById(doctor_id);
+        doctor.setOutpatient(List.of(savedOutpatient));
+        this.userRepository.save(doctor);
     }
 }

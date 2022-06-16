@@ -38,6 +38,9 @@ public class UserEntity {
     @Column(name = "available_to")
     private LocalTime availableTo;
 
+    private String nid;
+    private String phoneNumber;
+
     @OneToOne()
     @JoinColumn(name = "department_id", referencedColumnName = "id")
     private DepartmentEntity department;
@@ -50,7 +53,7 @@ public class UserEntity {
     private LocalDateTime createdAt;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "doctor",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctor",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OutpatientEntity> outpatient;
 
 }

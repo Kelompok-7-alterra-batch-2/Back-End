@@ -36,4 +36,8 @@ public class QueueServiceImpl {
 
         return this.queueRepository.save(queue);
     }
+
+    public QueueEntity saveQueue(QueueEntity queue){
+        return this.queueRepository.save(queue);
+    }
 }

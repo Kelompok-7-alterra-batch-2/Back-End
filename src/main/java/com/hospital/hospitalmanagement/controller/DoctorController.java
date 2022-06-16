@@ -2,7 +2,9 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
+import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
+import com.hospital.hospitalmanagement.repository.RoleRepository;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +20,10 @@ public class DoctorController {
     @Autowired
     UserServiceImpl userService;
 
-    @Autowired
-    UserRepository userRepository;
+    @GetMapping("/count")
+    public Long countAllDoctor(){
+        return this.userService.countDoctor();
+    }
 
     @GetMapping
     public List<UserEntity> getAllDoctor(){

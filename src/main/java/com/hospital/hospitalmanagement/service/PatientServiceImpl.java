@@ -1,7 +1,9 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
-import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
+import com.hospital.hospitalmanagement.entities.BloodTypeEntity;
+import com.hospital.hospitalmanagement.entities.GenderEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,38 +21,24 @@ public class PatientServiceImpl {
     @Autowired
     PatientRepository patientRepository;
 
-    public List<GetPatientDTO>getAllPatient(){
-        List<GetPatientDTO>patients = new ArrayList<>();
+    @Autowired
+    GenderServiceImpl genderService;
 
-        List<PatientEntity>patient = this.patientRepository.findAll();
-        for (PatientEntity data : patient){
-            GetPatientDTO obj = new GetPatientDTO();
+    @Autowired
+    BloodTypeServiceImpl bloodTypeService;
 
-            obj.setId(data.getId());
-            obj.setName(data.getName());
-            obj.setMedicalRecord(data.getMedicalRecord());
-            obj.setDob(data.getDob());
-
-            patients.add(obj);
-        }
-        return patients;
+    public List<PatientEntity>getAllPatient(){
+        return this.patientRepository.findAll();
     }
 
-    public GetPatientDTO getById(Long id){
+    public PatientEntity getById(Long id){
         Optional<PatientEntity> patient = this.patientRepository.findById(id);
-
-        GetPatientDTO obj = new GetPatientDTO();
 
         if (patient.isEmpty()){
             return null;
         }
 
-        obj.setId(patient.get().getId());
-        obj.setName(patient.get().getName());
-        obj.setMedicalRecord(patient.get().getMedicalRecord());
-        obj.setDob(patient.get().getDob());
-
-        return obj;
+        return patient.get();
     }
 
     public PatientEntity getPatientById(Long id){
@@ -64,22 +51,35 @@ public class PatientServiceImpl {
     }
 
     public PatientEntity createPatient(PatientDTO patientDTO){
+        BloodTypeEntity existBloodType = this.bloodTypeService.getBloodTypeById(patientDTO.getBlood_type_id());
+        GenderEntity existGender = this.genderService.getGenderById(patientDTO.getGender_id());
 
         PatientEntity patientEntity = PatientEntity.builder()
                 .name(patientDTO.getName())
-                .medicalRecord(patientDTO.getMedicalRecord())
                 .dob(LocalDate.parse(patientDTO.getDob()))
+                .address(patientDTO.getAddress())
+                .city(patientDTO.getCity())
+                .phoneNumber(patientDTO.getPhoneNumber())
+                .gender(existGender)
+                .bloodType(existBloodType)
                 .createdAt(LocalDateTime.now())
                 .build();
+        
         return this.patientRepository.save(patientEntity);
     }
 
     public PatientEntity updatePatient(Long id, PatientDTO patientDTO){
         PatientEntity existPatient = this.getPatientById(id);
+        BloodTypeEntity existBloodType = this.bloodTypeService.getBloodTypeById(patientDTO.getBlood_type_id());
+        GenderEntity existGender = this.genderService.getGenderById(patientDTO.getGender_id());
 
         existPatient.setName(patientDTO.getName());
-        existPatient.setMedicalRecord(patientDTO.getMedicalRecord());
         existPatient.setDob(LocalDate.parse(patientDTO.getDob()));
+        existPatient.setAddress(patientDTO.getAddress());
+        existPatient.setCity(patientDTO.getCity());
+        existPatient.setPhoneNumber(patientDTO.getPhoneNumber());
+        existPatient.setBloodType(existBloodType);
+        existPatient.setGender(existGender);
 
         return this.patientRepository.save(existPatient);
     }
@@ -95,5 +95,14 @@ public class PatientServiceImpl {
 
     public Page<PatientEntity> getAllPatientPaginate(int index, int element) {
         return this.patientRepository.findAll(PageRequest.of(index, element));
+    }
+
+    public void save(PatientEntity patient){
+        this.patientRepository.save(patient);
+    }
+
+    public void createOutpatient(OutpatientEntity savedOutpatient, Long patient_id) {
+        PatientEntity patient = this.getPatientById(patient_id);
+        patient.setOutpatient(List.of(savedOutpatient));
     }
 }
