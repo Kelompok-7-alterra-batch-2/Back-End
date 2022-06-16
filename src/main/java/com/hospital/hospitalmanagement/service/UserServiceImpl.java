@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.UserRepository;
@@ -37,6 +38,10 @@ public class UserServiceImpl {
         RoleEntity role = this.roleService.getRoleById(1L);
 
         return this.userRepository.findAllByRole(role);
+    }
+
+    public UserEntity getUserById(Long id){
+        return this.userRepository.findById(id).get();
     }
 
     public UserEntity getAdminById(Long id){
@@ -196,5 +201,11 @@ public class UserServiceImpl {
 
     public void save(UserEntity user){
         this.userRepository.save(user);
+    }
+
+    public void creatOutpatient(OutpatientEntity savedOutpatient, Long doctor_id) {
+        UserEntity doctor = this.getUserById(doctor_id);
+        doctor.setOutpatient(List.of(savedOutpatient));
+        this.userRepository.save(doctor);
     }
 }

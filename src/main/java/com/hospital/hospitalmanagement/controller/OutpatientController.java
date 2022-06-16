@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
+import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
@@ -55,5 +56,41 @@ public class OutpatientController {
     @DeleteMapping("/{id}")
     public void deleteOutpatient(@PathVariable("id") Long id){
         this.outpatientService.deleteOutpatient(id);
+    }
+
+
+    @GetMapping("/pending")
+    public List<OutpatientEntity> getAllPendingOutpatient(){
+        return this.outpatientService.getAllPendingOutpatient();
+    }
+
+    @GetMapping("/process")
+    public List<OutpatientEntity> getAllProcessOutpatient(){
+        return this.outpatientService.getAllProcessOutpatient();
+    }
+
+    @PutMapping("/process/{id}")
+    public OutpatientEntity updateOutpatientConditionToProcess(@PathVariable("id") Long condition_id){
+        return this.outpatientService.processOutpatient(condition_id);
+    }
+
+    @GetMapping("/done")
+    public List<OutpatientEntity> getAllDoneOutpatient(){
+        return this.outpatientService.getAllDoneOutpatient();
+    }
+
+    @PutMapping("/done/{id}")
+    public OutpatientEntity updateOutpatientConditionToDone(@PathVariable("id") Long outpatient_id){
+        return this.outpatientService.doneOutpatient(outpatient_id);
+    }
+
+    @GetMapping("/departments/{id}")
+    public List<OutpatientEntity> getAllOutpatientByDepartment(@PathVariable("id") Long department_id){
+        return this.outpatientService.getAllTodayOutpatientByDepartment(department_id);
+    }
+
+    @PutMapping("/diagnosis/{id}")
+    public OutpatientEntity updateDiagnosisOutpatient(@PathVariable("id") Long outpatient_id, @RequestBody DiagnosisDTO diagnosisDTO){
+        return this.outpatientService.diagnosisOutpatient(outpatient_id, diagnosisDTO);
     }
 }
