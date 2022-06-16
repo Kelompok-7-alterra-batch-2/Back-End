@@ -177,4 +177,9 @@ public class OutpatientServiceImpl {
 
         return this.outpatientRepository.save(existOutpatient);
     }
+
+    public List<OutpatientEntity> getAllOutpatientByDoctor(Long doctor_id) {
+        UserEntity existDoctor = this.userService.getDoctorById(doctor_id);
+        return this.outpatientRepository.findAllByDoctorOrderByQueueAsc(existDoctor);
+    }
 }
