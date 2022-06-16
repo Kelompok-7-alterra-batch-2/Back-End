@@ -28,12 +28,12 @@ public class OutpatientEntity {
     private String name;
 
     @JsonBackReference
-    @ManyToOne(targetEntity = PatientEntity.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = PatientEntity.class)
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientEntity patient;
 
     @JsonBackReference
-    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = UserEntity.class)
     @JoinColumn(name = "doctor_id", nullable = false)
     private UserEntity doctor;
 

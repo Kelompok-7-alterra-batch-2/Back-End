@@ -59,13 +59,11 @@ public class OutpatientServiceImpl {
     public OutpatientEntity createOutpatient(OutpatientDTO outpatientDTO){
         PatientEntity existPatient = patientService.getPatientById(outpatientDTO.getPatient_id());
 
-        UserEntity existDoctor = userService.getDoctorById(outpatientDTO.getDoctor_id());
+        UserEntity existDoctor = this.userService.getUserById(outpatientDTO.getDoctor_id());
 
-        DepartmentEntity existDepartment = departmentService.
-                getDepartmentById(outpatientDTO.getDepartment_id());
+        DepartmentEntity existDepartment = departmentService.getDepartmentById(outpatientDTO.getDepartment_id());
 
-        OutpatientConditionEntity existOutpatientCondition = outpatientConditionService
-                .getOutpatientById(1L);
+        OutpatientConditionEntity existOutpatientCondition = outpatientConditionService.getOutpatientById(1L);
 
         OutpatientEntity newOutpatient = OutpatientEntity.builder()
                 .name(outpatientDTO.getName())
@@ -81,11 +79,8 @@ public class OutpatientServiceImpl {
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(newOutpatient);
 
-        existPatient.setOutpatient(List.of(savedOutpatient));
-        existDoctor.setOutpatient(List.of(savedOutpatient));
-
-        this.userService.save(existDoctor);
-        this.patientService.save(existPatient);
+        this.userService.creatOutpatient(savedOutpatient, outpatientDTO.getDoctor_id());
+        this.patientService.createOutpatient(savedOutpatient, outpatientDTO.getPatient_id());
 
         return this.outpatientRepository.save(savedOutpatient);
     }

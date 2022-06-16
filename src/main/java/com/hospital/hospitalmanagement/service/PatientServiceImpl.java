@@ -3,6 +3,7 @@ package com.hospital.hospitalmanagement.service;
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
 import com.hospital.hospitalmanagement.entities.BloodTypeEntity;
 import com.hospital.hospitalmanagement.entities.GenderEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,5 +99,10 @@ public class PatientServiceImpl {
 
     public void save(PatientEntity patient){
         this.patientRepository.save(patient);
+    }
+
+    public void createOutpatient(OutpatientEntity savedOutpatient, Long patient_id) {
+        PatientEntity patient = this.getPatientById(patient_id);
+        patient.setOutpatient(List.of(savedOutpatient));
     }
 }
