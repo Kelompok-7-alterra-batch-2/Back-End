@@ -64,9 +64,19 @@ public class OutpatientController {
         return this.outpatientService.getAllPendingOutpatient();
     }
 
+    @GetMapping("/pending/today")
+    public List<OutpatientEntity> getAllPendingOutpatientToday(){
+        return this.outpatientService.findAllTodayPendingOutpatient();
+    }
+
     @GetMapping("/process")
     public List<OutpatientEntity> getAllProcessOutpatient(){
         return this.outpatientService.getAllProcessOutpatient();
+    }
+
+    @GetMapping("/process/today")
+    public List<OutpatientEntity> getAllProcessOutpatientToday(){
+        return this.outpatientService.findAllTodayProcessOutpatient();
     }
 
     @PutMapping("/process/{id}")
@@ -77,6 +87,11 @@ public class OutpatientController {
     @GetMapping("/done")
     public List<OutpatientEntity> getAllDoneOutpatient(){
         return this.outpatientService.getAllDoneOutpatient();
+    }
+
+    @GetMapping("/done/today")
+    public List<OutpatientEntity> getAllDoneOutpatientToday(){
+        return this.outpatientService.findAllTodayDoneOutpatient();
     }
 
     @PutMapping("/done/{id}")
@@ -97,5 +112,10 @@ public class OutpatientController {
     @GetMapping("/doctors/{id}")
     public List<OutpatientEntity> getAllOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
         return this.outpatientService.getAllOutpatientByDoctor(doctor_id);
+    }
+
+    @GetMapping("/OutpatientByDoctorToday/{id}")
+    public List<OutpatientEntity> getAllOutpatientByDoctor(@PathVariable("id") Long doctor_id){
+        return this.outpatientService.getAllTodayOutpatientByDoctor(doctor_id);
     }
 }
