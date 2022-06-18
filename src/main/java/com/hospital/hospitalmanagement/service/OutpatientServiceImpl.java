@@ -1,9 +1,7 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.*;
-import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
-import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,6 +133,13 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
     }
 
+    public List<OutpatientEntity> findAllTodayPendingOutpatient(){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);
+
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+    }
+
     public OutpatientEntity processOutpatient(Long outpatient_id){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
 
@@ -150,6 +154,13 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
     }
 
+    public List<OutpatientEntity> findAllTodayProcessOutpatient(){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
+
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+    }
+
     public OutpatientEntity doneOutpatient(Long outpatient_id){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
 
@@ -162,6 +173,13 @@ public class OutpatientServiceImpl {
     public List<OutpatientEntity> getAllDoneOutpatient(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
         return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+    }
+
+    public List<OutpatientEntity> findAllTodayDoneOutpatient(){
+        OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
+
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
     }
 
     public List<OutpatientEntity> getAllTodayOutpatientByDepartment(Long department_id){
@@ -181,5 +199,11 @@ public class OutpatientServiceImpl {
     public List<OutpatientEntity> getAllOutpatientByDoctor(Long doctor_id) {
         UserEntity existDoctor = this.userService.getDoctorById(doctor_id);
         return this.outpatientRepository.findAllByDoctorOrderByQueueAsc(existDoctor);
+    }
+
+    public List<OutpatientEntity> getAllTodayOutpatientByDoctor(Long doctor_id){
+        UserEntity existDoctor = this.userService.getDoctorById(doctor_id);
+        LocalDate now = LocalDate.now();
+        return this.outpatientRepository.findAllByDoctorAndDate(existDoctor, now);
     }
 }
