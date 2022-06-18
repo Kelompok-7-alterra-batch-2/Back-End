@@ -1,6 +1,9 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.*;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
+import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
@@ -53,7 +56,7 @@ public class OutpatientServiceImpl {
         return optionalOutpatient.get();
     }
 
-    public OutpatientEntity createOutpatient(OutpatientDTO outpatientDTO){
+    public GetOutpatientDTO createOutpatient(OutpatientDTO outpatientDTO){
         PatientEntity existPatient = patientService.getPatientById(outpatientDTO.getPatient_id());
 
         UserEntity existDoctor = this.userService.getUserById(outpatientDTO.getDoctor_id());
@@ -78,10 +81,53 @@ public class OutpatientServiceImpl {
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(newOutpatient);
 
-        return savedOutpatient;
+        GetDoctorDTO getDoctorDTO = GetDoctorDTO.builder()
+                .id(existDoctor.getId())
+                .nid(existDoctor.getNid())
+                .name(existDoctor.getName())
+                .dob(existDoctor.getDob().toString())
+                .email(existDoctor.getEmail())
+                .password(existDoctor.getPassword())
+                .availableFrom(existDoctor.getAvailableFrom())
+                .availableTo(existDoctor.getAvailableTo())
+                .phoneNumber(existDoctor.getPhoneNumber())
+                .createdAt(existDoctor.getCreatedAt())
+                .department(existDoctor.getDepartment())
+                .role(existDoctor.getRole())
+                .build();
+
+        GetPatientDTO getPatientDTO = GetPatientDTO.builder()
+                .id(existPatient.getId())
+                .name(existPatient.getName())
+                .address(existPatient.getAddress())
+                .city(existPatient.getCity())
+                .dob(existPatient.getDob())
+                .gender(existPatient.getGender())
+                .phoneNumber(existPatient.getPhoneNumber())
+                .createdAt(existPatient.getCreatedAt())
+                .bloodType(existPatient.getBloodType())
+                .build();
+
+        GetOutpatientDTO getOutpatientDTO = GetOutpatientDTO.builder()
+                .id(savedOutpatient.getId())
+                .appointmentReason(savedOutpatient.getAppointmentReason())
+                .arrivalTime(savedOutpatient.getArrivalTime())
+                .createdAt(savedOutpatient.getCreatedAt())
+                .date(savedOutpatient.getDate())
+                .department(savedOutpatient.getDepartment())
+                .diagnosis(savedOutpatient.getDiagnosis())
+                .doctor(getDoctorDTO)
+                .medicalRecord(savedOutpatient.getMedicalRecord())
+                .outpatientCondition(savedOutpatient.getOutpatientCondition())
+                .patient(getPatientDTO)
+                .prescription(savedOutpatient.getPrescription())
+                .queue(savedOutpatient.getQueue())
+                .build();
+
+        return getOutpatientDTO;
     }
 
-    public OutpatientEntity updateOutpatient(Long id, OutpatientDTO outpatientDTO){
+    public GetOutpatientDTO updateOutpatient(Long id, OutpatientDTO outpatientDTO){
         PatientEntity existPatient = patientService.getPatientById(outpatientDTO.getPatient_id());
 
         UserEntity existDoctor = userService.getDoctorById(outpatientDTO.getDoctor_id());
@@ -106,7 +152,50 @@ public class OutpatientServiceImpl {
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(existOutpatient);
 
-        return savedOutpatient;
+        GetDoctorDTO getDoctorDTO = GetDoctorDTO.builder()
+                .id(existDoctor.getId())
+                .nid(existDoctor.getNid())
+                .name(existDoctor.getName())
+                .dob(existDoctor.getDob().toString())
+                .email(existDoctor.getEmail())
+                .password(existDoctor.getPassword())
+                .availableFrom(existDoctor.getAvailableFrom())
+                .availableTo(existDoctor.getAvailableTo())
+                .phoneNumber(existDoctor.getPhoneNumber())
+                .createdAt(existDoctor.getCreatedAt())
+                .department(existDoctor.getDepartment())
+                .role(existDoctor.getRole())
+                .build();
+
+        GetPatientDTO getPatientDTO = GetPatientDTO.builder()
+                .id(existPatient.getId())
+                .name(existPatient.getName())
+                .address(existPatient.getAddress())
+                .city(existPatient.getCity())
+                .dob(existPatient.getDob())
+                .gender(existPatient.getGender())
+                .phoneNumber(existPatient.getPhoneNumber())
+                .createdAt(existPatient.getCreatedAt())
+                .bloodType(existPatient.getBloodType())
+                .build();
+
+        GetOutpatientDTO getOutpatientDTO = GetOutpatientDTO.builder()
+                .id(savedOutpatient.getId())
+                .appointmentReason(savedOutpatient.getAppointmentReason())
+                .arrivalTime(savedOutpatient.getArrivalTime())
+                .createdAt(savedOutpatient.getCreatedAt())
+                .date(savedOutpatient.getDate())
+                .department(savedOutpatient.getDepartment())
+                .diagnosis(savedOutpatient.getDiagnosis())
+                .doctor(getDoctorDTO)
+                .medicalRecord(savedOutpatient.getMedicalRecord())
+                .outpatientCondition(savedOutpatient.getOutpatientCondition())
+                .patient(getPatientDTO)
+                .prescription(savedOutpatient.getPrescription())
+                .queue(savedOutpatient.getQueue())
+                .build();
+
+        return getOutpatientDTO;
     }
 
     public void deleteOutpatient(Long id){

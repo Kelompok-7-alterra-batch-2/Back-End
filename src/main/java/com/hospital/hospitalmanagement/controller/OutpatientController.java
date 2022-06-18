@@ -3,6 +3,7 @@ package com.hospital.hospitalmanagement.controller;
 import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
@@ -45,12 +46,12 @@ public class OutpatientController {
     }
 
     @PostMapping
-    public OutpatientEntity createOutpatient(@RequestBody OutpatientDTO outpatientDTO){
+    public GetOutpatientDTO createOutpatient(@RequestBody OutpatientDTO outpatientDTO){
         return this.outpatientService.createOutpatient(outpatientDTO);
     }
 
     @PutMapping("/{id}")
-    public OutpatientEntity updateOutpatient(@RequestBody OutpatientDTO outpatientDTO, @PathVariable("id")Long id){
+    public GetOutpatientDTO updateOutpatient(@RequestBody OutpatientDTO outpatientDTO, @PathVariable("id")Long id){
         return this.outpatientService.updateOutpatient(id,outpatientDTO);
     }
 
