@@ -30,6 +30,8 @@ public class OutpatientServiceImpl {
     @Autowired
     OutpatientConditionServiceImpl outpatientConditionService;
 
+    int queue;
+
     public List<OutpatientEntity>getAllOutpatient(){
         return this.outpatientRepository.findAll();
     }
@@ -68,7 +70,7 @@ public class OutpatientServiceImpl {
                 .dokter(existDoctor.getId())
                 .department(existDepartment)
                 .outpatientCondition(existOutpatientCondition)
-                .queue(outpatientDTO.getQueue())
+                .queue(++queue)
                 .appointmentReason(outpatientDTO.getAppointmentReason())
                 .medicalRecord(outpatientDTO.getMedicalRecord())
                 .date(outpatientDTO.getDate())
@@ -204,6 +206,6 @@ public class OutpatientServiceImpl {
     public List<OutpatientEntity> getAllTodayOutpatientByDoctor(Long doctor_id){
         UserEntity existDoctor = this.userService.getDoctorById(doctor_id);
         LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findAllByDoctorAndDate(existDoctor, now);
+        return this.outpatientRepository.findAllByDoctorAndDateOrderByQueueAsc(existDoctor, now);
     }
 }

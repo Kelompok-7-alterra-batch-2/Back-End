@@ -115,8 +115,8 @@ public class OutpatientController {
         return this.outpatientService.getAllOutpatientByDoctor(doctor_id);
     }
 
-    @GetMapping("/OutpatientByDoctorToday/{id}")
-    public List<OutpatientEntity> getAllOutpatientByDoctor(@PathVariable("id") Long doctor_id){
+    @GetMapping("/doctors/{id}/today")
+    public List<OutpatientEntity> getAllTodayOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
         return this.outpatientService.getAllTodayOutpatientByDoctor(doctor_id);
     }
 }
