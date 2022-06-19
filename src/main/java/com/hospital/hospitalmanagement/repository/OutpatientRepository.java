@@ -24,5 +24,5 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
 
     List<OutpatientEntity> findAllByDoctorOrderByQueueAsc(UserEntity doctor);
 
-    List<OutpatientEntity> findAllByOutpatientConditionAndDate(OutpatientConditionEntity outpatientCondition, LocalDate date);
+    List<OutpatientEntity> findAllByOutpatientConditionAndDateAndDoctor(OutpatientConditionEntity outpatientCondition, LocalDate date, UserEntity doctor);
 }

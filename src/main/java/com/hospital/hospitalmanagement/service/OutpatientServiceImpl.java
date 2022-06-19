@@ -135,11 +135,11 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
     }
 
-    public List<OutpatientEntity> findAllTodayPendingOutpatient(){
+    public List<OutpatientEntity> findAllTodayPendingOutpatient(Long doctorId){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);
-
+        UserEntity existDoctor = this.userService.getDoctorById(doctorId);
         LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+        return this.outpatientRepository.findAllByOutpatientConditionAndDateAndDoctor(existCondition, now, existDoctor);
     }
 
     public OutpatientEntity processOutpatient(Long outpatient_id){
@@ -156,11 +156,11 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
     }
 
-    public List<OutpatientEntity> findAllTodayProcessOutpatient(){
+    public List<OutpatientEntity> findAllTodayProcessOutpatient(Long doctorId){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
-
+        UserEntity existDoctor = this.userService.getDoctorById(doctorId);
         LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+        return this.outpatientRepository.findAllByOutpatientConditionAndDateAndDoctor(existCondition, now, existDoctor);
     }
 
     public OutpatientEntity doneOutpatient(Long outpatient_id){
@@ -177,11 +177,11 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.findAllByOutpatientCondition(existCondition);
     }
 
-    public List<OutpatientEntity> findAllTodayDoneOutpatient(){
+    public List<OutpatientEntity> findAllTodayDoneOutpatient(Long doctorId){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
-
+        UserEntity existDoctor = this.userService.getDoctorById(doctorId);
         LocalDate now = LocalDate.now();
-        return this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+        return this.outpatientRepository.findAllByOutpatientConditionAndDateAndDoctor(existCondition, now, existDoctor);
     }
 
     public List<OutpatientEntity> getAllTodayOutpatientByDepartment(Long department_id){
