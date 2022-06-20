@@ -30,8 +30,6 @@ public class OutpatientServiceImpl {
     @Autowired
     OutpatientConditionServiceImpl outpatientConditionService;
 
-    int queue;
-
     public List<OutpatientEntity>getAllOutpatient(){
         return this.outpatientRepository.findAll();
     }
@@ -70,7 +68,6 @@ public class OutpatientServiceImpl {
                 .dokter(existDoctor.getId())
                 .department(existDepartment)
                 .outpatientCondition(existOutpatientCondition)
-                .queue(++queue)
                 .appointmentReason(outpatientDTO.getAppointmentReason())
                 .medicalRecord(outpatientDTO.getMedicalRecord())
                 .date(outpatientDTO.getDate())
