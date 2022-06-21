@@ -97,7 +97,6 @@ public class OutpatientServiceImpl {
         existOutpatient.setDokter(existDoctor.getId());
         existOutpatient.setDepartment(existDepartment);
         existOutpatient.setOutpatientCondition(existOutpatientCondition);
-        existOutpatient.setQueue(outpatientDTO.getQueue());
         existOutpatient.setDate(outpatientDTO.getDate());
         existOutpatient.setAppointmentReason(outpatientDTO.getAppointmentReason());
         existOutpatient.setMedicalRecord(outpatientDTO.getMedicalRecord());
