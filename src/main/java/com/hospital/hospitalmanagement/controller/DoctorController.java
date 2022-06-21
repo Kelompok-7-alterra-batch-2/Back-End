@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.print.Doc;
 import java.util.List;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/doctors")
 public class DoctorController {
