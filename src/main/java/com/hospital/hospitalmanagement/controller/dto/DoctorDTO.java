@@ -9,7 +9,6 @@ import java.time.LocalTime;
 @Setter
 public class DoctorDTO {
     private String name;
-    private String dob;
     private String password;
     private String email;
     private LocalTime availableFrom;

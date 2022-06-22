@@ -12,10 +12,11 @@ import java.time.LocalTime;
 public class GetDoctorDTO {
     private Long id;
     private String name;
-    private String dob;
     private String email;
     private LocalTime availableFrom;
     private LocalTime availableTo;
-    DepartmentEntity departmentEntity;
-    RoleEntity roleEntity;
+    private RoleEntity role;
+    private DepartmentEntity department;
+    private String nid;
+    private String phoneNumber;
 }
