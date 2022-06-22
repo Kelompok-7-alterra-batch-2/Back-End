@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.service.PatientServiceImpl;
@@ -18,12 +19,12 @@ public class PatientController {
     private PatientServiceImpl patientService;
 
     @GetMapping
-    public List<PatientEntity> getPatients(){
+    public List<GetPatientDTO> getPatients(){
         return this.patientService.getAllPatient();
     }
 
     @GetMapping("/{id}")
-    public PatientEntity getById(@PathVariable("id") Long id){
+    public GetPatientDTO getById(@PathVariable("id") Long id){
         return this.patientService.getById(id);
     }
 

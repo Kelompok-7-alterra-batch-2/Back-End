@@ -1,5 +1,7 @@
 package com.hospital.hospitalmanagement.controller.response;
 
+import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.RoleEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,4 +16,6 @@ public class GetDoctorDTO {
     private String email;
     private LocalTime availableFrom;
     private LocalTime availableTo;
+    DepartmentEntity departmentEntity;
+    RoleEntity roleEntity;
 }

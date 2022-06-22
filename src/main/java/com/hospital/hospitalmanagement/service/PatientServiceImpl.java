@@ -1,11 +1,14 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.entities.BloodTypeEntity;
 import com.hospital.hospitalmanagement.entities.GenderEntity;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientServiceImpl {
@@ -27,12 +31,27 @@ public class PatientServiceImpl {
     @Autowired
     BloodTypeServiceImpl bloodTypeService;
 
-    public List<PatientEntity>getAllPatient(){
-        return this.patientRepository.findAll();
+    @Autowired
+    ModelMapper modelMapper;
+
+    public List<GetPatientDTO>getAllPatient(){
+        return this.patientRepository.findAll()
+                .stream()
+                .map(this::convertPatient)
+                .collect(Collectors.toList());
     }
 
-    public PatientEntity getById(Long id){
-        Optional<PatientEntity> patient = this.patientRepository.findById(id);
+    public GetPatientDTO convertPatient(PatientEntity patientEntity){
+        GetPatientDTO getPatientDTO = new GetPatientDTO();
+        getPatientDTO = modelMapper.map(patientEntity , GetPatientDTO.class);
+        return getPatientDTO;
+    }
+
+    public GetPatientDTO getById(Long id){
+        Optional<GetPatientDTO> patient = this.patientRepository.findById(id)
+                .stream()
+                .map(this::convertPatient)
+                .findFirst();
 
         if (patient.isEmpty()){
             return null;

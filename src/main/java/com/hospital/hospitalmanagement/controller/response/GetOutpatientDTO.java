@@ -17,7 +17,7 @@ import java.time.LocalTime;
 public class GetOutpatientDTO {
     private Long id;
     private String name;
-    GetPatientDTO patient;
+    PatientEntity patient;
     GetDoctorDTO doctor;
     DepartmentEntity department;
     OutpatientConditionEntity outpatientCondition;

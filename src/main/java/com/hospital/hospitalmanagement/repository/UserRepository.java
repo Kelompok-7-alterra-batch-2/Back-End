@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.repository;
 
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;

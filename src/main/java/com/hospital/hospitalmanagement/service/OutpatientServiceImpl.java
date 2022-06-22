@@ -1,9 +1,11 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.*;
+import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OutpatientServiceImpl {
@@ -30,12 +33,27 @@ public class OutpatientServiceImpl {
     @Autowired
     OutpatientConditionServiceImpl outpatientConditionService;
 
-    public List<OutpatientEntity>getAllOutpatient(){
-        return this.outpatientRepository.findAll();
+    @Autowired
+    ModelMapper modelMapper;
+
+    public List<GetOutpatientDTO>getAllOutpatient(){
+        return this.outpatientRepository.findAll()
+                .stream()
+                .map(this::convertOutpatient)
+                .collect(Collectors.toList());
     }
 
-    public OutpatientEntity getById(Long id){
-        Optional<OutpatientEntity> data = this.outpatientRepository.findById(id);
+    private GetOutpatientDTO convertOutpatient(OutpatientEntity outpatientEntity){
+        GetOutpatientDTO getOutpatientDTO = new GetOutpatientDTO();
+        getOutpatientDTO = modelMapper.map(outpatientEntity, GetOutpatientDTO.class);
+        return getOutpatientDTO;
+    }
+
+    public GetOutpatientDTO getOutpatientById(Long id){
+        Optional<GetOutpatientDTO> data = this.outpatientRepository.findById(id)
+                .stream()
+                .map(this::convertOutpatient)
+                .findFirst();
 
         if (data.isEmpty()){
             return null;
@@ -44,7 +62,7 @@ public class OutpatientServiceImpl {
        return data.get();
     }
 
-    public OutpatientEntity getOutpatientById(Long id){
+    public OutpatientEntity getById(Long id){
         Optional<OutpatientEntity> optionalOutpatient = this.outpatientRepository.findById(id);
 
         if (optionalOutpatient.isEmpty()){
@@ -91,7 +109,7 @@ public class OutpatientServiceImpl {
         OutpatientConditionEntity existOutpatientCondition = outpatientConditionService
                 .getOutpatientById(outpatientDTO.getOutpatientCondition_id());
 
-        OutpatientEntity existOutpatient = this.getOutpatientById(id);
+        OutpatientEntity existOutpatient = this.getById(id);
         existOutpatient.setPatient(existPatient);
         existOutpatient.setDoctor(existDoctor);
         existOutpatient.setDokter(existDoctor.getId());
@@ -109,7 +127,7 @@ public class OutpatientServiceImpl {
     }
 
     public void deleteOutpatient(Long id){
-        OutpatientEntity existPatient = this.getOutpatientById(id);
+        OutpatientEntity existPatient = this.getById(id);
         this.outpatientRepository.delete(existPatient);
     }
 

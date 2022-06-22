@@ -27,7 +27,7 @@ public class DoctorController {
     }
 
     @GetMapping
-    public List<UserEntity> getAllDoctor(){
+    public List<GetDoctorDTO> getAllDoctor(){
         return this.userService.getAllDoctor();
     }
 
