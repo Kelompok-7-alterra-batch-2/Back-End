@@ -8,6 +8,7 @@ import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl {
@@ -29,6 +31,9 @@ public class UserServiceImpl {
 
     @Autowired
     RoleServiceImpl roleService;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     public List<UserEntity> getAllUser(){
         return this.userRepository.findAll();
@@ -91,31 +96,32 @@ public class UserServiceImpl {
         this.userRepository.delete(existAdmin);
     }
 
-    public List<UserEntity> getAllDoctor(){
+    public List<GetDoctorDTO> getAllDoctor(){
         RoleEntity role = this.roleService.getRoleById(2L);
-        return this.userRepository.findAllByRole(role);
+        return this.userRepository.findAllByRole(role)
+                .stream()
+                .map(this::convertDoctor)
+                .collect(Collectors.toList());
+    }
+
+    public GetDoctorDTO convertDoctor(UserEntity userEntity) {
+        GetDoctorDTO getDoctorDTO = new GetDoctorDTO();
+        getDoctorDTO = modelMapper.map(userEntity, GetDoctorDTO.class);
+        return getDoctorDTO;
     }
 
     public GetDoctorDTO getById(Long id){
         RoleEntity existRole = this.roleService.getRoleById(2L);
-        UserEntity optional = this.userRepository.findByIdAndRole(id, existRole);
+        Optional<GetDoctorDTO> optional = this.userRepository.findById(id)
+                .stream()
+                .map(this::convertDoctor)
+                .findFirst();
 
-        Optional<UserEntity> exist = this.userRepository.findById(id);
-
-        if (exist.isEmpty()){
+        if (optional.isEmpty() && optional.get().getRole().getId() != 2){
             return null;
         }
 
-        GetDoctorDTO obj = new GetDoctorDTO();
-
-        obj.setId(optional.getId());
-        obj.setId(optional.getId());
-        obj.setName(optional.getName());
-        obj.setEmail(optional.getEmail());
-        obj.setAvailableFrom(optional.getAvailableFrom());
-        obj.setAvailableTo(optional.getAvailableTo());
-
-        return obj;
+        return optional.get();
     }
 
     public UserEntity getDoctorById(Long id){

@@ -32,8 +32,8 @@ public class DoctorController {
     }
 
     @GetMapping("/{id}")
-    public UserEntity getDoctorById(@PathVariable("id") Long id){
-        return this.userService.getDoctorById(id);
+    public GetDoctorDTO getDoctorById(@PathVariable("id") Long id){
+        return this.userService.getById(id);
     }
 
     @GetMapping("/departments/{departmentId}")
