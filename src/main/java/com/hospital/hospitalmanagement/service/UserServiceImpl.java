@@ -112,7 +112,6 @@ public class UserServiceImpl {
         obj.setId(optional.getId());
         obj.setName(optional.getName());
         obj.setEmail(optional.getEmail());
-        obj.setDob(optional.getDob().toString());
         obj.setAvailableFrom(optional.getAvailableFrom());
         obj.setAvailableTo(optional.getAvailableTo());
 
@@ -139,14 +138,12 @@ public class UserServiceImpl {
 
 
     public UserEntity createDoctor(DoctorDTO doctorDTO) {
-        LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
         RoleEntity role = roleService.getRoleById(2L);
 
 
         UserEntity newDoctor = UserEntity.builder()
                 .name(doctorDTO.getName())
-                .dob(dob)
                 .email(doctorDTO.getEmail())
                 .password(doctorDTO.getPassword())
                 .role(role)
@@ -163,12 +160,10 @@ public class UserServiceImpl {
 
 
     public UserEntity updateDoctor(Long id, DoctorDTO doctorDTO) {
-        LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
 
         UserEntity existDoctor = this.getDoctorById(id);
         existDoctor.setName(doctorDTO.getName());
-        existDoctor.setDob(dob);
         existDoctor.setEmail(doctorDTO.getEmail());
         existDoctor.setPassword(doctorDTO.getPassword());
         existDoctor.setDepartment(existDepartment);
