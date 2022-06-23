@@ -1,8 +1,11 @@
 package com.hospital.hospitalmanagement.controller.response;
 
+import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.RoleEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,4 +20,9 @@ public class GetDoctorDTO {
     private String email;
     private LocalTime availableFrom;
     private LocalTime availableTo;
+    private DepartmentEntity department;
+    private RoleEntity role;
+    private String nid;
+    private String phoneNumber;
+    private LocalDateTime createdAt;
 }

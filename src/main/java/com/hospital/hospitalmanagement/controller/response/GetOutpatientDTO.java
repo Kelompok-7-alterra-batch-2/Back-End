@@ -20,7 +20,11 @@ public class GetOutpatientDTO {
     private DepartmentEntity department;
     private OutpatientConditionEntity outpatientCondition;
     private int queue;
+    private String appointmentReason;
+    private String medicalRecord;
     private LocalDate date;
     private LocalTime arrivalTime;
+    private String diagnosis;
+    private String prescription;
     private LocalDateTime createAt;
 }
