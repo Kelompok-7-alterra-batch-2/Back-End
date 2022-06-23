@@ -20,7 +20,7 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
 
     List<OutpatientEntity> findAllByDepartmentAndDate(DepartmentEntity department, LocalDate date);
 
-    List<OutpatientEntity> findAllByDoctorAndDateOrderByQueueAsc(UserEntity doctor, LocalDate date);
+    List<OutpatientEntity> findAllByDoctorAndDate(UserEntity doctor, LocalDate date);
 
     List<OutpatientEntity> findAllByDoctorOrderByQueueAsc(UserEntity doctor);
 
