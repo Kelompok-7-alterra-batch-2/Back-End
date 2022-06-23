@@ -2,14 +2,12 @@ package com.hospital.hospitalmanagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -48,6 +46,9 @@ public class OutpatientEntity {
     private String medicalRecord;
     private String appointmentReason;
     private Long dokter;
+
+    @Column(insertable = false, updatable = false)
+    @org.hibernate.annotations.Generated(GenerationTime.INSERT)
     private int queue;
     @Column(name = "date")
     private LocalDate date;
