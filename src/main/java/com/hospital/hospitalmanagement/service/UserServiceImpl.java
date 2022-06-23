@@ -2,7 +2,6 @@ package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
@@ -149,6 +148,8 @@ public class UserServiceImpl {
                 .password(doctorDTO.getPassword())
                 .role(role)
                 .department(existDepartment)
+                .availableFrom(doctorDTO.getAvailableFrom())
+                .availableTo(doctorDTO.getAvailableTo())
                 .nid(doctorDTO.getNid())
                 .phoneNumber(doctorDTO.getPhoneNumber())
                 .createdAt(LocalDateTime.now())
@@ -166,6 +167,8 @@ public class UserServiceImpl {
         existDoctor.setEmail(doctorDTO.getEmail());
         existDoctor.setPassword(doctorDTO.getPassword());
         existDoctor.setDepartment(existDepartment);
+        existDoctor.setAvailableFrom(doctorDTO.getAvailableFrom());
+        existDoctor.setAvailableTo(doctorDTO.getAvailableTo());
         existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
         existDoctor.setNid(doctorDTO.getNid());
 
@@ -199,13 +202,5 @@ public class UserServiceImpl {
         UserEntity doctor = this.getUserById(doctor_id);
         doctor.setOutpatient(List.of(savedOutpatient));
         this.userRepository.save(doctor);
-    }
-
-    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
-        UserEntity existDoctor = this.getDoctorById(doctorId);
-        existDoctor.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
-        existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
-
-        return this.userRepository.save(existDoctor);
     }
 }

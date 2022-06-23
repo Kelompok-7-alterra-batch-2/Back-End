@@ -11,6 +11,8 @@ public class DoctorDTO {
     private String name;
     private String password;
     private String email;
+    private LocalTime availableFrom;
+    private LocalTime availableTo;
     private Long department_id;
     private String nid;
     private String phoneNumber;
