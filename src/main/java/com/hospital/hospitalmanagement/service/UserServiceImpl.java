@@ -113,7 +113,7 @@ public class UserServiceImpl {
         obj.setId(optional.getId());
         obj.setName(optional.getName());
         obj.setEmail(optional.getEmail());
-        obj.setDob(optional.getDob().toString());
+        obj.setDob(optional.getDob());
         obj.setAvailableFrom(optional.getAvailableFrom());
         obj.setAvailableTo(optional.getAvailableTo());
 

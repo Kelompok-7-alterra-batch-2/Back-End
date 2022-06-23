@@ -1,6 +1,9 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.*;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
+import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
@@ -10,8 +13,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OutpatientServiceImpl {
@@ -30,8 +35,48 @@ public class OutpatientServiceImpl {
     @Autowired
     OutpatientConditionServiceImpl outpatientConditionService;
 
-    public List<OutpatientEntity>getAllOutpatient(){
-        return this.outpatientRepository.findAll();
+    public List<GetOutpatientDTO> getAllOutpatient(){
+        List<OutpatientEntity> all = this.outpatientRepository.findAll();
+
+        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
+
+        for(OutpatientEntity outpatient : all){
+            UserEntity doctor = outpatient.getDoctor();
+
+            GetDoctorDTO getDoctorDTO = GetDoctorDTO.builder()
+                    .name(doctor.getName())
+                    .id(doctor.getId())
+                    .email(doctor.getEmail())
+                    .availableTo(doctor.getAvailableTo())
+                    .availableFrom(doctor.getAvailableFrom())
+                    .dob(doctor.getDob())
+                    .build();
+
+            PatientEntity patient = outpatient.getPatient();
+
+            GetPatientDTO getPatientDTO = GetPatientDTO.builder()
+                    .id(patient.getId())
+                    .dob(patient.getDob())
+                    .medicalRecord(null)
+                    .name(patient.getName())
+                    .build();
+
+            GetOutpatientDTO getOutpatientDTO = GetOutpatientDTO.builder()
+                    .queue(outpatient.getQueue())
+                    .outpatientCondition(outpatient.getOutpatientCondition())
+                    .patient(getPatientDTO)
+                    .doctor(getDoctorDTO)
+                    .department(outpatient.getDepartment())
+                    .createAt(outpatient.getCreatedAt())
+                    .date(outpatient.getDate())
+                    .id(outpatient.getId())
+                    .arrivalTime(outpatient.getArrivalTime())
+                    .build();
+
+            outpatientDTOList.add(getOutpatientDTO);
+        }
+
+        return outpatientDTOList;
     }
 
     public OutpatientEntity getById(Long id){
