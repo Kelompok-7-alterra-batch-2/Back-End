@@ -3,6 +3,7 @@ package com.hospital.hospitalmanagement.controller;
 import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
@@ -20,7 +21,7 @@ public class OutpatientController {
     OutpatientServiceImpl outpatientService;
 
     @GetMapping("/today")
-    public List<OutpatientEntity> getAllTodayOutpatient(){
+    public List<GetOutpatientDTO> getAllTodayOutpatient(){
         return this.outpatientService.findAllTodayOutpatient();
     }
 
@@ -35,22 +36,22 @@ public class OutpatientController {
     }
 
     @GetMapping
-    public List<OutpatientEntity> getAllOutpatient(){
+    public List<GetOutpatientDTO> getAllOutpatient(){
         return this.outpatientService.getAllOutpatient();
     }
 
     @GetMapping("/{id}")
-    public OutpatientEntity getOutpatientById(@PathVariable("id") Long id){
-        return this.outpatientService.getById(id);
+    public GetOutpatientDTO getOutpatientById(@PathVariable("id") Long id){
+        return this.outpatientService.getOutpatientById(id);
     }
 
     @PostMapping
-    public OutpatientEntity createOutpatient(@RequestBody OutpatientDTO outpatientDTO){
+    public GetOutpatientDTO createOutpatient(@RequestBody OutpatientDTO outpatientDTO){
         return this.outpatientService.createOutpatient(outpatientDTO);
     }
 
     @PutMapping("/{id}")
-    public OutpatientEntity updateOutpatient(@RequestBody OutpatientDTO outpatientDTO, @PathVariable("id")Long id){
+    public GetOutpatientDTO updateOutpatient(@RequestBody OutpatientDTO outpatientDTO, @PathVariable("id")Long id){
         return this.outpatientService.updateOutpatient(id,outpatientDTO);
     }
 
@@ -61,62 +62,62 @@ public class OutpatientController {
 
 
     @GetMapping("/pending")
-    public List<OutpatientEntity> getAllPendingOutpatient(){
+    public List<GetOutpatientDTO> getAllPendingOutpatient(){
         return this.outpatientService.getAllPendingOutpatient();
     }
 
-    @GetMapping("/pending/today")
-    public List<OutpatientEntity> getAllPendingOutpatientToday(){
-        return this.outpatientService.findAllTodayPendingOutpatient();
+    @GetMapping("/pending/doctors/{doctorId}/today")
+    public List<GetOutpatientDTO> getAllPendingOutpatientToday(@PathVariable("doctorId") Long doctorId){
+        return this.outpatientService.findAllTodayPendingOutpatientByDoctor(doctorId);
     }
 
     @GetMapping("/process")
-    public List<OutpatientEntity> getAllProcessOutpatient(){
+    public List<GetOutpatientDTO> getAllProcessOutpatient(){
         return this.outpatientService.getAllProcessOutpatient();
     }
 
-    @GetMapping("/process/today")
-    public List<OutpatientEntity> getAllProcessOutpatientToday(){
-        return this.outpatientService.findAllTodayProcessOutpatient();
+    @GetMapping("/process/doctors/{doctorId}/today")
+    public List<GetOutpatientDTO> getAllProcessOutpatientToday(@PathVariable("doctorId") Long doctorId){
+        return this.outpatientService.findAllTodayProcessOutpatientByDoctor(doctorId);
     }
 
     @PutMapping("/process/{id}")
-    public OutpatientEntity updateOutpatientConditionToProcess(@PathVariable("id") Long condition_id){
+    public GetOutpatientDTO updateOutpatientConditionToProcess(@PathVariable("id") Long condition_id){
         return this.outpatientService.processOutpatient(condition_id);
     }
 
     @GetMapping("/done")
-    public List<OutpatientEntity> getAllDoneOutpatient(){
+    public List<GetOutpatientDTO> getAllDoneOutpatient(){
         return this.outpatientService.getAllDoneOutpatient();
     }
 
-    @GetMapping("/done/today")
-    public List<OutpatientEntity> getAllDoneOutpatientToday(){
-        return this.outpatientService.findAllTodayDoneOutpatient();
+    @GetMapping("/done/doctors/{doctorId}/today")
+    public List<GetOutpatientDTO> getAllDoneOutpatientToday(@PathVariable("doctorId") Long doctorId){
+        return this.outpatientService.findAllTodayDoneOutpatientByDoctor(doctorId);
     }
 
     @PutMapping("/done/{id}")
-    public OutpatientEntity updateOutpatientConditionToDone(@PathVariable("id") Long outpatient_id){
+    public GetOutpatientDTO updateOutpatientConditionToDone(@PathVariable("id") Long outpatient_id){
         return this.outpatientService.doneOutpatient(outpatient_id);
     }
 
     @GetMapping("/departments/{id}")
-    public List<OutpatientEntity> getAllOutpatientByDepartment(@PathVariable("id") Long department_id){
+    public List<GetOutpatientDTO> getAllOutpatientByDepartment(@PathVariable("id") Long department_id){
         return this.outpatientService.getAllTodayOutpatientByDepartment(department_id);
     }
 
     @PutMapping("/diagnosis/{id}")
-    public OutpatientEntity updateDiagnosisOutpatient(@PathVariable("id") Long outpatient_id, @RequestBody DiagnosisDTO diagnosisDTO){
+    public GetOutpatientDTO updateDiagnosisOutpatient(@PathVariable("id") Long outpatient_id, @RequestBody DiagnosisDTO diagnosisDTO){
         return this.outpatientService.diagnosisOutpatient(outpatient_id, diagnosisDTO);
     }
 
     @GetMapping("/doctors/{id}")
-    public List<OutpatientEntity> getAllOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
+    public List<GetOutpatientDTO> getAllOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
         return this.outpatientService.getAllOutpatientByDoctor(doctor_id);
     }
 
     @GetMapping("/doctors/{id}/today")
-    public List<OutpatientEntity> getAllTodayOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
+    public List<GetOutpatientDTO> getAllTodayOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
         return this.outpatientService.getAllTodayOutpatientByDoctor(doctor_id);
     }
 }

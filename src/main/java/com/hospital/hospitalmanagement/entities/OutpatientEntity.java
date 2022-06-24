@@ -45,10 +45,7 @@ public class OutpatientEntity {
     private String prescription;
     private String medicalRecord;
     private String appointmentReason;
-    private Long dokter;
 
-    @Column(insertable = false, updatable = false)
-    @org.hibernate.annotations.Generated(GenerationTime.INSERT)
     private int queue;
     @Column(name = "date")
     private LocalDate date;
