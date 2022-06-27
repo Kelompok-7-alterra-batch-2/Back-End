@@ -1,10 +1,8 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
-import com.hospital.hospitalmanagement.entities.BloodTypeEntity;
-import com.hospital.hospitalmanagement.entities.GenderEntity;
-import com.hospital.hospitalmanagement.entities.OutpatientEntity;
-import com.hospital.hospitalmanagement.entities.PatientEntity;
+import com.hospital.hospitalmanagement.controller.response.*;
+import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,18 +26,114 @@ public class PatientServiceImpl {
     @Autowired
     BloodTypeServiceImpl bloodTypeService;
 
-    public List<PatientEntity>getAllPatient(){
-        return this.patientRepository.findAll();
+    @Autowired
+    OutpatientServiceImpl outpatientService;
+
+    public GetPatientTwoDTO convertPatientEntityToResponse(PatientEntity patient, List<GetOutpatientTwoDTO> getOutpatientTwoDTO){
+        GetPatientTwoDTO getPatientDTO = GetPatientTwoDTO.builder()
+                .id(patient.getId())
+                .dob(patient.getDob())
+                .name(patient.getName())
+                .bloodType(patient.getBloodType())
+                .city(patient.getCity())
+                .gender(patient.getGender())
+                .address(patient.getAddress())
+                .createdAt(patient.getCreatedAt())
+                .phoneNumber(patient.getPhoneNumber())
+                .outpatient(getOutpatientTwoDTO)
+                .build();
+
+        return getPatientDTO;
     }
 
-    public PatientEntity getById(Long id){
+    public GetOutpatientTwoDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetDoctorDTO getDoctorDTO){
+        GetOutpatientTwoDTO getOutpatientTwoDTO = GetOutpatientTwoDTO.builder()
+                .queue(outpatient.getQueue())
+                .outpatientCondition(outpatient.getOutpatientCondition())
+                .doctor(getDoctorDTO)
+                .department(outpatient.getDepartment())
+                .createAt(outpatient.getCreatedAt())
+                .date(outpatient.getDate())
+                .id(outpatient.getId())
+                .arrivalTime(outpatient.getArrivalTime())
+                .appointmentReason(outpatient.getAppointmentReason())
+                .medicalRecord(outpatient.getMedicalRecord())
+                .diagnosis(outpatient.getDiagnosis())
+                .prescription(outpatient.getPrescription())
+                .build();
+
+        return getOutpatientTwoDTO;
+    }
+
+    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+        OutpatientEntity getOutpatient = OutpatientEntity.builder()
+                .queue(outpatient.getQueue())
+                .outpatientCondition(outpatient.getOutpatientCondition())
+                .department(outpatient.getDepartment())
+                .date(outpatient.getDate())
+                .id(outpatient.getId())
+                .arrivalTime(outpatient.getArrivalTime())
+                .appointmentReason(outpatient.getAppointmentReason())
+                .medicalRecord(outpatient.getMedicalRecord())
+                .diagnosis(outpatient.getDiagnosis())
+                .prescription(outpatient.getPrescription())
+                .build();
+
+        return getOutpatient;
+    }
+
+    public List<GetPatientTwoDTO>getAllPatient(){
+        List<PatientEntity> all = this.patientRepository.findAll();
+
+        List<GetPatientTwoDTO> patientDTOList = new ArrayList<>();
+
+        for(PatientEntity patient : all){
+
+            List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
+
+            List<GetOutpatientTwoDTO> outpatientNewDTOList = new ArrayList<>();
+
+            for (GetOutpatientDTO outpatient : get){
+                GetDoctorDTO doctor = outpatient.getDoctor();
+
+                OutpatientEntity convert = this.convertOutpatient(outpatient);
+
+                GetOutpatientTwoDTO getOutpatientTwoDTO = this.convertOutpatientEntityToResponse(convert,doctor);
+
+                outpatientNewDTOList.add(getOutpatientTwoDTO);
+            }
+
+            GetPatientTwoDTO getPatientDTO = this.convertPatientEntityToResponse(patient,outpatientNewDTOList);
+
+            patientDTOList.add(getPatientDTO);
+        }
+
+        return patientDTOList;
+    }
+
+    public GetPatientTwoDTO getById(Long id){
         Optional<PatientEntity> patient = this.patientRepository.findById(id);
 
         if (patient.isEmpty()){
             return null;
         }
+        PatientEntity data = patient.get();
 
-        return patient.get();
+        List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
+
+        List<GetOutpatientTwoDTO> outpatientNewDTOList = new ArrayList<>();
+
+        for (GetOutpatientDTO outpatient : get){
+            GetDoctorDTO doctor = outpatient.getDoctor();
+
+            OutpatientEntity convert = this.convertOutpatient(outpatient);
+
+            GetOutpatientTwoDTO getOutpatientTwoDTO = this.convertOutpatientEntityToResponse(convert,doctor);
+
+            outpatientNewDTOList.add(getOutpatientTwoDTO);
+        }
+
+        return this.convertPatientEntityToResponse(data,outpatientNewDTOList);
     }
 
     public PatientEntity getPatientById(Long id){

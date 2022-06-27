@@ -3,11 +3,8 @@ package com.hospital.hospitalmanagement.service;
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
-import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
-import com.hospital.hospitalmanagement.entities.DepartmentEntity;
-import com.hospital.hospitalmanagement.entities.OutpatientEntity;
-import com.hospital.hospitalmanagement.entities.RoleEntity;
-import com.hospital.hospitalmanagement.entities.UserEntity;
+import com.hospital.hospitalmanagement.controller.response.*;
+import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +28,9 @@ public class UserServiceImpl {
 
     @Autowired
     RoleServiceImpl roleService;
+
+    @Autowired
+    private OutpatientServiceImpl outpatientService;
 
     public List<UserEntity> getAllUser(){
         return this.userRepository.findAll();
@@ -92,32 +93,112 @@ public class UserServiceImpl {
         this.userRepository.delete(existAdmin);
     }
 
-    public List<UserEntity> getAllDoctor(){
-        RoleEntity role = this.roleService.getRoleById(2L);
-        return this.userRepository.findAllByRole(role);
+    public GetDoctorTwoDTO convertDoctorEntityToResponse(UserEntity doctor,List<GetOutpatientThreeDTO> outpatientThreeDTOS){
+        GetDoctorTwoDTO getDoctorTwoDTO = GetDoctorTwoDTO.builder()
+                .name(doctor.getName())
+                .id(doctor.getId())
+                .email(doctor.getEmail())
+                .availableTo(doctor.getAvailableTo())
+                .availableFrom(doctor.getAvailableFrom())
+                .dob(doctor.getDob())
+                .role(doctor.getRole())
+                .nid(doctor.getNid())
+                .phoneNumber(doctor.getPhoneNumber())
+                .department(doctor.getDepartment())
+                .outpatient(outpatientThreeDTOS)
+                .createdAt(doctor.getCreatedAt())
+                .build();
+
+        return getDoctorTwoDTO;
     }
 
-    public GetDoctorDTO getById(Long id){
-        RoleEntity existRole = this.roleService.getRoleById(2L);
-        UserEntity optional = this.userRepository.findByIdAndRole(id, existRole);
+    public GetOutpatientThreeDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetPatientDTO getPatientDTO){
+        GetOutpatientThreeDTO getOutpatientThreeDTO = GetOutpatientThreeDTO.builder()
+                .queue(outpatient.getQueue())
+                .outpatientCondition(outpatient.getOutpatientCondition())
+                .patient(getPatientDTO)
+                .department(outpatient.getDepartment())
+                .createAt(outpatient.getCreatedAt())
+                .date(outpatient.getDate())
+                .id(outpatient.getId())
+                .arrivalTime(outpatient.getArrivalTime())
+                .appointmentReason(outpatient.getAppointmentReason())
+                .medicalRecord(outpatient.getMedicalRecord())
+                .diagnosis(outpatient.getDiagnosis())
+                .prescription(outpatient.getPrescription())
+                .build();
 
-        Optional<UserEntity> exist = this.userRepository.findById(id);
+        return getOutpatientThreeDTO;
+    }
 
-        if (exist.isEmpty()){
-            return null;
+    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+        OutpatientEntity getOutpatient = OutpatientEntity.builder()
+                .queue(outpatient.getQueue())
+                .outpatientCondition(outpatient.getOutpatientCondition())
+                .department(outpatient.getDepartment())
+                .date(outpatient.getDate())
+                .id(outpatient.getId())
+                .arrivalTime(outpatient.getArrivalTime())
+                .appointmentReason(outpatient.getAppointmentReason())
+                .medicalRecord(outpatient.getMedicalRecord())
+                .diagnosis(outpatient.getDiagnosis())
+                .prescription(outpatient.getPrescription())
+                .build();
+
+        return getOutpatient;
+    }
+
+    public List<GetDoctorTwoDTO> getAllDoctor(){
+        RoleEntity role = this.roleService.getRoleById(2L);
+        List<UserEntity> all = this.userRepository.findAllByRole(role);
+
+        List<GetDoctorTwoDTO> getDoctorDTOList = new ArrayList<>();
+
+        for(UserEntity doctor : all){
+
+            List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
+
+            List<GetOutpatientThreeDTO> outpatientThreeDTOList = new ArrayList<>();
+
+            for (GetOutpatientDTO outpatient : get){
+                GetPatientDTO patient = outpatient.getPatient();
+
+                OutpatientEntity convert = this.convertOutpatient(outpatient);
+
+                GetOutpatientThreeDTO getOutpatientThreeDTO = this.convertOutpatientEntityToResponse(convert,patient);
+
+                outpatientThreeDTOList.add(getOutpatientThreeDTO);
+            }
+
+            GetDoctorTwoDTO getDoctorTwoDTO = this.convertDoctorEntityToResponse(doctor,outpatientThreeDTOList);
+
+            getDoctorDTOList.add(getDoctorTwoDTO);
         }
 
-        GetDoctorDTO obj = new GetDoctorDTO();
+        return getDoctorDTOList;
+    }
 
-        obj.setId(optional.getId());
-        obj.setId(optional.getId());
-        obj.setName(optional.getName());
-        obj.setEmail(optional.getEmail());
-        obj.setDob(optional.getDob());
-        obj.setAvailableFrom(optional.getAvailableFrom());
-        obj.setAvailableTo(optional.getAvailableTo());
+    public GetDoctorTwoDTO getById(Long id){
+        RoleEntity existRole = this.roleService.getRoleById(2L);
+        Optional<UserEntity> doctor = Optional.ofNullable(this.userRepository.findByIdAndRole(id, existRole));
 
-        return obj;
+        UserEntity existDoctor = doctor.get();
+
+        List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
+
+        List<GetOutpatientThreeDTO> outpatientThreeDTOList = new ArrayList<>();
+
+        for (GetOutpatientDTO outpatient : get){
+            GetPatientDTO patient = outpatient.getPatient();
+
+            OutpatientEntity convert = this.convertOutpatient(outpatient);
+
+            GetOutpatientThreeDTO getOutpatientThreeDTO = this.convertOutpatientEntityToResponse(convert,patient);
+
+            outpatientThreeDTOList.add(getOutpatientThreeDTO);
+        }
+
+        return convertDoctorEntityToResponse(existDoctor,outpatientThreeDTOList);
     }
 
     public UserEntity getDoctorById(Long id){
