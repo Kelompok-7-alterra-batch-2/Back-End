@@ -1,0 +1,29 @@
+package com.hospital.hospitalmanagement.controller.response;
+
+import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientConditionEntity;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class GetOutpatientThreeDTO {
+    private Long id;
+    private GetPatientDTO patient;
+    private DepartmentEntity department;
+    private OutpatientConditionEntity outpatientCondition;
+    private int queue;
+    private String appointmentReason;
+    private String medicalRecord;
+    private LocalDate date;
+    private LocalTime arrivalTime;
+    private String diagnosis;
+    private String prescription;
+    private LocalDateTime createAt;
+}
