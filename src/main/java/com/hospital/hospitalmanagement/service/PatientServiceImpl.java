@@ -57,7 +57,6 @@ public class PatientServiceImpl {
                 .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
                 .build();
@@ -74,9 +73,9 @@ public class PatientServiceImpl {
                 .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
+                .createdAt(outpatient.getCreateAt())
                 .build();
 
         return getOutpatient;

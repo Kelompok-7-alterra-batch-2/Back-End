@@ -11,6 +11,7 @@ import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -82,7 +83,6 @@ public class OutpatientServiceImpl {
                 .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
                 .build();
@@ -151,18 +151,19 @@ public class OutpatientServiceImpl {
                 .department(existDepartment)
                 .outpatientCondition(existOutpatientCondition)
                 .appointmentReason(outpatientDTO.getAppointmentReason())
-                .medicalRecord(outpatientDTO.getMedicalRecord())
                 .date(outpatientDTO.getDate())
                 .arrivalTime(outpatientDTO.getArrivalTime())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(newOutpatient);
+        savedOutpatient.setQueue(Math.toIntExact(savedOutpatient.getId()));
+        OutpatientEntity updatedOutpatient = this.outpatientRepository.save(savedOutpatient);
 
         GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(savedOutpatient.getDoctor());
         GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(savedOutpatient.getPatient());
 
-        return this.convertOutpatientEntityToResponse(savedOutpatient, getDoctorDTO, getPatientDTO);
+        return this.convertOutpatientEntityToResponse(updatedOutpatient, getDoctorDTO, getPatientDTO);
     }
 
     public GetOutpatientDTO updateOutpatient(Long id, OutpatientDTO outpatientDTO){
@@ -184,7 +185,6 @@ public class OutpatientServiceImpl {
         existOutpatient.setQueue(outpatientDTO.getQueue());
         existOutpatient.setDate(outpatientDTO.getDate());
         existOutpatient.setAppointmentReason(outpatientDTO.getAppointmentReason());
-        existOutpatient.setMedicalRecord(outpatientDTO.getMedicalRecord());
         existOutpatient.setArrivalTime(outpatientDTO.getArrivalTime());
 
         OutpatientEntity savedOutpatient = this.outpatientRepository.save(existOutpatient);
@@ -465,5 +465,10 @@ public class OutpatientServiceImpl {
         }
 
         return outpatientDTOList;
+    }
+
+    @Transactional
+    public void truncateOutpatientTable(){
+        this.outpatientRepository.truncateMyTable();
     }
 }

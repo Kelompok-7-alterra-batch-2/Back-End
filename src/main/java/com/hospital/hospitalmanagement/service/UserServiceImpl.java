@@ -68,6 +68,7 @@ public class UserServiceImpl {
                 .dob(dob)
                 .email(adminDTO.getEmail())
                 .password(adminDTO.getPassword())
+                .phoneNumber(adminDTO.getPhoneNumber())
                 .role(existRole)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -84,6 +85,7 @@ public class UserServiceImpl {
         existAdmin.setDob(dob);
         existAdmin.setEmail(adminDTO.getEmail());
         existAdmin.setPassword(adminDTO.getPassword());
+        existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
 
         return this.userRepository.save(existAdmin);
     }
@@ -123,7 +125,6 @@ public class UserServiceImpl {
                 .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
                 .build();
@@ -140,7 +141,6 @@ public class UserServiceImpl {
                 .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
                 .build();

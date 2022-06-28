@@ -4,7 +4,6 @@ import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
-import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,5 +118,10 @@ public class OutpatientController {
     @GetMapping("/doctors/{id}/today")
     public List<GetOutpatientDTO> getAllTodayOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
         return this.outpatientService.getAllTodayOutpatientByDoctor(doctor_id);
+    }
+
+    @PutMapping("/truncate")
+    public void truncateOutpatientTable(){
+        this.outpatientService.truncateOutpatientTable();
     }
 }
