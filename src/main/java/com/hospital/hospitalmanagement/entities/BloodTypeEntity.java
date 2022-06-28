@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.entities;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class BloodTypeEntity {
     @Id
+    @Column(nullable = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String type;

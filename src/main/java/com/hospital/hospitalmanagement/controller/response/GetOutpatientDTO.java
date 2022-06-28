@@ -26,5 +26,6 @@ public class GetOutpatientDTO {
     private LocalTime arrivalTime;
     private String diagnosis;
     private String prescription;
+    private Long id_today;
     private LocalDateTime createAt;
 }

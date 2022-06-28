@@ -82,8 +82,8 @@ public class OutpatientController {
     }
 
     @PutMapping("/process/{id}")
-    public GetOutpatientDTO updateOutpatientConditionToProcess(@PathVariable("id") Long condition_id){
-        return this.outpatientService.processOutpatient(condition_id);
+    public GetOutpatientDTO updateOutpatientConditionToProcess(@PathVariable("id") Long outpatient_id){
+        return this.outpatientService.processOutpatient(outpatient_id);
     }
 
     @GetMapping("/done")

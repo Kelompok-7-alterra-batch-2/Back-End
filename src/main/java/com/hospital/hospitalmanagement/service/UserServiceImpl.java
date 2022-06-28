@@ -114,16 +114,14 @@ public class UserServiceImpl {
 
     public GetOutpatientThreeDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetPatientDTO getPatientDTO){
         GetOutpatientThreeDTO getOutpatientThreeDTO = GetOutpatientThreeDTO.builder()
-                .queue(outpatient.getQueue())
+                .queue(Math.toIntExact(outpatient.getQueue()))
                 .outpatientCondition(outpatient.getOutpatientCondition())
                 .patient(getPatientDTO)
                 .department(outpatient.getDepartment())
                 .createAt(outpatient.getCreatedAt())
                 .date(outpatient.getDate())
-                .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
                 .build();
@@ -137,10 +135,8 @@ public class UserServiceImpl {
                 .outpatientCondition(outpatient.getOutpatientCondition())
                 .department(outpatient.getDepartment())
                 .date(outpatient.getDate())
-                .id(outpatient.getId())
                 .arrivalTime(outpatient.getArrivalTime())
                 .appointmentReason(outpatient.getAppointmentReason())
-                .medicalRecord(outpatient.getMedicalRecord())
                 .diagnosis(outpatient.getDiagnosis())
                 .prescription(outpatient.getPrescription())
                 .build();

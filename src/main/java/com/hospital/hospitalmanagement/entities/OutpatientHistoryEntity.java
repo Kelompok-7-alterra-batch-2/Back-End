@@ -2,22 +2,20 @@ package com.hospital.hospitalmanagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "outpatient")
-public class OutpatientEntity {
-
+@Builder
+@Table(name = "outpatient_history")
+public class OutpatientHistoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,6 +47,7 @@ public class OutpatientEntity {
     private String prescription;
     private String appointmentReason;
 
+    private Long id_today;
 
     @Column(name = "date")
     private LocalDate date;

@@ -42,6 +42,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
 			<!-- Automated JSON API documentation for API's built with Spring -->
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>

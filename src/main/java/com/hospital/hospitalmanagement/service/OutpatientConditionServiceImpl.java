@@ -19,7 +19,7 @@ public class OutpatientConditionServiceImpl {
         return this.conditionRepository.findAll();
     }
 
-    public OutpatientConditionEntity getOutpatientById(Long id){
+    public OutpatientConditionEntity getOutpatientConditionById(Long id){
         Optional<OutpatientConditionEntity> optionalOutpatientCondition = this.conditionRepository.findById(id);
 
         if (optionalOutpatientCondition.isEmpty()){
