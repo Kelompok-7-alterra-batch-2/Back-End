@@ -95,7 +95,7 @@ public class UserServiceImpl {
         this.userRepository.delete(existAdmin);
     }
 
-    public GetDoctorTwoDTO convertDoctorEntityToResponse(UserEntity doctor,List<GetOutpatientThreeDTO> outpatientThreeDTOS){
+    public GetDoctorTwoDTO convertDoctorEntityToResponse(UserEntity doctor){
         GetDoctorTwoDTO getDoctorTwoDTO = GetDoctorTwoDTO.builder()
                 .name(doctor.getName())
                 .id(doctor.getId())
@@ -107,7 +107,6 @@ public class UserServiceImpl {
                 .nid(doctor.getNid())
                 .phoneNumber(doctor.getPhoneNumber())
                 .department(doctor.getDepartment())
-                .outpatient(outpatientThreeDTOS)
                 .createdAt(doctor.getCreatedAt())
                 .build();
 
@@ -156,21 +155,7 @@ public class UserServiceImpl {
 
         for(UserEntity doctor : all){
 
-            List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
-
-            List<GetOutpatientThreeDTO> outpatientThreeDTOList = new ArrayList<>();
-
-            for (GetOutpatientDTO outpatient : get){
-                GetPatientDTO patient = outpatient.getPatient();
-
-                OutpatientEntity convert = this.convertOutpatient(outpatient);
-
-                GetOutpatientThreeDTO getOutpatientThreeDTO = this.convertOutpatientEntityToResponse(convert,patient);
-
-                outpatientThreeDTOList.add(getOutpatientThreeDTO);
-            }
-
-            GetDoctorTwoDTO getDoctorTwoDTO = this.convertDoctorEntityToResponse(doctor,outpatientThreeDTOList);
+            GetDoctorTwoDTO getDoctorTwoDTO = this.convertDoctorEntityToResponse(doctor);
 
             getDoctorDTOList.add(getDoctorTwoDTO);
         }
@@ -184,21 +169,7 @@ public class UserServiceImpl {
 
         UserEntity existDoctor = doctor.get();
 
-        List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
-
-        List<GetOutpatientThreeDTO> outpatientThreeDTOList = new ArrayList<>();
-
-        for (GetOutpatientDTO outpatient : get){
-            GetPatientDTO patient = outpatient.getPatient();
-
-            OutpatientEntity convert = this.convertOutpatient(outpatient);
-
-            GetOutpatientThreeDTO getOutpatientThreeDTO = this.convertOutpatientEntityToResponse(convert,patient);
-
-            outpatientThreeDTOList.add(getOutpatientThreeDTO);
-        }
-
-        return convertDoctorEntityToResponse(existDoctor,outpatientThreeDTOList);
+        return convertDoctorEntityToResponse(existDoctor);
     }
 
     public UserEntity getDoctorById(Long id){
