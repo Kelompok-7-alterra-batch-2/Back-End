@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import lombok.*;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

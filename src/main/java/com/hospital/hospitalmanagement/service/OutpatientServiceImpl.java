@@ -150,6 +150,7 @@ public class OutpatientServiceImpl {
                 .doctor(existDoctor)
                 .department(existDepartment)
                 .outpatientCondition(existOutpatientCondition)
+                .queue(outpatientDTO.getQueue())
                 .appointmentReason(outpatientDTO.getAppointmentReason())
                 .date(outpatientDTO.getDate())
                 .arrivalTime(outpatientDTO.getArrivalTime())

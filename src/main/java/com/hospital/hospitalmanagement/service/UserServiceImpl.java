@@ -2,9 +2,17 @@ package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
+
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.entities.*;
+
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
+import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
+import com.hospital.hospitalmanagement.entities.RoleEntity;
+import com.hospital.hospitalmanagement.entities.UserEntity;
+
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -221,18 +229,18 @@ public class UserServiceImpl {
 
 
     public UserEntity createDoctor(DoctorDTO doctorDTO) {
-        LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
         RoleEntity role = roleService.getRoleById(2L);
 
 
         UserEntity newDoctor = UserEntity.builder()
                 .name(doctorDTO.getName())
-                .dob(dob)
                 .email(doctorDTO.getEmail())
                 .password(doctorDTO.getPassword())
                 .role(role)
                 .department(existDepartment)
+                .availableFrom(doctorDTO.getAvailableFrom())
+                .availableTo(doctorDTO.getAvailableTo())
                 .nid(doctorDTO.getNid())
                 .phoneNumber(doctorDTO.getPhoneNumber())
                 .createdAt(LocalDateTime.now())
@@ -243,15 +251,15 @@ public class UserServiceImpl {
 
 
     public UserEntity updateDoctor(Long id, DoctorDTO doctorDTO) {
-        LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
 
         UserEntity existDoctor = this.getDoctorById(id);
         existDoctor.setName(doctorDTO.getName());
-        existDoctor.setDob(dob);
         existDoctor.setEmail(doctorDTO.getEmail());
         existDoctor.setPassword(doctorDTO.getPassword());
         existDoctor.setDepartment(existDepartment);
+        existDoctor.setAvailableFrom(doctorDTO.getAvailableFrom());
+        existDoctor.setAvailableTo(doctorDTO.getAvailableTo());
         existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
         existDoctor.setNid(doctorDTO.getNid());
 
@@ -285,13 +293,5 @@ public class UserServiceImpl {
         UserEntity doctor = this.getUserById(doctor_id);
         doctor.setOutpatient(List.of(savedOutpatient));
         this.userRepository.save(doctor);
-    }
-
-    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
-        UserEntity existDoctor = this.getDoctorById(doctorId);
-        existDoctor.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
-        existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
-
-        return this.userRepository.save(existDoctor);
     }
 }
