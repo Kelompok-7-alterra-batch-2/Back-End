@@ -16,5 +16,4 @@ public class AdminDTO {
     private String dob;
     private String password;
     private String email;
-    private String phoneNumber;
 }

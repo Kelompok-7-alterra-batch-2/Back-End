@@ -25,5 +25,4 @@ public class BloodTypeController {
         return this.bloodTypeService.createBloodType(bloodTypeDTO);
     }
 
-
 }

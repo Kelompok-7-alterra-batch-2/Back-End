@@ -21,6 +21,7 @@ public class GetOutpatientDTO {
     private OutpatientConditionEntity outpatientCondition;
     private int queue;
     private String appointmentReason;
+    private String medicalRecord;
     private LocalDate date;
     private LocalTime arrivalTime;
     private String diagnosis;
