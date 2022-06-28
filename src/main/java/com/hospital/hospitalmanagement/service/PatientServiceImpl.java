@@ -29,7 +29,7 @@ public class PatientServiceImpl {
     @Autowired
     OutpatientServiceImpl outpatientService;
 
-    public GetPatientTwoDTO convertPatientEntityToResponse(PatientEntity patient, List<GetOutpatientTwoDTO> getOutpatientTwoDTO){
+    public GetPatientTwoDTO convertPatientEntityToResponse(PatientEntity patient){
         GetPatientTwoDTO getPatientDTO = GetPatientTwoDTO.builder()
                 .id(patient.getId())
                 .dob(patient.getDob())
@@ -40,46 +40,45 @@ public class PatientServiceImpl {
                 .address(patient.getAddress())
                 .createdAt(patient.getCreatedAt())
                 .phoneNumber(patient.getPhoneNumber())
-                .outpatient(getOutpatientTwoDTO)
                 .build();
 
         return getPatientDTO;
     }
 
-    public GetOutpatientTwoDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetDoctorDTO getDoctorDTO){
-        GetOutpatientTwoDTO getOutpatientTwoDTO = GetOutpatientTwoDTO.builder()
-                .queue(outpatient.getQueue())
-                .outpatientCondition(outpatient.getOutpatientCondition())
-                .doctor(getDoctorDTO)
-                .department(outpatient.getDepartment())
-                .createAt(outpatient.getCreatedAt())
-                .date(outpatient.getDate())
-                .id(outpatient.getId())
-                .arrivalTime(outpatient.getArrivalTime())
-                .appointmentReason(outpatient.getAppointmentReason())
-                .diagnosis(outpatient.getDiagnosis())
-                .prescription(outpatient.getPrescription())
-                .build();
+//    public GetOutpatientTwoDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetDoctorDTO getDoctorDTO){
+//        GetOutpatientTwoDTO getOutpatientTwoDTO = GetOutpatientTwoDTO.builder()
+//                .queue(outpatient.getQueue())
+//                .outpatientCondition(outpatient.getOutpatientCondition())
+//                .doctor(getDoctorDTO)
+//                .department(outpatient.getDepartment())
+//                .createAt(outpatient.getCreatedAt())
+//                .date(outpatient.getDate())
+//                .id(outpatient.getId())
+//                .arrivalTime(outpatient.getArrivalTime())
+//                .appointmentReason(outpatient.getAppointmentReason())
+//                .diagnosis(outpatient.getDiagnosis())
+//                .prescription(outpatient.getPrescription())
+//                .build();
+//
+//        return getOutpatientTwoDTO;
+//    }
 
-        return getOutpatientTwoDTO;
-    }
-
-    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
-        OutpatientEntity getOutpatient = OutpatientEntity.builder()
-                .queue(outpatient.getQueue())
-                .outpatientCondition(outpatient.getOutpatientCondition())
-                .department(outpatient.getDepartment())
-                .date(outpatient.getDate())
-                .id(outpatient.getId())
-                .arrivalTime(outpatient.getArrivalTime())
-                .appointmentReason(outpatient.getAppointmentReason())
-                .diagnosis(outpatient.getDiagnosis())
-                .prescription(outpatient.getPrescription())
-                .createdAt(outpatient.getCreateAt())
-                .build();
-
-        return getOutpatient;
-    }
+//    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+//        OutpatientEntity getOutpatient = OutpatientEntity.builder()
+//                .queue(outpatient.getQueue())
+//                .outpatientCondition(outpatient.getOutpatientCondition())
+//                .department(outpatient.getDepartment())
+//                .date(outpatient.getDate())
+//                .id(outpatient.getId())
+//                .arrivalTime(outpatient.getArrivalTime())
+//                .appointmentReason(outpatient.getAppointmentReason())
+//                .diagnosis(outpatient.getDiagnosis())
+//                .prescription(outpatient.getPrescription())
+//                .createdAt(outpatient.getCreateAt())
+//                .build();
+//
+//        return getOutpatient;
+//    }
 
     public List<GetPatientTwoDTO>getAllPatient(){
         List<PatientEntity> all = this.patientRepository.findAll();
@@ -88,21 +87,7 @@ public class PatientServiceImpl {
 
         for(PatientEntity patient : all){
 
-            List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
-
-            List<GetOutpatientTwoDTO> outpatientNewDTOList = new ArrayList<>();
-
-            for (GetOutpatientDTO outpatient : get){
-                GetDoctorDTO doctor = outpatient.getDoctor();
-
-                OutpatientEntity convert = this.convertOutpatient(outpatient);
-
-                GetOutpatientTwoDTO getOutpatientTwoDTO = this.convertOutpatientEntityToResponse(convert,doctor);
-
-                outpatientNewDTOList.add(getOutpatientTwoDTO);
-            }
-
-            GetPatientTwoDTO getPatientDTO = this.convertPatientEntityToResponse(patient,outpatientNewDTOList);
+            GetPatientTwoDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
 
             patientDTOList.add(getPatientDTO);
         }
@@ -118,21 +103,7 @@ public class PatientServiceImpl {
         }
         PatientEntity data = patient.get();
 
-        List<GetOutpatientDTO> get = this.outpatientService.getAllOutpatient();
-
-        List<GetOutpatientTwoDTO> outpatientNewDTOList = new ArrayList<>();
-
-        for (GetOutpatientDTO outpatient : get){
-            GetDoctorDTO doctor = outpatient.getDoctor();
-
-            OutpatientEntity convert = this.convertOutpatient(outpatient);
-
-            GetOutpatientTwoDTO getOutpatientTwoDTO = this.convertOutpatientEntityToResponse(convert,doctor);
-
-            outpatientNewDTOList.add(getOutpatientTwoDTO);
-        }
-
-        return this.convertPatientEntityToResponse(data,outpatientNewDTOList);
+        return this.convertPatientEntityToResponse(data);
     }
 
     public PatientEntity getPatientById(Long id){
