@@ -34,4 +34,6 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
             nativeQuery = true
     )
     void truncateMyTable();
+
+    List<OutpatientEntity> findAllByDoctorAndDateOrderByQueueAsc(UserEntity existDoctor, LocalDate now);
 }
