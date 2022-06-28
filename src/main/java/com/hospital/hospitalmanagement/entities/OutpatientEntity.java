@@ -45,9 +45,8 @@ public class OutpatientEntity {
 
     private String diagnosis;
     private String prescription;
-    private String medicalRecord;
     private String appointmentReason;
-    private Long dokter;
+    
     private int queue;
     @Column(name = "date")
     private LocalDate date;

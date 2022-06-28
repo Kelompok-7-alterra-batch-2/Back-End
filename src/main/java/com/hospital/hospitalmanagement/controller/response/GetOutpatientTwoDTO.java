@@ -1,7 +1,7 @@
 package com.hospital.hospitalmanagement.controller.response;
 
-import com.hospital.hospitalmanagement.controller.dto.*;
-import com.hospital.hospitalmanagement.entities.*;
+import com.hospital.hospitalmanagement.entities.DepartmentEntity;
+import com.hospital.hospitalmanagement.entities.OutpatientConditionEntity;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,14 +13,14 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetOutpatientDTO {
+public class GetOutpatientTwoDTO {
     private Long id;
-    private GetPatientDTO patient;
     private GetDoctorDTO doctor;
     private DepartmentEntity department;
     private OutpatientConditionEntity outpatientCondition;
     private int queue;
     private String appointmentReason;
+    private String medicalRecord;
     private LocalDate date;
     private LocalTime arrivalTime;
     private String diagnosis;

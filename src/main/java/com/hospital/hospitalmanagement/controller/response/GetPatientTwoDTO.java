@@ -6,13 +6,14 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetPatientDTO {
+public class GetPatientTwoDTO {
     private Long id;
     private String name;
     private LocalDate dob;
@@ -22,4 +23,5 @@ public class GetPatientDTO {
     private BloodTypeEntity bloodType;
     private GenderEntity gender;
     private LocalDateTime createdAt;
+    private List<GetOutpatientTwoDTO> outpatient;
 }

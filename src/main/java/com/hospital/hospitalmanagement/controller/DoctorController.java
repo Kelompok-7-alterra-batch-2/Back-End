@@ -2,6 +2,7 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.RoleRepository;
@@ -27,13 +28,13 @@ public class DoctorController {
     }
 
     @GetMapping
-    public List<UserEntity> getAllDoctor(){
+    public List<GetDoctorTwoDTO> getAllDoctor(){
         return this.userService.getAllDoctor();
     }
 
     @GetMapping("/{id}")
-    public UserEntity getDoctorById(@PathVariable("id") Long id){
-        return this.userService.getDoctorById(id);
+    public GetDoctorTwoDTO getDoctorById(@PathVariable("id") Long id){
+        return this.userService.getById(id);
     }
 
     @GetMapping("/departments/{departmentId}")
