@@ -30,10 +30,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Long countByRole(RoleEntity role);
 
-
-    @Query(
-            value = "SELECT * FROM user u WHERE u.available_from < ?1 AND u.available_to > ?1 AND u.department_id = ?2",
-            nativeQuery = true
-    )
-    List<UserEntity> findAllAvailableDoctor(LocalTime time, Long department_id);
+    List<UserEntity> findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(LocalTime time1, LocalTime time2, DepartmentEntity department_id);
 }

@@ -274,7 +274,8 @@ public class UserServiceImpl {
     }
 
     public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
-        return this.userRepository.findAllAvailableDoctor(arrivalTime, department_id);
+        DepartmentEntity existDepartment = this.departmentService.getDepartmentById(department_id);
+        return this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, existDepartment);
     }
 
     public void save(UserEntity user){
