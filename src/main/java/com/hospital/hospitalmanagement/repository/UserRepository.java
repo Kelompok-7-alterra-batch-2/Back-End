@@ -37,5 +37,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     )
     List<UserEntity> findAllAvailableDoctor(LocalTime time, Long department_id);
 
-    UserEntity getDistictTopByEmail(String email);
+    UserEntity getDistinctTopByEmail(String email);
+
+    UserEntity findByEmail(String email);
 }

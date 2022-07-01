@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserDetailsService {
 
         UserEntity newAdmin = UserEntity.builder()
                 .name(adminDTO.getName())
+                .username(adminDTO.getName())
                 .dob(dob)
                 .email(adminDTO.getEmail())
                 .password(passwordEncoder.encode(adminDTO.getPassword()))
@@ -310,7 +311,15 @@ public class UserServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity user = userRepository.getDistictTopByEmail(email);
+        UserEntity user = userRepository.getDistinctTopByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("Email Not Found");
+        }
+        return user;
+    }
+
+    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+        UserEntity user = this.userRepository.getDistinctTopByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("Email Not Found");
         }

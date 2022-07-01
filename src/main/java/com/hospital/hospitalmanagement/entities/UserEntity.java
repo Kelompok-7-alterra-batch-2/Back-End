@@ -26,7 +26,6 @@ import java.util.List;
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "id")
     private Long id;
     @Column(name = "name")
@@ -63,15 +62,17 @@ public class UserEntity implements UserDetails {
     @Column(columnDefinition = "boolean default true")
     private boolean active = true;
 
+    private String username;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
+//    @Override
+//    public String getUsername() {
+//        return email;
+//    }
 
     @Override
     public boolean isAccountNonExpired() {

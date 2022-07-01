@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.security;
 
+import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,14 +28,16 @@ public class SecurityFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final UserServiceImpl userService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = getJWTFromRequest(request);
             if (token != null && !token.isBlank() && jwtTokenProvider.ValidateToken(token)) {
-                String username = jwtTokenProvider.getUsername(token);
-                log.info("username : {}",username);
-                UserDetails user = userDetailsService.loadUserByUsername(username);
+                String email = jwtTokenProvider.getEmail(token);
+                log.info("email: {}", email);
+                UserDetails user = this.userService.loadUserByEmail(email);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         user, user.getPassword(), user.getAuthorities()
                 );
