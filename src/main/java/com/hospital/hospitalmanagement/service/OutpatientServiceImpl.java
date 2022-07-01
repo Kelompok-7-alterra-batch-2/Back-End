@@ -8,6 +8,7 @@ import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
 import org.apache.catalina.User;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -225,8 +226,8 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.countByDate(now);
     }
 
-    public List<UserEntity> getAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
-        return this.userService.findAllAvailableDoctor(arrivalTime, department_id);
+    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
+        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
     }
 
     public List<GetOutpatientDTO> getAllPendingOutpatient(){

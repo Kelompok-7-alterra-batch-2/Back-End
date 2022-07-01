@@ -9,6 +9,7 @@ import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -30,8 +31,10 @@ public class OutpatientController {
     }
 
     @GetMapping("/doctors")
-    public List<UserEntity> getAllAvailableDoctor(@RequestBody AvailDoctorDTO availDoctorDTO){
-        return this.outpatientService.getAllAvailableDoctor(availDoctorDTO.getArrival_time(), availDoctorDTO.getDepartment_id());
+    public List<UserEntity> getAllAvailableDoctor(
+            @RequestParam(name = "arrival_time") String arrival_time,
+            @RequestParam(name = "department_id") Long department_id){
+        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
     }
 
     @GetMapping
