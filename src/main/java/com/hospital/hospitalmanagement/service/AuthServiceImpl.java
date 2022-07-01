@@ -33,12 +33,10 @@ public class AuthServiceImpl {
     }
 
     public TokenResponse generateToken(Login login){
-        UserEntity existUser = this.userRepository.findByEmail(login.getEmail());
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            existUser.getUsername(),
+                            login.getEmail(),
                             login.getPassword()
                     )
             );

@@ -27,7 +27,7 @@ public class JwtTokenProvider {
         Date expirationDate = new Date(now.getTime()+ expiration);
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", user.getEmail());
+        claims.put("username", user.getUsername());
 
         return Jwts.builder()
                 .setId(user.getId().toString())
@@ -44,9 +44,9 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SignatureException ex){
-            log.error("Invalid Jwt Signature : {}", ex.getMessage());
+            log.error("Invaild Jwt Signature : {}", ex.getMessage());
         } catch (MalformedJwtException ex){
-            log.error("Invalid Jwt Token: {}",ex.getMessage());
+            log.error("Invaild Jwt Token: {}",ex.getMessage());
         }catch (ExpiredJwtException ex){
             log.error("Expired Jwt Token: {}",ex.getMessage());
         }catch (UnsupportedJwtException ex){
@@ -57,9 +57,9 @@ public class JwtTokenProvider {
         return false;
     }
 
-    public String getEmail(String token){
+    public String getUsername(String token){
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        return claims.get("email").toString();
+        return claims.get("username").toString();
     }
 
 }

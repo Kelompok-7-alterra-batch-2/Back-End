@@ -1,10 +1,8 @@
 package com.hospital.hospitalmanagement.controller.payload;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class Login {
     private String email;
     private String password;
