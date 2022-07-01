@@ -36,4 +36,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             nativeQuery = true
     )
     List<UserEntity> findAllAvailableDoctor(LocalTime time, Long department_id);
+
+    UserEntity getDistictTopByEmail(String email);
 }

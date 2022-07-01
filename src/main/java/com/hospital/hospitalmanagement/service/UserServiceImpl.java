@@ -6,11 +6,19 @@ import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
-public class UserServiceImpl {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
@@ -63,11 +73,13 @@ public class UserServiceImpl {
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
 
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         UserEntity newAdmin = UserEntity.builder()
                 .name(adminDTO.getName())
                 .dob(dob)
                 .email(adminDTO.getEmail())
-                .password(adminDTO.getPassword())
+                .password(passwordEncoder.encode(adminDTO.getPassword()))
                 .phoneNumber(adminDTO.getPhoneNumber())
                 .role(existRole)
                 .createdAt(LocalDateTime.now())
@@ -225,12 +237,13 @@ public class UserServiceImpl {
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
         RoleEntity role = roleService.getRoleById(2L);
 
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         UserEntity newDoctor = UserEntity.builder()
                 .name(doctorDTO.getName())
                 .dob(dob)
                 .email(doctorDTO.getEmail())
-                .password(doctorDTO.getPassword())
+                .password(passwordEncoder.encode(doctorDTO.getPassword()))
                 .role(role)
                 .department(existDepartment)
                 .nid(doctorDTO.getNid())
@@ -293,5 +306,14 @@ public class UserServiceImpl {
         existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
 
         return this.userRepository.save(existDoctor);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserEntity user = userRepository.getDistictTopByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("Email Not Found");
+        }
+        return user;
     }
 }
