@@ -1,6 +1,8 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
+import com.hospital.hospitalmanagement.controller.dto.UsernamePasswordDTO;
+import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
@@ -58,4 +60,10 @@ public class AdminController {
     public UserEntity getAdminByEmail(@PathVariable("email") String email){
         return this.userService.getAdminByEmail(email);
     }
+
+    @PostMapping("/token")
+    public GetTokenDTO getToken(@RequestBody UsernamePasswordDTO usernamePasswordDTO){
+        return this.userService.generateToken(usernamePasswordDTO);
+    }
+
 }
