@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.security.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,8 +44,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/admins/**").permitAll()
-                .antMatchers("/roles").permitAll()
+                .antMatchers(HttpMethod.POST, "/admins").permitAll()
+                .antMatchers(HttpMethod.POST, "/admins/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/roles").permitAll()
+                .antMatchers(HttpMethod.POST, "/doctors").permitAll()
                 .anyRequest().authenticated();
 
         // remove session

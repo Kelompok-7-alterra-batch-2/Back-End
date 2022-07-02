@@ -28,6 +28,7 @@ public class JwtProvider {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", user.getUsername());
+        claims.put("role", user.getRole().getName());
 
         return Jwts.builder()
                 .setId(user.getId().toString()) // with claims, this will be replaced

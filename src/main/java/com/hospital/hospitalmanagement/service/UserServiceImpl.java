@@ -3,13 +3,16 @@ package com.hospital.hospitalmanagement.service;
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
-import com.hospital.hospitalmanagement.controller.dto.UsernamePasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.security.JwtProvider;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -94,7 +98,7 @@ public class UserServiceImpl implements UserDetailsService {
 
         UserEntity newAdmin = UserEntity.builder()
                 .name(adminDTO.getName())
-                .username(adminDTO.getName())
+                .username(adminDTO.getEmail())
                 .dob(dob)
                 .email(adminDTO.getEmail())
                 .password(passwordEncoder.encode(adminDTO.getPassword()))
@@ -232,7 +236,8 @@ public class UserServiceImpl implements UserDetailsService {
                 .name(doctorDTO.getName())
                 .dob(dob)
                 .email(doctorDTO.getEmail())
-                .password(doctorDTO.getPassword())
+                .username(doctorDTO.getEmail())
+                .password(passwordEncoder.encode(doctorDTO.getPassword()))
                 .role(role)
                 .department(existDepartment)
                 .nid(doctorDTO.getNid())
@@ -307,19 +312,21 @@ public class UserServiceImpl implements UserDetailsService {
         return existUser;
     }
 
-    public GetTokenDTO generateToken(UsernamePasswordDTO usernamePasswordDTO) {
+    public GetTokenDTO generateToken(EmailPasswordDTO usernamePasswordDTO) {
         try{
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            usernamePasswordDTO.getUsername(),
+                            usernamePasswordDTO.getEmail(),
                             usernamePasswordDTO.getPassword()
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateToken(authentication);
-            GetTokenDTO tokenResponse = new GetTokenDTO();
-            tokenResponse.setToken(jwt);
-            return tokenResponse;
+            UserEntity existUser = this.userRepository.getDistinctTopByUsername(usernamePasswordDTO.getEmail());
+            GetTokenDTO getTokenDTO = new GetTokenDTO();
+            getTokenDTO.setToken(jwt);
+            getTokenDTO.setRole(existUser.getRole().getName());
+            return getTokenDTO;
         }catch (BadCredentialsException e){
             log.error("Bad Credential ", e);
             throw new RuntimeException(e.getMessage(), e);
@@ -328,4 +335,5 @@ public class UserServiceImpl implements UserDetailsService {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
 }

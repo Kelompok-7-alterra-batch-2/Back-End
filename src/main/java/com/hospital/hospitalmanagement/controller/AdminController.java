@@ -1,20 +1,14 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
-import com.hospital.hospitalmanagement.controller.dto.UsernamePasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
 import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
-import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
-import com.hospital.hospitalmanagement.repository.OutpatientRepository;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.time.LocalDate;
+import java.security.Principal;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -61,9 +55,21 @@ public class AdminController {
         return this.userService.getAdminByEmail(email);
     }
 
-    @PostMapping("/token")
-    public GetTokenDTO getToken(@RequestBody UsernamePasswordDTO usernamePasswordDTO){
-        return this.userService.generateToken(usernamePasswordDTO);
+    @PostMapping("/login")
+    public GetTokenDTO getToken(@RequestBody EmailPasswordDTO usernamePasswordDTO, Principal principal){
+        GetTokenDTO getTokenDTO = new GetTokenDTO();
+
+        try{
+            GetTokenDTO obj = this.userService.generateToken(usernamePasswordDTO);
+
+            getTokenDTO.setToken(obj.getToken());
+            getTokenDTO.setRole(obj.getRole());
+            getTokenDTO.setMessage("Success");
+        }catch (Exception e){
+            getTokenDTO.setMessage(e.getMessage());
+        }
+
+        return getTokenDTO;
     }
 
 }
