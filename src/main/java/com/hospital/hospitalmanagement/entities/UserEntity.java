@@ -2,17 +2,14 @@ package com.hospital.hospitalmanagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -21,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +46,7 @@ public class UserEntity implements UserDetails {
     private DepartmentEntity department;
 
     @OneToOne()
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    @JoinColumn(name = "roles_id", referencedColumnName = "id")
     private RoleEntity role;
 
     @Column(name = "created_at")
