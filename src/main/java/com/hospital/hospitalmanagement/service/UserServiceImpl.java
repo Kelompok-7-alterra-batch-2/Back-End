@@ -3,14 +3,31 @@ package com.hospital.hospitalmanagement.service;
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
+import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hospital.hospitalmanagement.security.JwtProvider;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,18 +36,34 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl {
-    @Autowired
-    UserRepository userRepository;
+@Log4j2
+public class UserServiceImpl implements UserDetailsService {
 
-    @Autowired
-    DepartmentServiceImpl departmentService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    RoleServiceImpl roleService;
+    private final DepartmentServiceImpl departmentService;
 
-    @Autowired
-    private OutpatientServiceImpl outpatientService;
+    private final RoleServiceImpl roleService;
+
+    private final JwtProvider jwtProvider;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    public UserServiceImpl(@Lazy UserRepository userRepository,
+                           @Lazy DepartmentServiceImpl departmentService,
+                           @Lazy RoleServiceImpl roleService,
+                           @Lazy JwtProvider jwtProvider,
+                           @Lazy PasswordEncoder passwordEncoder,
+                           @Lazy AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.departmentService = departmentService;
+        this.roleService = roleService;
+        this.jwtProvider = jwtProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
 
     public List<UserEntity> getAllUser(){
         return this.userRepository.findAll();
@@ -65,15 +98,17 @@ public class UserServiceImpl {
 
         UserEntity newAdmin = UserEntity.builder()
                 .name(adminDTO.getName())
+                .username(adminDTO.getEmail())
                 .dob(dob)
                 .email(adminDTO.getEmail())
-                .password(adminDTO.getPassword())
+                .password(passwordEncoder.encode(adminDTO.getPassword()))
                 .phoneNumber(adminDTO.getPhoneNumber())
                 .role(existRole)
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return this.userRepository.save(newAdmin);
+        UserEntity save = this.userRepository.save(newAdmin);
+        return save;
     }
 
     public UserEntity updateAdmin(Long id, AdminDTO adminDTO) {
@@ -201,7 +236,8 @@ public class UserServiceImpl {
                 .name(doctorDTO.getName())
                 .dob(dob)
                 .email(doctorDTO.getEmail())
-                .password(doctorDTO.getPassword())
+                .username(doctorDTO.getEmail())
+                .password(passwordEncoder.encode(doctorDTO.getPassword()))
                 .role(role)
                 .department(existDepartment)
                 .nid(doctorDTO.getNid())
@@ -265,4 +301,39 @@ public class UserServiceImpl {
 
         return this.userRepository.save(existDoctor);
     }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity existUser = this.userRepository.getDistinctTopByUsername(username);
+        if(existUser == null){
+            throw new UsernameNotFoundException("Username Not Found");
+        }
+        return existUser;
+    }
+
+    public GetTokenDTO generateToken(EmailPasswordDTO usernamePasswordDTO) {
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            usernamePasswordDTO.getEmail(),
+                            usernamePasswordDTO.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtProvider.generateToken(authentication);
+            UserEntity existUser = this.userRepository.getDistinctTopByUsername(usernamePasswordDTO.getEmail());
+            GetTokenDTO getTokenDTO = new GetTokenDTO();
+            getTokenDTO.setToken(jwt);
+            getTokenDTO.setRole(existUser.getRole().getName());
+            return getTokenDTO;
+        }catch (BadCredentialsException e){
+            log.error("Bad Credential ", e);
+            throw new RuntimeException(e.getMessage(), e);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
 }
