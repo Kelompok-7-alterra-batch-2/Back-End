@@ -15,6 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class AdminDTO {
+    @NotEmpty(message = "Name Is Required")
     private String name;
     private String dob;
     @NotEmpty(message = "Password Is Required")

@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class DoctorDTO {
+    @NotEmpty(message = "Name Is Required")
     private String name;
     private String dob;
     @NotEmpty(message = "Password Is Required")
