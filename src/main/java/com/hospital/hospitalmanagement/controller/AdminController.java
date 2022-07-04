@@ -8,6 +8,7 @@ import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -35,13 +36,13 @@ public class AdminController {
     }
 
     @PostMapping
-    public UserEntity createUserAdmin(@RequestBody AdminDTO adminDTO) {
+    public UserEntity createUserAdmin(@Valid @RequestBody AdminDTO adminDTO) {
         return this.userService.createAdmin(adminDTO);
     }
 
 
     @PutMapping("/{id}")
-    public UserEntity updateAdminById(@RequestBody AdminDTO adminDTO, @PathVariable("id") Long id){
+    public UserEntity updateAdminById(@Valid @RequestBody AdminDTO adminDTO, @PathVariable("id") Long id){
         return this.userService.updateAdmin(id, adminDTO);
     }
 
