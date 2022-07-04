@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.print.Doc;
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,12 +45,12 @@ public class DoctorController {
     }
 
     @PostMapping
-    public UserEntity createDoctor(@RequestBody DoctorDTO doctorDTO){
+    public UserEntity createDoctor(@Valid @RequestBody DoctorDTO doctorDTO){
         return this.userService.createDoctor(doctorDTO);
     }
 
     @PutMapping("/{id}")
-    public UserEntity updateDoctorById(@RequestBody DoctorDTO doctorDTO, @PathVariable("id") Long id){
+    public UserEntity updateDoctorById(@Valid @RequestBody DoctorDTO doctorDTO, @PathVariable("id") Long id){
         return this.userService.updateDoctor(id, doctorDTO);
     }
 
