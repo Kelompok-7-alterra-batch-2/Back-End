@@ -8,10 +8,6 @@ import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.security.JwtProvider;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -27,7 +23,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -281,7 +276,8 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
-        return this.userRepository.findAllAvailableDoctor(arrivalTime, department_id);
+        DepartmentEntity existsDepartment = this.departmentService.getDepartmentById(department_id);
+        return this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, existsDepartment);
     }
 
     public void save(UserEntity user){
