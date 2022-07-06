@@ -56,21 +56,4 @@ public class AdminController {
         return this.userService.getAdminByEmail(email);
     }
 
-    @PostMapping("/login")
-    public GetTokenDTO getToken(@RequestBody EmailPasswordDTO usernamePasswordDTO, Principal principal){
-        GetTokenDTO getTokenDTO = new GetTokenDTO();
-
-        try{
-            GetTokenDTO obj = this.userService.generateToken(usernamePasswordDTO);
-
-            getTokenDTO.setToken(obj.getToken());
-            getTokenDTO.setRole(obj.getRole());
-            getTokenDTO.setMessage("Success");
-        }catch (Exception e){
-            getTokenDTO.setMessage(e.getMessage());
-        }
-
-        return getTokenDTO;
-    }
-
 }
