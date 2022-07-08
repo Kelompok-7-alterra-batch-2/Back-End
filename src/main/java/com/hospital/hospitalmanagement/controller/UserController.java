@@ -8,11 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
     @Autowired
     UserServiceImpl userService;
@@ -32,7 +31,11 @@ public class UserController {
             getTokenDTO.setMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getTokenDTO);
         }
-
-
     }
+
+    @GetMapping("/test")
+    public String tes(){
+        return "Tes Jing";
+    }
+
 }
