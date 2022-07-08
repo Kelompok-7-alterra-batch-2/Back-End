@@ -44,10 +44,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/admins").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/roles").permitAll()
-                .antMatchers(HttpMethod.GET, "/hello").permitAll()
+//                .antMatchers(HttpMethod.POST, "/admins").permitAll()
+//                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
+//                .antMatchers(HttpMethod.POST, "/roles").permitAll()
+//                .antMatchers(HttpMethod.GET, "/hello").permitAll()
+                .antMatchers("/admins/**").permitAll()
                 .anyRequest().authenticated();
 
         // remove session
