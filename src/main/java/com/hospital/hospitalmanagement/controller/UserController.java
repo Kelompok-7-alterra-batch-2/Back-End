@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "**", allowedHeaders = "**")
 @RestController
 @RequestMapping("/users")
 public class UserController {
