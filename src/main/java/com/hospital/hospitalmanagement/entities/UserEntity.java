@@ -33,10 +33,10 @@ public class UserEntity implements UserDetails {
     private String password;
     @Column(name = "email")
     private String email;
-    @Column(name = "available_from")
-    private LocalTime availableFrom;
-    @Column(name = "available_to")
-    private LocalTime availableTo;
+//    @Column(name = "available_from")
+//    private LocalTime availableFrom;
+//    @Column(name = "available_to")
+//    private LocalTime availableTo;
 
     private String nid;
     private String phoneNumber;

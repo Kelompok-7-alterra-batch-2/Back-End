@@ -5,12 +5,15 @@ import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
+import com.hospital.hospitalmanagement.entities.ScheduleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.repository.RoleRepository;
 import com.hospital.hospitalmanagement.repository.UserRepository;
+import com.hospital.hospitalmanagement.service.ScheduleServiceImpl;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.print.Doc;
@@ -23,6 +26,9 @@ import java.util.List;
 public class DoctorController {
     @Autowired
     UserServiceImpl userService;
+
+    @Autowired
+    ScheduleServiceImpl scheduleService;
 
     @GetMapping("/count")
     public Long countAllDoctor(){
@@ -54,14 +60,15 @@ public class DoctorController {
         return this.userService.updateDoctor(id, doctorDTO);
     }
 
-    @PutMapping("/{id}/schedule")
-    public UserEntity updateDoctorSchedule(@PathVariable("id") Long doctorId, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
-        return this.userService.updateDoctorSchedule(doctorId, doctorScheduleDTO);
-    }
+//    @PutMapping("/{id}/schedule")
+//    public UserEntity updateDoctorSchedule(@PathVariable("id") Long doctorId, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
+//        return this.userService.updateDoctorSchedule(doctorId, doctorScheduleDTO);
+//    }
 
     @DeleteMapping("/{id}")
-    public void deleteDoctorById(@PathVariable("id") Long id){
+    public HttpStatus deleteDoctorById(@PathVariable("id") Long id){
         this.userService.deleteDoctor(id);
+        return HttpStatus.OK;
     }
 
     @GetMapping("/names/{name}")
@@ -74,5 +81,30 @@ public class DoctorController {
         return this.userService.getAllDoctorPaginate(index, element);
     }
 
+    @GetMapping("/schedule/{id}")
+    public ScheduleEntity getScheduleById(@PathVariable("id") Long id){
+        return this.scheduleService.getById(id);
+    }
+
+    @GetMapping("/schedule")
+    public List<ScheduleEntity> getAllSchedule(){
+        return this.scheduleService.getAllSchedule();
+    }
+
+    @PostMapping("/schedule")
+    public ScheduleEntity createdSchedule(@RequestBody DoctorScheduleDTO doctorScheduleDTO){
+        return this.scheduleService.createSchedule(doctorScheduleDTO);
+    }
+
+    @PutMapping("/schedule/{id}")
+    public ScheduleEntity newUpdateSchedule(@PathVariable("id") Long id, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
+        return this.scheduleService.updateSchedule(id,doctorScheduleDTO);
+    }
+
+    @DeleteMapping("/schedule/{id}")
+    public HttpStatus deleteSchedule(@PathVariable("id") Long id){
+        this.scheduleService.deleteSchedule(id);
+        return HttpStatus.OK;
+    }
 
 }

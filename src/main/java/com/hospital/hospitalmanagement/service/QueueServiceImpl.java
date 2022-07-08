@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.QueueDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.QueueEntity;
 import com.hospital.hospitalmanagement.repository.QueueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class QueueServiceImpl {
         Optional<QueueEntity>optionalQueue = this.queueRepository.findById(id);
 
         if (optionalQueue.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalQueue.get();
     }
