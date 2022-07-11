@@ -138,8 +138,6 @@ public class UserServiceImpl implements UserDetailsService {
                 .name(doctor.getName())
                 .id(doctor.getId())
                 .email(doctor.getEmail())
-                .availableTo(doctor.getAvailableTo())
-                .availableFrom(doctor.getAvailableFrom())
                 .dob(doctor.getDob())
                 .role(doctor.getRole())
                 .nid(doctor.getNid())
