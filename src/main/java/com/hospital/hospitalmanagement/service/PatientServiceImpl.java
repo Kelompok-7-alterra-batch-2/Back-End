@@ -163,12 +163,4 @@ public class PatientServiceImpl {
         return this.patientRepository.findAll(PageRequest.of(index, element));
     }
 
-    public void save(PatientEntity patient){
-        this.patientRepository.save(patient);
-    }
-
-    public void createOutpatient(OutpatientEntity savedOutpatient, Long patient_id) {
-        PatientEntity patient = this.getPatientById(patient_id);
-        patient.setOutpatient(List.of(savedOutpatient));
-    }
 }
