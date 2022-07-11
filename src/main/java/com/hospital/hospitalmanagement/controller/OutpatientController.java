@@ -7,6 +7,7 @@ import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -30,12 +31,12 @@ public class OutpatientController {
         return this.outpatientService.countTodayOutpatient();
     }
 
-    @GetMapping("/doctors")
-    public List<UserEntity> getAllAvailableDoctor(
-            @RequestParam(name = "arrival_time") String arrival_time,
-            @RequestParam(name = "department_id") Long department_id){
-        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
-    }
+//    @GetMapping("/doctors")
+//    public List<UserEntity> getAllAvailableDoctor(
+//            @RequestParam(name = "arrival_time") String arrival_time,
+//            @RequestParam(name = "department_id") Long department_id){
+//        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
+//    }
 
     @GetMapping
     public List<GetOutpatientDTO> getAllOutpatient(){
@@ -58,8 +59,9 @@ public class OutpatientController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOutpatient(@PathVariable("id") Long id){
+    public HttpStatus deleteOutpatient(@PathVariable("id") Long id){
         this.outpatientService.deleteOutpatient(id);
+        return HttpStatus.OK;
     }
 
 

@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
@@ -40,8 +41,6 @@ public class OutpatientServiceImpl {
                 .name(doctor.getName())
                 .id(doctor.getId())
                 .email(doctor.getEmail())
-                .availableTo(doctor.getAvailableTo())
-                .availableFrom(doctor.getAvailableFrom())
                 .dob(doctor.getDob())
                 .role(doctor.getRole())
                 .nid(doctor.getNid())
@@ -112,7 +111,7 @@ public class OutpatientServiceImpl {
         Optional<OutpatientEntity> data = this.outpatientRepository.findById(id);
 
         if (data.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
 
         OutpatientEntity existOutpatient = data.get();
@@ -129,7 +128,7 @@ public class OutpatientServiceImpl {
         Optional<OutpatientEntity> optionalOutpatient = this.outpatientRepository.findById(id);
 
         if (optionalOutpatient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalOutpatient.get();
     }
@@ -223,9 +222,9 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.countByDate(now);
     }
 
-    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
-        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
-    }
+//    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
+//        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
+//    }
 
     public List<GetOutpatientDTO> getAllPendingOutpatient(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);

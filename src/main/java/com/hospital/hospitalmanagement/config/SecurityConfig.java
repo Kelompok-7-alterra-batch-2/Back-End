@@ -45,11 +45,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/admins").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/roles").permitAll()
                 .antMatchers(HttpMethod.GET, "/hello").permitAll()
+                .antMatchers("/admins/**").permitAll()
+                .antMatchers("/users/**").permitAll()
                 .anyRequest().authenticated();
-
+//                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
         // remove session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // filter jwt

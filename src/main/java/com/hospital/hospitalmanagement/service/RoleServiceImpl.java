@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.RoleDto;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.QueueEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
@@ -30,7 +31,7 @@ public class RoleServiceImpl {
             Optional<RoleEntity> optionalRole = this.roleRepository.findById(id);
 
         if(optionalRole.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
 
         return optionalRole.get();

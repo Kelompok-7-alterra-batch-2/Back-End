@@ -33,5 +33,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity getDistinctTopByUsername(String username);
 
-    List<UserEntity> findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(LocalTime time1, LocalTime time2, DepartmentEntity department_id);
+//    List<UserEntity> findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(LocalTime time1, LocalTime time2, DepartmentEntity department_id);
 }
