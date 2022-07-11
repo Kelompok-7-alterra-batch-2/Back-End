@@ -138,8 +138,6 @@ public class UserServiceImpl implements UserDetailsService {
                 .name(doctor.getName())
                 .id(doctor.getId())
                 .email(doctor.getEmail())
-                .availableTo(doctor.getAvailableTo())
-                .availableFrom(doctor.getAvailableFrom())
                 .dob(doctor.getDob())
                 .role(doctor.getRole())
                 .nid(doctor.getNid())
@@ -298,10 +296,10 @@ public class UserServiceImpl implements UserDetailsService {
         return this.userRepository.countByRole(role);
     }
 
-    public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
-        DepartmentEntity existsDepartment = this.departmentService.getDepartmentById(department_id);
-        return this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, existsDepartment);
-    }
+//    public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
+//        DepartmentEntity existsDepartment = this.departmentService.getDepartmentById(department_id);
+//        return this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, existsDepartment);
+//    }
 
     public void save(UserEntity user){
         this.userRepository.save(user);

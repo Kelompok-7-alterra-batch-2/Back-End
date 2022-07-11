@@ -41,8 +41,6 @@ public class OutpatientServiceImpl {
                 .name(doctor.getName())
                 .id(doctor.getId())
                 .email(doctor.getEmail())
-                .availableTo(doctor.getAvailableTo())
-                .availableFrom(doctor.getAvailableFrom())
                 .dob(doctor.getDob())
                 .role(doctor.getRole())
                 .nid(doctor.getNid())
@@ -224,9 +222,9 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.countByDate(now);
     }
 
-    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
-        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
-    }
+//    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
+//        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
+//    }
 
     public List<GetOutpatientDTO> getAllPendingOutpatient(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);

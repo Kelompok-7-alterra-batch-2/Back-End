@@ -31,12 +31,12 @@ public class OutpatientController {
         return this.outpatientService.countTodayOutpatient();
     }
 
-    @GetMapping("/doctors")
-    public List<UserEntity> getAllAvailableDoctor(
-            @RequestParam(name = "arrival_time") String arrival_time,
-            @RequestParam(name = "department_id") Long department_id){
-        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
-    }
+//    @GetMapping("/doctors")
+//    public List<UserEntity> getAllAvailableDoctor(
+//            @RequestParam(name = "arrival_time") String arrival_time,
+//            @RequestParam(name = "department_id") Long department_id){
+//        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
+//    }
 
     @GetMapping
     public List<GetOutpatientDTO> getAllOutpatient(){
