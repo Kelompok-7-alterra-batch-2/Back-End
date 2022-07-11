@@ -204,21 +204,6 @@ public class OutpatientServiceImplTest {
     }
 
     @Test
-    public void getAllAvailableDoctor() {
-        LocalTime arrivalTime = LocalTime.parse("11:00:00");
-        UserEntity user1 = this.easyRandom.nextObject(UserEntity.class);
-        UserEntity user2 = this.easyRandom.nextObject(UserEntity.class);
-
-        List<UserEntity> userList = List.of(user1, user2);
-
-        when(this.userService.findAllAvailableDoctor(arrivalTime, id)).thenReturn(userList);
-
-        var result = this.outpatientService.getAllAvailableDoctor("11:00:00", id);
-
-        assertEquals(userList, result);
-    }
-
-    @Test
     public void getAllPendingOutpatient() {
     }
 
@@ -228,22 +213,6 @@ public class OutpatientServiceImplTest {
 
     @Test
     public void processOutpatient() {
-        OutpatientConditionEntity outpatientCondition = this.easyRandom.nextObject(OutpatientConditionEntity.class);
-        OutpatientEntity outpatient = this.easyRandom.nextObject(OutpatientEntity.class);
-        GetOutpatientDTO getOutpatientDTO = this.easyRandom.nextObject(GetOutpatientDTO.class);
-        GetDoctorDTO getDoctorDTO = this.easyRandom.nextObject(GetDoctorDTO.class);
-        GetPatientDTO getPatientDTO = this.easyRandom.nextObject(GetPatientDTO.class);
-
-        when(this.outpatientConditionService.getOutpatientById(2L)).thenReturn(outpatientCondition);
-        when(this.outpatientRepository.findById(id)).thenReturn(Optional.of(outpatient));
-        when(this.outpatientRepository.save(any(OutpatientEntity.class))).thenReturn(outpatient);
-        when(this.outpatientService.convertDoctorEntityToResponse(outpatient.getDoctor())).thenReturn(getDoctorDTO);
-        when(this.outpatientService.convertPatientEntityToResponse(outpatient.getPatient())).thenReturn(getPatientDTO);
-        when(this.outpatientService.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO)).thenReturn(getOutpatientDTO);
-
-        var result = this.outpatientService.processOutpatient(id);
-
-        assertEquals(getOutpatientDTO, result);
     }
 
     @Test

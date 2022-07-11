@@ -390,46 +390,6 @@ public class UserServiceImplTest {
         assertEquals(count, result);
     }
 
-    @Test
-    public void findAllAvailableDoctor() {
-        LocalTime arrivalTime = LocalTime.parse("11:00:00");
-        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
-
-        UserEntity user1 = this.easyRandom.nextObject(UserEntity.class);
-        UserEntity user2 = this.easyRandom.nextObject(UserEntity.class);
-
-        List<UserEntity> userList = List.of(user1, user2);
-
-        when(this.departmentService.getDepartmentById(id)).thenReturn(department);
-        when(this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, department)).thenReturn(userList);
-
-        var result = this.userService.findAllAvailableDoctor(arrivalTime, id);
-
-        assertEquals(userList, result);
-    }
-
-    @Test
-    public void save() {
-    }
-
-    @Test
-    public void creatOutpatient() {
-    }
-
-    @Test
-    public void updateDoctorSchedule() {
-        RoleEntity role = new RoleEntity(2L, "doctor", LocalDateTime.now());
-        UserEntity user = this.easyRandom.nextObject(UserEntity.class);
-        DoctorScheduleDTO doctorScheduleDTO = this.easyRandom.nextObject(DoctorScheduleDTO.class);
-
-        when(this.roleService.getRoleById(2L)).thenReturn(role);
-        when(this.userRepository.findByIdAndRole(id, role)).thenReturn(user);
-        when(this.userRepository.save(any(UserEntity.class))).thenReturn(user);
-
-        var result = this.userService.updateDoctorSchedule(id, doctorScheduleDTO);
-
-        assertEquals(user, result);
-    }
 
     @Test
     public void loadUserByUsername() {
