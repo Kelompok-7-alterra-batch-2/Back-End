@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.service;
 
+import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
@@ -21,6 +22,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -161,12 +163,32 @@ public class OutpatientServiceImplTest {
 
         List<OutpatientEntity> outpatientList = List.of(outpatient1, outpatient2);
 
+        GetOutpatientDTO outpatientDto1 = this.mapper.map(outpatient1, GetOutpatientDTO.class);
+        GetOutpatientDTO outpatientDto2 = this.mapper.map(outpatient2, GetOutpatientDTO.class);
+
+        List<GetOutpatientDTO> outpatientDTOList = List.of(outpatientDto1, outpatientDto2);
 
         when(this.outpatientRepository.findAllByDate(now)).thenReturn(outpatientList);
 
-        this.outpatientService.findAllTodayOutpatient();
+        // When
+        var result = this.outpatientService.findAllTodayOutpatient();
 
-        verify(this.outpatientService, times(outpatientList.size())).convertOutpatientEntityToResponse(any(OutpatientEntity.class), any(GetDoctorDTO.class), any(GetPatientDTO.class));
+        for (int i = 0; i < outpatientDTOList.size(); i++) {
+            GetOutpatientDTO dto = outpatientDTOList.get(i);
+            GetOutpatientDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getAppointmentReason(), res.getAppointmentReason());
+            assertEquals(dto.getArrivalTime(), res.getArrivalTime());
+            assertEquals(dto.getDate(), res.getDate());
+            assertEquals(dto.getOutpatientCondition(), res.getOutpatientCondition());
+            assertEquals(dto.getDoctor().getId(), res.getDoctor().getId());
+            assertEquals(dto.getDepartment(), res.getDepartment());
+            assertEquals(dto.getDiagnosis(), res.getDiagnosis());
+            assertEquals(dto.getPrescription(), res.getPrescription());
+            assertEquals(dto.getPatient().getId(), res.getPatient().getId());
+        }
+//        verify(this.outpatientService, times(outpatientList.size())).convertOutpatientEntityToResponse(any(OutpatientEntity.class), any(GetDoctorDTO.class), any(GetPatientDTO.class));
     }
 
     @Test
@@ -215,9 +237,9 @@ public class OutpatientServiceImplTest {
         when(this.outpatientConditionService.getOutpatientById(2L)).thenReturn(outpatientCondition);
         when(this.outpatientRepository.findById(id)).thenReturn(Optional.of(outpatient));
         when(this.outpatientRepository.save(any(OutpatientEntity.class))).thenReturn(outpatient);
-        when(this.outpatientService.convertDoctorEntityToResponse(any(UserEntity.class))).thenReturn(getDoctorDTO);
-        when(this.outpatientService.convertPatientEntityToResponse(any(PatientEntity.class))).thenReturn(getPatientDTO);
-        when(this.outpatientService.convertOutpatientEntityToResponse(any(OutpatientEntity.class), any(GetDoctorDTO.class), any(GetPatientDTO.class))).thenReturn(getOutpatientDTO);
+        when(this.outpatientService.convertDoctorEntityToResponse(outpatient.getDoctor())).thenReturn(getDoctorDTO);
+        when(this.outpatientService.convertPatientEntityToResponse(outpatient.getPatient())).thenReturn(getPatientDTO);
+        when(this.outpatientService.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO)).thenReturn(getOutpatientDTO);
 
         var result = this.outpatientService.processOutpatient(id);
 
@@ -234,6 +256,22 @@ public class OutpatientServiceImplTest {
 
     @Test
     public void doneOutpatient() {
+        OutpatientConditionEntity outpatientCondition = this.easyRandom.nextObject(OutpatientConditionEntity.class);
+        OutpatientEntity outpatient = this.easyRandom.nextObject(OutpatientEntity.class);
+        GetOutpatientDTO getOutpatientDTO = this.easyRandom.nextObject(GetOutpatientDTO.class);
+        GetDoctorDTO getDoctorDTO = this.easyRandom.nextObject(GetDoctorDTO.class);
+        GetPatientDTO getPatientDTO = this.easyRandom.nextObject(GetPatientDTO.class);
+
+        when(this.outpatientConditionService.getOutpatientById(3L)).thenReturn(outpatientCondition);
+        when(this.outpatientRepository.findById(id)).thenReturn(Optional.of(outpatient));
+        when(this.outpatientRepository.save(any(OutpatientEntity.class))).thenReturn(outpatient);
+        when(this.outpatientService.convertDoctorEntityToResponse(outpatient.getDoctor())).thenReturn(getDoctorDTO);
+        when(this.outpatientService.convertPatientEntityToResponse(outpatient.getPatient())).thenReturn(getPatientDTO);
+        when(this.outpatientService.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO)).thenReturn(getOutpatientDTO);
+
+        var result = this.outpatientService.doneOutpatient(id);
+
+        assertEquals(getOutpatientDTO, result);
     }
 
     @Test
@@ -250,6 +288,22 @@ public class OutpatientServiceImplTest {
 
     @Test
     public void diagnosisOutpatient() {
+        DiagnosisDTO diagnosisDTO = this.easyRandom.nextObject(DiagnosisDTO.class);
+        OutpatientEntity outpatient = this.easyRandom.nextObject(OutpatientEntity.class);
+        GetDoctorDTO getDoctorDTO = this.easyRandom.nextObject(GetDoctorDTO.class);
+        GetPatientDTO getPatientDTO = this.easyRandom.nextObject(GetPatientDTO.class);
+        GetOutpatientDTO getOutpatientDTO = this.easyRandom.nextObject(GetOutpatientDTO.class);
+
+        when(this.outpatientRepository.findById(id)).thenReturn(Optional.of(outpatient));
+        when(this.outpatientRepository.save(any(OutpatientEntity.class))).thenReturn(outpatient);
+
+        when(this.outpatientService.convertDoctorEntityToResponse(outpatient.getDoctor())).thenReturn(getDoctorDTO);
+        when(this.outpatientService.convertPatientEntityToResponse(outpatient.getPatient())).thenReturn(getPatientDTO);
+        when(this.outpatientService.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO)).thenReturn(getOutpatientDTO);
+
+        var result = this.outpatientService.diagnosisOutpatient(id, diagnosisDTO);
+
+        assertEquals(getOutpatientDTO, result);
     }
 
     @Test
