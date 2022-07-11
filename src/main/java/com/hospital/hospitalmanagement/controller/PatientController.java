@@ -6,6 +6,7 @@ import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.service.PatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,8 +39,9 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletePatientById(@PathVariable("id") Long id){
+    public HttpStatus deletePatientById(@PathVariable("id") Long id){
         this.patientService.deletePatient(id);
+        return HttpStatus.OK;
     }
 
     @GetMapping("/names/{name}")

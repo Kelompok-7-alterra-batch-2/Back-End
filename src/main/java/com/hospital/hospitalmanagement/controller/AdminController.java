@@ -3,6 +3,7 @@ package com.hospital.hospitalmanagement.controller;
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
 import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,11 @@ public class AdminController {
 
     @GetMapping("/{id}")
     public UserEntity getAdminById(@PathVariable("id") Long id){
-        return this.userService.getAdminById(id);
+        UserEntity user=this.userService.getAdminById(id);
+        if (user == null){
+            throw new NotFoundException("Data Not Found");
+        }
+        return user;
     }
 
     @PostMapping
@@ -53,7 +58,11 @@ public class AdminController {
 
     @GetMapping("/emails/{email}")
     public UserEntity getAdminByEmail(@PathVariable("email") String email){
-        return this.userService.getAdminByEmail(email);
+        UserEntity user = this.userService.getAdminByEmail(email);
+        if (user == null){
+            throw new NotFoundException("Data Not Found");
+        }
+        return user;
     }
 
 }

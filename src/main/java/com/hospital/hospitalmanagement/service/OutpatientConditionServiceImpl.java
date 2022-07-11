@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.OutpatientConditionDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.OutpatientConditionEntity;
 import com.hospital.hospitalmanagement.repository.OutpatientConditionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class OutpatientConditionServiceImpl {
         Optional<OutpatientConditionEntity> optionalOutpatientCondition = this.conditionRepository.findById(id);
 
         if (optionalOutpatientCondition.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalOutpatientCondition.get();
     }

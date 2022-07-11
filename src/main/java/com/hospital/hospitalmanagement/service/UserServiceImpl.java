@@ -5,6 +5,8 @@ import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
 import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
+import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.security.JwtProvider;
@@ -88,6 +90,12 @@ public class UserServiceImpl implements UserDetailsService {
 
     public UserEntity createAdmin(AdminDTO adminDTO) {
         RoleEntity existRole = this.roleService.getRoleById(1L);
+
+        UserEntity uniq = this.getAdminByEmail(adminDTO.getEmail());
+
+        if (uniq != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
 
@@ -197,6 +205,10 @@ public class UserServiceImpl implements UserDetailsService {
         RoleEntity existRole = this.roleService.getRoleById(2L);
         Optional<UserEntity> doctor = Optional.ofNullable(this.userRepository.findByIdAndRole(id, existRole));
 
+        if (doctor.isEmpty()){
+            throw new NotFoundException("Data Not Found");
+        }
+
         UserEntity existDoctor = doctor.get();
 
         return convertDoctorEntityToResponse(existDoctor);
@@ -220,12 +232,23 @@ public class UserServiceImpl implements UserDetailsService {
         return this.userRepository.findByNameContainsAndRole(name, existRole);
     }
 
+    public UserEntity getDoctorByEmail(String email){
+        RoleEntity existRole = this.roleService.getRoleById(2L);
+
+        return this.userRepository.findByEmailAndRole(email, existRole);
+    }
+
 
     public UserEntity createDoctor(DoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
         RoleEntity role = roleService.getRoleById(2L);
 
+        UserEntity uniq = this.getDoctorByEmail(doctorDTO.getEmail());
+
+        if (uniq != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
 
         UserEntity newDoctor = UserEntity.builder()
                 .name(doctorDTO.getName())
@@ -290,13 +313,13 @@ public class UserServiceImpl implements UserDetailsService {
         this.userRepository.save(doctor);
     }
 
-    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
-        UserEntity existDoctor = this.getDoctorById(doctorId);
-        existDoctor.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
-        existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
-
-        return this.userRepository.save(existDoctor);
-    }
+//    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
+//        UserEntity existDoctor = this.getDoctorById(doctorId);
+//        existDoctor.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
+//        existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
+//
+//        return this.userRepository.save(existDoctor);
+//    }
 
 
     @Override

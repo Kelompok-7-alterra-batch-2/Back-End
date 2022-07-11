@@ -2,6 +2,7 @@ package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class PatientServiceImpl {
         Optional<PatientEntity> patient = this.patientRepository.findById(id);
 
         if (patient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         PatientEntity data = patient.get();
 
@@ -110,7 +111,7 @@ public class PatientServiceImpl {
         Optional<PatientEntity> optionalPatient = this.patientRepository.findById(id);
 
         if (optionalPatient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalPatient.get();
     }

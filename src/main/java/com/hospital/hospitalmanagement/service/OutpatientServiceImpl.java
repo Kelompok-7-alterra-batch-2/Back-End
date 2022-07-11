@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
@@ -112,7 +113,7 @@ public class OutpatientServiceImpl {
         Optional<OutpatientEntity> data = this.outpatientRepository.findById(id);
 
         if (data.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
 
         OutpatientEntity existOutpatient = data.get();
@@ -129,7 +130,7 @@ public class OutpatientServiceImpl {
         Optional<OutpatientEntity> optionalOutpatient = this.outpatientRepository.findById(id);
 
         if (optionalOutpatient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalOutpatient.get();
     }

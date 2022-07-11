@@ -7,6 +7,7 @@ import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -58,8 +59,9 @@ public class OutpatientController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOutpatient(@PathVariable("id") Long id){
+    public HttpStatus deleteOutpatient(@PathVariable("id") Long id){
         this.outpatientService.deleteOutpatient(id);
+        return HttpStatus.OK;
     }
 
 
