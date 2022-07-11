@@ -2,13 +2,9 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
-import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
-import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.ScheduleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
-import com.hospital.hospitalmanagement.repository.RoleRepository;
-import com.hospital.hospitalmanagement.repository.UserRepository;
 import com.hospital.hospitalmanagement.service.ScheduleServiceImpl;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.Doc;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -48,6 +43,11 @@ public class DoctorController {
     @GetMapping("/departments/{departmentId}")
     public List<UserEntity> getAllDoctorByDepartment(@PathVariable("departmentId") Long departmentId){
         return this.userService.getDoctorByDepartment(departmentId);
+    }
+
+    @GetMapping("/emails")
+    public UserEntity getDoctorByEmail(@RequestParam("email") String email){
+        return this.userService.getDoctorByEmail(email);
     }
 
     @PostMapping
