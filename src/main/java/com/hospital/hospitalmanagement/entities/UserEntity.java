@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,6 +58,10 @@ public class UserEntity implements UserDetails {
     private List<OutpatientEntity> outpatient;
 
     private String username;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "doctor",targetEntity = OutpatientEntity.class,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ScheduleEntity> schedule;
 
     @Column(columnDefinition = "boolean default true")
     private Boolean active = true;

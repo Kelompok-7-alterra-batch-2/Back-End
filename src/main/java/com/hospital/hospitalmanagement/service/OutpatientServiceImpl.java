@@ -226,9 +226,10 @@ public class OutpatientServiceImpl {
 //        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
 //    }
 
-    public List<GetOutpatientDTO> getAllPendingOutpatient(){
+    public List<GetOutpatientDTO> getAllPendingOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -284,9 +285,10 @@ public class OutpatientServiceImpl {
         return this.convertOutpatientEntityToResponse(savedOutpatient, getDoctorDTO, getPatientDTO);
     }
 
-    public List<GetOutpatientDTO> getAllProcessOutpatient(){
+    public List<GetOutpatientDTO> getAllProcessOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -342,9 +344,10 @@ public class OutpatientServiceImpl {
         return this.convertOutpatientEntityToResponse(savedOutpatient, getDoctorDTO, getPatientDTO);
     }
 
-    public List<GetOutpatientDTO> getAllDoneOutpatient(){
+    public List<GetOutpatientDTO> getAllDoneOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
