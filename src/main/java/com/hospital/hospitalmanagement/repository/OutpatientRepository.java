@@ -18,7 +18,7 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
 
     Long countByDate(LocalDate date);
 
-    List<OutpatientEntity> findAllByOutpatientConditionAndDate(OutpatientConditionEntity outpatientCondition, LocalDate date);
+    List<OutpatientEntity> findAllByOutpatientConditionAndDateOrderByQueueAsc(OutpatientConditionEntity outpatientCondition, LocalDate date);
 
     List<OutpatientEntity> findAllByDepartmentAndDate(DepartmentEntity department, LocalDate date);
 
@@ -34,4 +34,6 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
             nativeQuery = true
     )
     void truncateMyTable();
+
+    List<OutpatientEntity> findAllByPatientNameContains(String name);
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -229,7 +228,7 @@ public class OutpatientServiceImpl {
     public List<GetOutpatientDTO> getAllPendingOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);
         LocalDate now = LocalDate.now();
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDateOrderByQueueAsc(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -288,7 +287,7 @@ public class OutpatientServiceImpl {
     public List<GetOutpatientDTO> getAllProcessOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
         LocalDate now = LocalDate.now();
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDateOrderByQueueAsc(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -347,7 +346,7 @@ public class OutpatientServiceImpl {
     public List<GetOutpatientDTO> getAllDoneOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
         LocalDate now = LocalDate.now();
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDate(existCondition, now);
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDateOrderByQueueAsc(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -470,5 +469,25 @@ public class OutpatientServiceImpl {
     @Transactional
     public void truncateOutpatientTable(){
         this.outpatientRepository.truncateMyTable();
+    }
+
+    public List<GetOutpatientDTO> getAllOutpatientByPatient(String name){
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientNameContains(name);
+
+        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
+
+        for(OutpatientEntity outpatient : existOutpatientList){
+            UserEntity doctor = outpatient.getDoctor();
+            PatientEntity patient = outpatient.getPatient();
+
+            GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(doctor);
+            GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
+
+            GetOutpatientDTO getOutpatientDTO = this.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO);
+
+            outpatientDTOList.add(getOutpatientDTO);
+        }
+
+        return outpatientDTOList;
     }
 }
