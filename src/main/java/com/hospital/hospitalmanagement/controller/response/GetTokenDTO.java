@@ -12,6 +12,7 @@ import lombok.Setter;
 public class GetTokenDTO {
     private String role;
     private String message;
-    private String token;
     private String email;
+    private String token;
+
 }
