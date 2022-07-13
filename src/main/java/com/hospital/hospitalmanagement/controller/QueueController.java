@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.controller.dto.QueueDTO;
 import com.hospital.hospitalmanagement.entities.QueueEntity;
 import com.hospital.hospitalmanagement.service.QueueServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,12 @@ public class QueueController {
     QueueServiceImpl queueService;
 
     @GetMapping
-    public List<QueueEntity>getAllQueue(){
-        return this.queueService.getAllQueue();
+    public ResponseEntity<List<QueueEntity>>getAllQueue(){
+        return ResponseEntity.ok().body(this.queueService.getAllQueue());
     }
 
     @PostMapping
-    public QueueEntity createQueue(@RequestBody QueueDTO queueDTO){
-        return this.queueService.createQueue(queueDTO);
+    public ResponseEntity<QueueEntity> createQueue(@RequestBody QueueDTO queueDTO){
+        return ResponseEntity.ok().body(this.queueService.createQueue(queueDTO));
     }
 }

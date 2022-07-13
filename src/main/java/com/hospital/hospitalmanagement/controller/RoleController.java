@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.controller.dto.RoleDto;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.service.RoleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,13 +17,13 @@ public class RoleController {
     RoleServiceImpl roleService;
 
     @GetMapping
-    public List<RoleEntity> getAllRole(){
-        return this.roleService.getAllRole();
+    public ResponseEntity<List<RoleEntity>> getAllRole(){
+        return ResponseEntity.ok().body(this.roleService.getAllRole());
     }
 
     @PostMapping
-    public RoleEntity createRole(@RequestBody RoleDto roleDto){
-        return this.roleService.createRole(roleDto);
+    public ResponseEntity<RoleEntity> createRole(@RequestBody RoleDto roleDto){
+        return ResponseEntity.ok().body(this.roleService.createRole(roleDto));
     }
 
 }
