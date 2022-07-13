@@ -88,12 +88,16 @@ public class UserServiceImpl implements UserDetailsService {
         return this.userRepository.findByEmailAndRole(email, existRole);
     }
 
+    public UserEntity getUserByEmail(String email){
+         return this.userRepository.findByEmail(email);
+    }
+
     public UserEntity createAdmin(AdminDTO adminDTO) {
         RoleEntity existRole = this.roleService.getRoleById(1L);
 
-        UserEntity uniq = this.getAdminByEmail(adminDTO.getEmail());
+        UserEntity unique = this.getUserByEmail(adminDTO.getEmail());
 
-        if (uniq != null){
+        if (unique != null){
             throw new UnprocessableException("This Email Is Duplicate");
         }
 
@@ -242,7 +246,7 @@ public class UserServiceImpl implements UserDetailsService {
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
         RoleEntity role = roleService.getRoleById(2L);
 
-        UserEntity uniq = this.getDoctorByEmail(doctorDTO.getEmail());
+        UserEntity uniq = this.getUserByEmail(doctorDTO.getEmail());
 
         if (uniq != null){
             throw new UnprocessableException("This Email Is Duplicate");
@@ -343,6 +347,7 @@ public class UserServiceImpl implements UserDetailsService {
             GetTokenDTO getTokenDTO = new GetTokenDTO();
             getTokenDTO.setToken(jwt);
             getTokenDTO.setRole(existUser.getRole().getName());
+            getTokenDTO.setEmail(existUser.getEmail());
             return getTokenDTO;
         }catch (BadCredentialsException e){
             log.error("Bad Credential ", e);
