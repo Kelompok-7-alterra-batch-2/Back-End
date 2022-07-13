@@ -3,6 +3,8 @@ package com.hospital.hospitalmanagement.controller;
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
+import com.hospital.hospitalmanagement.controller.response.GetScheduleDTO;
+import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
 import com.hospital.hospitalmanagement.entities.ScheduleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.ScheduleServiceImpl;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalTime;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -82,22 +85,27 @@ public class DoctorController {
     }
 
     @GetMapping("/schedule/{id}")
-    public ScheduleEntity getScheduleById(@PathVariable("id") Long id){
+    public GetScheduleDTO getScheduleById(@PathVariable("id") Long id){
         return this.scheduleService.getById(id);
     }
 
     @GetMapping("/schedule")
-    public List<ScheduleEntity> getAllSchedule(){
+    public List<GetScheduleDTO> getAllSchedule(){
         return this.scheduleService.getAllSchedule();
     }
 
+    @GetMapping("/schedules/available")
+    public List<GetScheduleDTO> getAvailableSchedule(@RequestParam("department_id") Long departmentId ,@RequestParam("arrivalTime")String arrivalTime){
+        return this.scheduleService.getScheduleFromArrivalTime(departmentId, arrivalTime);
+    }
+
     @PostMapping("/schedule")
-    public ScheduleEntity createdSchedule(@RequestBody DoctorScheduleDTO doctorScheduleDTO){
+    public GetScheduleDTO createdSchedule(@RequestBody DoctorScheduleDTO doctorScheduleDTO){
         return this.scheduleService.createSchedule(doctorScheduleDTO);
     }
 
     @PutMapping("/schedule/{id}")
-    public ScheduleEntity newUpdateSchedule(@PathVariable("id") Long id, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
+    public GetScheduleDTO newUpdateSchedule(@PathVariable("id") Long id, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
         return this.scheduleService.updateSchedule(id,doctorScheduleDTO);
     }
 

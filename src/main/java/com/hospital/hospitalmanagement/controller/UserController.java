@@ -26,6 +26,7 @@ public class UserController {
             getTokenDTO.setToken(obj.getToken());
             getTokenDTO.setRole(obj.getRole());
             getTokenDTO.setMessage("Success");
+            getTokenDTO.setEmail(obj.getEmail());
             return ResponseEntity.ok().body(getTokenDTO);
         }catch (Exception e){
             getTokenDTO.setMessage(e.getMessage());

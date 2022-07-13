@@ -65,9 +65,9 @@ public class OutpatientController {
     }
 
 
-    @GetMapping("/pending")
-    public List<GetOutpatientDTO> getAllPendingOutpatient(){
-        return this.outpatientService.getAllPendingOutpatient();
+    @GetMapping("/pending/today")
+    public List<GetOutpatientDTO> getAllPendingOutpatientToday(){
+        return this.outpatientService.getAllPendingOutpatientToday();
     }
 
     @GetMapping("/pending/doctors/{doctorId}/today")
@@ -75,9 +75,9 @@ public class OutpatientController {
         return this.outpatientService.findAllTodayPendingOutpatientByDoctor(doctorId);
     }
 
-    @GetMapping("/process")
-    public List<GetOutpatientDTO> getAllProcessOutpatient(){
-        return this.outpatientService.getAllProcessOutpatient();
+    @GetMapping("/process/today")
+    public List<GetOutpatientDTO> getAllProcessOutpatientToday(){
+        return this.outpatientService.getAllProcessOutpatientToday();
     }
 
     @GetMapping("/process/doctors/{doctorId}/today")
@@ -90,9 +90,9 @@ public class OutpatientController {
         return this.outpatientService.processOutpatient(condition_id);
     }
 
-    @GetMapping("/done")
-    public List<GetOutpatientDTO> getAllDoneOutpatient(){
-        return this.outpatientService.getAllDoneOutpatient();
+    @GetMapping("/done/today")
+    public List<GetOutpatientDTO> getAllDoneOutpatientToday(){
+        return this.outpatientService.getAllDoneOutpatientToday();
     }
 
     @GetMapping("/done/doctors/{doctorId}/today")
@@ -128,5 +128,10 @@ public class OutpatientController {
     @PutMapping("/truncate")
     public void truncateOutpatientTable(){
         this.outpatientService.truncateOutpatientTable();
+    }
+
+    @GetMapping("/patients")
+    public List<GetOutpatientDTO> getAllOutpatientByPatientName(@RequestParam("name") String name){
+        return this.outpatientService.getAllOutpatientByPatient(name);
     }
 }
