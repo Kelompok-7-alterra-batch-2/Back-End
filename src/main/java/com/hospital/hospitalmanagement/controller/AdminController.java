@@ -6,7 +6,10 @@ import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
 import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,47 +25,48 @@ public class AdminController {
     UserServiceImpl userService;
 
     @GetMapping("/users")
-    public List<UserEntity> getAllUsers(){
-        return this.userService.getAllUser();
+    public ResponseEntity<List<UserEntity>> getAllUsers(){
+        return ResponseEntity.ok(this.userService.getAllUser());
     }
 
     @GetMapping
-    public List<UserEntity> getAllAdmin(){
-        return this.userService.getAllAdmin();
+    public ResponseEntity<List<UserEntity>> getAllAdmin(){
+        return ResponseEntity.ok().body(this.userService.getAllAdmin());
     }
 
     @GetMapping("/{id}")
-    public UserEntity getAdminById(@PathVariable("id") Long id){
+    public ResponseEntity<UserEntity> getAdminById(@PathVariable("id") Long id){
         UserEntity user=this.userService.getAdminById(id);
         if (user == null){
             throw new NotFoundException("Data Not Found");
         }
-        return user;
+        return ResponseEntity.ok().body(user);
     }
 
     @PostMapping
-    public UserEntity createUserAdmin(@Valid @RequestBody AdminDTO adminDTO) {
-        return this.userService.createAdmin(adminDTO);
+    public ResponseEntity<UserEntity> createUserAdmin(@Valid @RequestBody AdminDTO adminDTO) {
+        return ResponseEntity.ok().body(this.userService.createAdmin(adminDTO));
     }
 
 
     @PutMapping("/{id}")
-    public UserEntity updateAdminById(@Valid @RequestBody AdminDTO adminDTO, @PathVariable("id") Long id){
-        return this.userService.updateAdmin(id, adminDTO);
+    public ResponseEntity<UserEntity> updateAdminById(@Valid @RequestBody AdminDTO adminDTO, @PathVariable("id") Long id){
+        return ResponseEntity.ok().body(this.userService.updateAdmin(id, adminDTO));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAdminById(@PathVariable("id")Long id){
+    public ResponseEntity<Void> deleteAdminById(@PathVariable("id")Long id){
         this.userService.deleteAdmin(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/emails/{email}")
-    public UserEntity getAdminByEmail(@PathVariable("email") String email){
+    public ResponseEntity<UserEntity> getAdminByEmail(@PathVariable("email") String email){
         UserEntity user = this.userService.getAdminByEmail(email);
         if (user == null){
             throw new NotFoundException("Data Not Found");
         }
-        return user;
+        return ResponseEntity.ok().body(user);
     }
 
 }
