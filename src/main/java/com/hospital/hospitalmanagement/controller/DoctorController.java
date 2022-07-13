@@ -12,6 +12,7 @@ import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,38 +30,38 @@ public class DoctorController {
     ScheduleServiceImpl scheduleService;
 
     @GetMapping("/count")
-    public Long countAllDoctor(){
-        return this.userService.countDoctor();
+    public ResponseEntity<Long> countAllDoctor(){
+        return ResponseEntity.ok().body(this.userService.countDoctor());
     }
 
     @GetMapping
-    public List<GetDoctorTwoDTO> getAllDoctor(){
-        return this.userService.getAllDoctor();
+    public ResponseEntity<List<GetDoctorTwoDTO>> getAllDoctor(){
+        return ResponseEntity.ok().body(this.userService.getAllDoctor());
     }
 
     @GetMapping("/{id}")
-    public GetDoctorTwoDTO getDoctorById(@PathVariable("id") Long id){
-        return this.userService.getById(id);
+    public ResponseEntity<GetDoctorTwoDTO> getDoctorById(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(this.userService.getById(id));
     }
 
     @GetMapping("/departments/{departmentId}")
-    public List<UserEntity> getAllDoctorByDepartment(@PathVariable("departmentId") Long departmentId){
-        return this.userService.getDoctorByDepartment(departmentId);
+    public ResponseEntity<List<UserEntity>> getAllDoctorByDepartment(@PathVariable("departmentId") Long departmentId){
+        return ResponseEntity.ok().body(this.userService.getDoctorByDepartment(departmentId));
     }
 
     @GetMapping("/emails")
-    public UserEntity getDoctorByEmail(@RequestParam("email") String email){
-        return this.userService.getDoctorByEmail(email);
+    public ResponseEntity<UserEntity> getDoctorByEmail(@RequestParam("email") String email){
+        return ResponseEntity.ok().body(this.userService.getDoctorByEmail(email));
     }
 
     @PostMapping
-    public UserEntity createDoctor(@Valid @RequestBody DoctorDTO doctorDTO){
-        return this.userService.createDoctor(doctorDTO);
+    public ResponseEntity<UserEntity> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO){
+        return ResponseEntity.ok().body(this.userService.createDoctor(doctorDTO));
     }
 
     @PutMapping("/{id}")
-    public UserEntity updateDoctorById(@Valid @RequestBody DoctorDTO doctorDTO, @PathVariable("id") Long id){
-        return this.userService.updateDoctor(id, doctorDTO);
+    public ResponseEntity<UserEntity> updateDoctorById(@Valid @RequestBody DoctorDTO doctorDTO, @PathVariable("id") Long id){
+        return ResponseEntity.ok().body(this.userService.updateDoctor(id, doctorDTO));
     }
 
 //    @PutMapping("/{id}/schedule")
@@ -75,38 +76,38 @@ public class DoctorController {
     }
 
     @GetMapping("/names/{name}")
-    public List<UserEntity> getDoctorByName(@PathVariable("name") String name){
-        return this.userService.getDoctorByName(name);
+    public ResponseEntity<List<UserEntity>> getDoctorByName(@PathVariable("name") String name){
+        return ResponseEntity.ok().body(this.userService.getDoctorByName(name));
     }
 
     @GetMapping("/page/{index}/{element}")
-    public Page<UserEntity> getAllDoctorPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
-        return this.userService.getAllDoctorPaginate(index, element);
+    public ResponseEntity<Page<UserEntity>> getAllDoctorPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
+        return ResponseEntity.ok().body(this.userService.getAllDoctorPaginate(index, element));
     }
 
     @GetMapping("/schedule/{id}")
-    public GetScheduleDTO getScheduleById(@PathVariable("id") Long id){
-        return this.scheduleService.getById(id);
+    public ResponseEntity<GetScheduleDTO> getScheduleById(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(this.scheduleService.getById(id));
     }
 
     @GetMapping("/schedule")
-    public List<GetScheduleDTO> getAllSchedule(){
-        return this.scheduleService.getAllSchedule();
+    public ResponseEntity<List<GetScheduleDTO>> getAllSchedule(){
+        return ResponseEntity.ok().body(this.scheduleService.getAllSchedule());
     }
 
     @GetMapping("/schedules/available")
-    public List<GetScheduleDTO> getAvailableSchedule(@RequestParam("department_id") Long departmentId ,@RequestParam("arrivalTime")String arrivalTime){
-        return this.scheduleService.getScheduleFromArrivalTime(departmentId, arrivalTime);
+    public ResponseEntity<List<GetScheduleDTO>> getAvailableSchedule(@RequestParam("department_id") Long departmentId ,@RequestParam("arrivalTime")String arrivalTime){
+        return ResponseEntity.ok().body(this.scheduleService.getScheduleFromArrivalTime(departmentId, arrivalTime));
     }
 
     @PostMapping("/schedule")
-    public GetScheduleDTO createdSchedule(@RequestBody DoctorScheduleDTO doctorScheduleDTO){
-        return this.scheduleService.createSchedule(doctorScheduleDTO);
+    public ResponseEntity<GetScheduleDTO> createdSchedule(@RequestBody DoctorScheduleDTO doctorScheduleDTO){
+        return ResponseEntity.ok().body(this.scheduleService.createSchedule(doctorScheduleDTO));
     }
 
     @PutMapping("/schedule/{id}")
-    public GetScheduleDTO newUpdateSchedule(@PathVariable("id") Long id, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
-        return this.scheduleService.updateSchedule(id,doctorScheduleDTO);
+    public ResponseEntity<GetScheduleDTO> newUpdateSchedule(@PathVariable("id") Long id, @RequestBody DoctorScheduleDTO doctorScheduleDTO){
+        return ResponseEntity.ok().body(this.scheduleService.updateSchedule(id,doctorScheduleDTO));
     }
 
     @DeleteMapping("/schedule/{id}")
