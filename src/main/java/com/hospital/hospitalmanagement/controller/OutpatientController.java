@@ -130,8 +130,8 @@ public class OutpatientController {
         this.outpatientService.truncateOutpatientTable();
     }
 
-    @GetMapping("/patients")
-    public List<GetOutpatientDTO> getAllOutpatientByPatientName(@RequestParam("name") String name){
+    @GetMapping("/patients/today")
+    public List<GetOutpatientDTO> getAllOutpatientByPatientNameToday(@RequestParam("name") String name){
         return this.outpatientService.getAllOutpatientByPatient(name);
     }
 }

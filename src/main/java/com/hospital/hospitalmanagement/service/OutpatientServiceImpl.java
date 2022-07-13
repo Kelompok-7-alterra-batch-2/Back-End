@@ -472,7 +472,8 @@ public class OutpatientServiceImpl {
     }
 
     public List<GetOutpatientDTO> getAllOutpatientByPatient(String name){
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientNameContains(name);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientNameContainsAndDate(name, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
