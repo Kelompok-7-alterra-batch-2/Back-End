@@ -9,24 +9,27 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class HospitalManagementApplication {
-	@Configuration
-	public class CorsConfig implements WebMvcConfigurer {
-		@Bean
-		public WebMvcConfigurer corsConfigurer() {
-			return new WebMvcConfigurer() {
-				@Override
-				public void addCorsMappings(CorsRegistry registry) {
-					registry.addMapping("/**")
-							.allowedOrigins("*")
-							.allowedHeaders("*");
-				}
-			};
-		}
-	}
-
-
 	public static void main(String[] args) {
 		SpringApplication.run(HospitalManagementApplication.class, args);
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/admins/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/bloods/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/departments/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/doctors/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/genders/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/outpatientCondition/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/outpatients/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/patients/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/roles/**").allowedOrigins("**").allowedHeaders("**");
+				registry.addMapping("/users/**").allowedOrigins("**").allowedHeaders("**");
+			}
+		};
 	}
 
 }
