@@ -133,6 +133,11 @@ public class OutpatientController {
 
     @GetMapping("/patients/today")
     public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientNameToday(@RequestParam("name") String name){
-        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatient(name));
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientName(name));
+    }
+
+    @GetMapping("/patients/{patientId}")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientIdToday(@PathVariable("patientId") Long patientId){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientIdToday(patientId));
     }
 }

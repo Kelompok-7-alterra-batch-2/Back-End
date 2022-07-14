@@ -471,9 +471,32 @@ public class OutpatientServiceImpl {
         this.outpatientRepository.truncateMyTable();
     }
 
-    public List<GetOutpatientDTO> getAllOutpatientByPatient(String name){
+    public List<GetOutpatientDTO> getAllOutpatientByPatientName(String name){
         LocalDate now = LocalDate.now();
         List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientNameContainsIgnoreCaseAndDate(name, now);
+
+        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
+
+        for(OutpatientEntity outpatient : existOutpatientList){
+            UserEntity doctor = outpatient.getDoctor();
+            PatientEntity patient = outpatient.getPatient();
+
+            GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(doctor);
+            GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
+
+            GetOutpatientDTO getOutpatientDTO = this.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO);
+
+            outpatientDTOList.add(getOutpatientDTO);
+        }
+
+        return outpatientDTOList;
+    }
+
+    public List<GetOutpatientDTO> getAllOutpatientByPatientIdToday(Long patientId) {
+        PatientEntity existPatient = this.patientService.getPatientById(patientId);
+        LocalDate now = LocalDate.now();
+
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientAndDate(existPatient, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
