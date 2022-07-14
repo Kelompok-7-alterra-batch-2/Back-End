@@ -167,7 +167,7 @@ public class PatientServiceImplTest {
 
         String name = patient1.getName();
 
-        when(this.patientRepository.findByNameContains(name)).thenReturn(patientList);
+        when(this.patientRepository.findByNameContainsIgnoreCase(name)).thenReturn(patientList);
 
         // When
         var result = this.patientService.getPatientByName(name);
