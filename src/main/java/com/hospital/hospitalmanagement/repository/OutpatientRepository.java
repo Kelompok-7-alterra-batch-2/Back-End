@@ -1,9 +1,6 @@
 package com.hospital.hospitalmanagement.repository;
 
-import com.hospital.hospitalmanagement.entities.DepartmentEntity;
-import com.hospital.hospitalmanagement.entities.OutpatientConditionEntity;
-import com.hospital.hospitalmanagement.entities.OutpatientEntity;
-import com.hospital.hospitalmanagement.entities.UserEntity;
+import com.hospital.hospitalmanagement.entities.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +33,6 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
     void truncateMyTable();
 
     List<OutpatientEntity> findAllByPatientNameContainsIgnoreCaseAndDate(String name, LocalDate date);
+
+    List<OutpatientEntity> findAllByPatientAndDate(PatientEntity patient, LocalDate date);
 }
