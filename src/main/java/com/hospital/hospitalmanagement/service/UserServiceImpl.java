@@ -123,10 +123,17 @@ public class UserServiceImpl implements UserDetailsService {
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
 
+        UserEntity unique = this.getUserByEmail(adminDTO.getEmail());
+
+        if (unique != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
+
         existAdmin.setName(adminDTO.getName());
+        existAdmin.setUsername(adminDTO.getEmail());
         existAdmin.setDob(dob);
         existAdmin.setEmail(adminDTO.getEmail());
-        existAdmin.setPassword(adminDTO.getPassword());
+        existAdmin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
         existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
 
         return this.userRepository.save(existAdmin);
@@ -273,11 +280,18 @@ public class UserServiceImpl implements UserDetailsService {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
 
+        UserEntity uniq = this.getUserByEmail(doctorDTO.getEmail());
+
+        if (uniq != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
+
         UserEntity existDoctor = this.getDoctorById(id);
         existDoctor.setName(doctorDTO.getName());
         existDoctor.setDob(dob);
+        existDoctor.setUsername(doctorDTO.getEmail());
         existDoctor.setEmail(doctorDTO.getEmail());
-        existDoctor.setPassword(doctorDTO.getPassword());
+        existDoctor.setPassword(passwordEncoder.encode(doctorDTO.getPassword()));
         existDoctor.setDepartment(existDepartment);
         existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
         existDoctor.setNid(doctorDTO.getNid());
