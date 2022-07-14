@@ -162,5 +162,4 @@ public class PatientServiceImpl {
     public Page<PatientEntity> getAllPatientPaginate(int index, int element) {
         return this.patientRepository.findAll(PageRequest.of(index, element));
     }
-
 }
