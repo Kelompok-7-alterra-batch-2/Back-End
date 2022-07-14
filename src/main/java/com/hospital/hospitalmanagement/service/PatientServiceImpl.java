@@ -156,7 +156,7 @@ public class PatientServiceImpl {
     }
 
     public List<PatientEntity> getPatientByName(String name) {
-        return this.patientRepository.findByNameContains(name);
+        return this.patientRepository.findByNameContainsIgnoreCase(name);
     }
 
     public Page<PatientEntity> getAllPatientPaginate(int index, int element) {

@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserDetailsService {
     public List<UserEntity> getDoctorByName(String name){
         RoleEntity existRole = this.roleService.getRoleById(2L);
 
-        return this.userRepository.findByNameContainsAndRole(name, existRole);
+        return this.userRepository.findByNameContainsIgnoreCaseAndRole(name, existRole);
     }
 
     public UserEntity getDoctorByEmail(String email){
