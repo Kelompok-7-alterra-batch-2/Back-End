@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
-    List<PatientEntity> findByNameContains(String name);
+    List<PatientEntity> findByNameContainsIgnoreCase(String name);
 
 //    @Modifying
 //    @Query(

@@ -313,7 +313,7 @@ public class UserServiceImplTest {
         List<UserEntity> userList = List.of(user1, user2);
 
         when(this.roleService.getRoleById(2L)).thenReturn(role);
-        when(this.userRepository.findByNameContainsAndRole(name, role)).thenReturn(userList);
+        when(this.userRepository.findByNameContainsIgnoreCaseAndRole(name, role)).thenReturn(userList);
 
         var result = this.userService.getDoctorByName(name);
 

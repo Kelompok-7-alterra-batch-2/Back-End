@@ -35,5 +35,5 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
     )
     void truncateMyTable();
 
-    List<OutpatientEntity> findAllByPatientNameContainsAndDate(String name, LocalDate date);
+    List<OutpatientEntity> findAllByPatientNameContainsIgnoreCaseAndDate(String name, LocalDate date);
 }
