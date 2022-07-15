@@ -75,6 +75,31 @@ public class ScheduleServiceImpl {
         return getScheduleDTOList;
     }
 
+    public List<GetScheduleDTO> getScheduleByDepartment(Long departmentId){
+        DepartmentEntity existDepartment = this.departmentService.getDepartmentById(departmentId);
+
+        List<ScheduleEntity> existSchedule = this.scheduleRepository.findByDepartment(existDepartment);
+
+        List<GetScheduleDTO> getScheduleDTOList = existSchedule.stream()
+                .map(schedule -> convertFromScheduleEntityToGetScheduleDTO(
+                        schedule,
+                        this.mapper.map(schedule.getDoctor(), GetDoctorDTO.class)
+                )).collect(Collectors.toList());
+        return getScheduleDTOList;
+    }
+
+    public List<GetScheduleDTO> getScheduleByDoctorName(String doctor){
+
+        List<ScheduleEntity> existSchedule = this.scheduleRepository.findByDoctor(doctor);
+
+        List<GetScheduleDTO> getScheduleDTOList = existSchedule.stream()
+                .map(schedule -> convertFromScheduleEntityToGetScheduleDTO(
+                        schedule,
+                        this.mapper.map(schedule.getDoctor(), GetDoctorDTO.class)
+                )).collect(Collectors.toList());
+        return getScheduleDTOList;
+    }
+
     public GetScheduleDTO createSchedule(DoctorScheduleDTO doctorScheduleDTO) {
         UserEntity existDoctor = this.userService.getDoctorById(doctorScheduleDTO.getDoctor_id());
 

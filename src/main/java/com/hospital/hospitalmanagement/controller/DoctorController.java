@@ -116,4 +116,14 @@ public class DoctorController {
         return HttpStatus.OK;
     }
 
+    @GetMapping("/schedule/department/{id}")
+    public ResponseEntity<List<GetScheduleDTO>> getScheduleByDepartment(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(this.scheduleService.getScheduleByDepartment(id));
+    }
+
+    @GetMapping("/schedule/doctor/{name}")
+    public ResponseEntity<List<GetScheduleDTO>> getScheduleByDoctorName(@PathVariable("name") String name){
+        return ResponseEntity.ok().body(this.scheduleService.getScheduleByDoctorName(name));
+    }
+
 }

@@ -4,9 +4,11 @@ import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -136,8 +138,18 @@ public class OutpatientController {
         return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientName(name));
     }
 
-    @GetMapping("/patients/{patientId}")
+    @GetMapping("/patients/today/{patientId}")
     public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientIdToday(@PathVariable("patientId") Long patientId){
         return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientIdToday(patientId));
+    }
+
+    @GetMapping("/patients/{patientId}")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientId(@PathVariable("patientId") Long patientId){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientId(patientId));
+    }
+
+    @GetMapping("/page/{index}/{element}")
+    public ResponseEntity<Page<OutpatientEntity>> getAllOutpatientPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPaginate(index, element));
     }
 }
