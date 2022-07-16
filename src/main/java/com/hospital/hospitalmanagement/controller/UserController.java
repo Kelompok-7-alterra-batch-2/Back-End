@@ -23,7 +23,8 @@ public class UserController {
         try{
             GetTokenDTO obj = this.userService.generateToken(usernamePasswordDTO);
 
-            getTokenDTO.setToken(obj.getToken());
+            getTokenDTO.setAccessToken(obj.getAccessToken());
+            getTokenDTO.setRefreshToken(obj.getRefreshToken());
             getTokenDTO.setRole(obj.getRole());
             getTokenDTO.setMessage("Success");
             getTokenDTO.setEmail(obj.getEmail());

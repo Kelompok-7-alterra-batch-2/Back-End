@@ -6,38 +6,59 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Component
 public class JwtProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    private Long expiration = 1000L * 60 * 60;
+    private Long expirationAccessToken = 10L * 60 * 60;
+    private Long expirationRefreshToken = 1000L * 60 * 60;
 
-    public String generateToken(Authentication authentication){
+    public Map<String, String> generateToken(Authentication authentication){
         final UserEntity user = (UserEntity) authentication.getPrincipal();
 
         Date now = new Date(System.currentTimeMillis());
-        Date expiryDate = new Date(now.getTime() + expiration);
+        Date expiryDateAccessToken = new Date(now.getTime() + expirationAccessToken);
+        Date expiryDateRefreshToken = new Date(now.getTime() + expirationRefreshToken);
+
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", user.getUsername());
-        claims.put("role", user.getRole().getName());
+        claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
 
-        return Jwts.builder()
+        String access_token = Jwts.builder()
                 .setId(user.getId().toString()) // with claims, this will be replaced
                 .setSubject(user.getUsername()) // with claims, this will be replaced
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
+                .setExpiration(expiryDateAccessToken)
                 .signWith(key)
                 .compact();
+
+        String refresh_token = Jwts.builder()
+                .setId(user.getId().toString()) // with claims, this will be replaced
+                .setSubject(user.getUsername()) // with claims, this will be replaced
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiryDateRefreshToken)
+                .signWith(key)
+                .compact();
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", access_token);
+        tokens.put("refresh_token", refresh_token);
+
+        return tokens;
     }
 
     public boolean validateToken(String token){

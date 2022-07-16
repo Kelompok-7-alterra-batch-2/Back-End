@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -344,6 +345,7 @@ public class UserServiceImpl implements UserDetailsService {
         if(existUser == null){
             throw new UsernameNotFoundException("Username Not Found");
         }
+
         return existUser;
     }
 
@@ -356,10 +358,11 @@ public class UserServiceImpl implements UserDetailsService {
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtProvider.generateToken(authentication);
+            Map<String, String> tokens = jwtProvider.generateToken(authentication);
             UserEntity existUser = this.userRepository.getDistinctTopByUsername(usernamePasswordDTO.getEmail());
             GetTokenDTO getTokenDTO = new GetTokenDTO();
-            getTokenDTO.setToken(jwt);
+            getTokenDTO.setAccessToken(tokens.get("access_token"));
+            getTokenDTO.setRefreshToken(tokens.get("refresh_token"));
             getTokenDTO.setRole(existUser.getRole().getName());
             getTokenDTO.setEmail(existUser.getEmail());
             return getTokenDTO;

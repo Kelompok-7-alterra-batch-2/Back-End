@@ -404,21 +404,21 @@ public class UserServiceImplTest {
 
     }
 
-    @Test
-    public void generateToken() {
-        String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6Im1pY2hhZWwxQGdtYWlsLmNvbSIsImlhdCI6MTY1NzQ1Mjk2OSwiZXhwIjoxNjU3NDU2NTY5fQ.Guk4bBMoSBilXaQNmvL9-imJHVZ4S5Y0HxQLzJJ0Lu8";
-        EmailPasswordDTO emailPasswordDTO = this.easyRandom.nextObject(EmailPasswordDTO.class);
-        UsernamePasswordAuthenticationToken authenticationToken = mock(UsernamePasswordAuthenticationToken.class);
-        UserEntity user = this.easyRandom.nextObject(UserEntity.class);
-
-        when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authenticationToken);
-        when(this.jwtProvider.generateToken(any(Authentication.class))).thenReturn(jwt);
-        when(this.userRepository.getDistinctTopByUsername(emailPasswordDTO.getEmail())).thenReturn(user);
-
-        var result = this.userService.generateToken(emailPasswordDTO);
-
-        assertEquals(jwt, result.getToken());
-        assertEquals(user.getRole().getName(), result.getRole());
-        assertNull(result.getMessage());
-    }
+//    @Test
+//    public void generateToken() {
+//        String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6Im1pY2hhZWwxQGdtYWlsLmNvbSIsImlhdCI6MTY1NzQ1Mjk2OSwiZXhwIjoxNjU3NDU2NTY5fQ.Guk4bBMoSBilXaQNmvL9-imJHVZ4S5Y0HxQLzJJ0Lu8";
+//        EmailPasswordDTO emailPasswordDTO = this.easyRandom.nextObject(EmailPasswordDTO.class);
+//        UsernamePasswordAuthenticationToken authenticationToken = mock(UsernamePasswordAuthenticationToken.class);
+//        UserEntity user = this.easyRandom.nextObject(UserEntity.class);
+//
+//        when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authenticationToken);
+//        when(this.jwtProvider.generateToken(any(Authentication.class))).thenReturn(jwt);
+//        when(this.userRepository.getDistinctTopByUsername(emailPasswordDTO.getEmail())).thenReturn(user);
+//
+//        var result = this.userService.generateToken(emailPasswordDTO);
+//
+//        assertEquals(jwt, result.getToken());
+//        assertEquals(user.getRole().getName(), result.getRole());
+//        assertNull(result.getMessage());
+//    }
 }

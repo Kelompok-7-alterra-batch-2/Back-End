@@ -13,6 +13,7 @@ public class GetTokenDTO {
     private String role;
     private String message;
     private String email;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
 }
