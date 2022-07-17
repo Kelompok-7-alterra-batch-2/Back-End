@@ -169,9 +169,23 @@ public class OutpatientServiceImplTest {
         OutpatientConditionEntity outpatientCondition = this.easyRandom.nextObject(OutpatientConditionEntity.class);
         OutpatientEntity outpatient = this.easyRandom.nextObject(OutpatientEntity.class);
 
-        GetDoctorDTO getDoctorDTO = this.mapper.map(outpatient.getDoctor(), GetDoctorDTO.class);
-        GetPatientDTO getPatientDTO = this.mapper.map(outpatient.getPatient(), GetPatientDTO.class);
-        GetOutpatientDTO getOutpatientDTO = this.mapper.map(outpatient, GetOutpatientDTO.class);
+        GetDoctorDTO getDoctorDTO = this.mapper.map(doctor, GetDoctorDTO.class);
+        GetPatientDTO getPatientDTO = this.mapper.map(patient, GetPatientDTO.class);
+        GetOutpatientDTO getOutpatientDTO = GetOutpatientDTO.builder()
+                .id(outpatient.getId())
+                .arrivalTime(outpatientDTO.getArrivalTime())
+                .date(outpatientDTO.getDate())
+                .department(departmentEntity)
+                .outpatientCondition(outpatientCondition)
+                .doctor(getDoctorDTO)
+                .patient(getPatientDTO)
+                .queue(outpatientDTO.getQueue())
+                .appointmentReason(outpatientDTO.getAppointmentReason())
+                .prescription(outpatient.getPrescription())
+                .diagnosis(outpatient.getDiagnosis())
+                .createAt(outpatient.getCreatedAt())
+                .build();
+
 
         when(this.patientService.getPatientById(outpatientDTO.getPatient_id())).thenReturn(patient);
         when(this.userService.getDoctorById(outpatientDTO.getDoctor_id())).thenReturn(doctor);
@@ -185,7 +199,16 @@ public class OutpatientServiceImplTest {
 
         var result = this.outpatientService.updateOutpatient(id, outpatientDTO);
 
-        assertEquals(getOutpatientDTO, result);
+        assertEquals(getOutpatientDTO.getId(), result.getId());
+        assertEquals(getOutpatientDTO.getAppointmentReason(), result.getAppointmentReason());
+        assertEquals(getOutpatientDTO.getArrivalTime(), result.getArrivalTime());
+        assertEquals(getOutpatientDTO.getDate(), result.getDate());
+        assertEquals(getOutpatientDTO.getOutpatientCondition(), result.getOutpatientCondition());
+        assertEquals(getOutpatientDTO.getDoctor().getId(), result.getDoctor().getId());
+        assertEquals(getOutpatientDTO.getDepartment(), result.getDepartment());
+        assertEquals(getOutpatientDTO.getDiagnosis(), result.getDiagnosis());
+        assertEquals(getOutpatientDTO.getPrescription(), result.getPrescription());
+        assertEquals(getOutpatientDTO.getPatient().getId(), result.getPatient().getId());
 
     }
 
@@ -515,6 +538,43 @@ public class OutpatientServiceImplTest {
 
     @Test
     public void getAllTodayOutpatientByDepartment() {
+        // Given
+        LocalDate now = LocalDate.now();
+        UserEntity existDoctor = this.easyRandom.nextObject(UserEntity.class);
+        OutpatientConditionEntity existCondition = this.easyRandom.nextObject(OutpatientConditionEntity.class);
+        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+        OutpatientEntity outpatient1 = this.easyRandom.nextObject(OutpatientEntity.class);
+        OutpatientEntity outpatient2 = this.easyRandom.nextObject(OutpatientEntity.class);
+
+        List<OutpatientEntity> outpatientList = List.of(outpatient1, outpatient2);
+
+        GetOutpatientDTO outpatientDto1 = this.mapper.map(outpatient1, GetOutpatientDTO.class);
+        GetOutpatientDTO outpatientDto2 = this.mapper.map(outpatient2, GetOutpatientDTO.class);
+
+        List<GetOutpatientDTO> outpatientDTOList = List.of(outpatientDto1, outpatientDto2);
+
+        when(this.departmentService.getDepartmentById(id)).thenReturn(department);
+        when(this.outpatientRepository.findAllByDepartmentAndDate(department, now)).thenReturn(outpatientList);
+
+        // When
+        var result = this.outpatientService.getAllTodayOutpatientByDepartment(id);
+
+        // Then
+        for (int i = 0; i < outpatientDTOList.size(); i++) {
+            GetOutpatientDTO dto = outpatientDTOList.get(i);
+            GetOutpatientDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getAppointmentReason(), res.getAppointmentReason());
+            assertEquals(dto.getArrivalTime(), res.getArrivalTime());
+            assertEquals(dto.getDate(), res.getDate());
+            assertEquals(dto.getOutpatientCondition(), res.getOutpatientCondition());
+            assertEquals(dto.getDoctor().getId(), res.getDoctor().getId());
+            assertEquals(dto.getDepartment(), res.getDepartment());
+            assertEquals(dto.getDiagnosis(), res.getDiagnosis());
+            assertEquals(dto.getPrescription(), res.getPrescription());
+            assertEquals(dto.getPatient().getId(), res.getPatient().getId());
+        }
     }
 
     @Test
@@ -622,5 +682,89 @@ public class OutpatientServiceImplTest {
 
         // Then
         verify(this.outpatientRepository, times(1)).truncateMyTable();
+    }
+
+    @Test
+    public void getAllOutpatientByPatientName() {
+        // Given
+        String name = "michael";
+        LocalDate now = LocalDate.now();
+        UserEntity existDoctor = this.easyRandom.nextObject(UserEntity.class);
+        OutpatientConditionEntity existCondition = this.easyRandom.nextObject(OutpatientConditionEntity.class);
+        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+        OutpatientEntity outpatient1 = this.easyRandom.nextObject(OutpatientEntity.class);
+        OutpatientEntity outpatient2 = this.easyRandom.nextObject(OutpatientEntity.class);
+
+        List<OutpatientEntity> outpatientList = List.of(outpatient1, outpatient2);
+
+        GetOutpatientDTO outpatientDto1 = this.mapper.map(outpatient1, GetOutpatientDTO.class);
+        GetOutpatientDTO outpatientDto2 = this.mapper.map(outpatient2, GetOutpatientDTO.class);
+
+        List<GetOutpatientDTO> outpatientDTOList = List.of(outpatientDto1, outpatientDto2);
+
+        when(this.outpatientRepository.findAllByPatientNameContainsIgnoreCaseAndDate(name, now)).thenReturn(outpatientList);
+
+        // When
+        var result = this.outpatientService.getAllOutpatientByPatientName(name);
+
+        // Then
+        for (int i = 0; i < outpatientDTOList.size(); i++) {
+            GetOutpatientDTO dto = outpatientDTOList.get(i);
+            GetOutpatientDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getAppointmentReason(), res.getAppointmentReason());
+            assertEquals(dto.getArrivalTime(), res.getArrivalTime());
+            assertEquals(dto.getDate(), res.getDate());
+            assertEquals(dto.getOutpatientCondition(), res.getOutpatientCondition());
+            assertEquals(dto.getDoctor().getId(), res.getDoctor().getId());
+            assertEquals(dto.getDepartment(), res.getDepartment());
+            assertEquals(dto.getDiagnosis(), res.getDiagnosis());
+            assertEquals(dto.getPrescription(), res.getPrescription());
+            assertEquals(dto.getPatient().getId(), res.getPatient().getId());
+        }
+    }
+
+    @Test
+    public void getAllOutpatientByPatientIdToday() {
+        // Given
+        String name = "michael";
+        LocalDate now = LocalDate.now();
+        UserEntity existDoctor = this.easyRandom.nextObject(UserEntity.class);
+        OutpatientConditionEntity existCondition = this.easyRandom.nextObject(OutpatientConditionEntity.class);
+        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+        PatientEntity patient = this.easyRandom.nextObject(PatientEntity.class);
+        OutpatientEntity outpatient1 = this.easyRandom.nextObject(OutpatientEntity.class);
+        OutpatientEntity outpatient2 = this.easyRandom.nextObject(OutpatientEntity.class);
+
+        List<OutpatientEntity> outpatientList = List.of(outpatient1, outpatient2);
+
+        GetOutpatientDTO outpatientDto1 = this.mapper.map(outpatient1, GetOutpatientDTO.class);
+        GetOutpatientDTO outpatientDto2 = this.mapper.map(outpatient2, GetOutpatientDTO.class);
+
+        List<GetOutpatientDTO> outpatientDTOList = List.of(outpatientDto1, outpatientDto2);
+
+        when(this.patientService.getPatientById(id)).thenReturn(patient);
+        when(this.outpatientRepository.findAllByPatientAndDate(patient, now)).thenReturn(outpatientList);
+
+        // When
+        var result = this.outpatientService.getAllOutpatientByPatientIdToday(id);
+
+        // Then
+        for (int i = 0; i < outpatientDTOList.size(); i++) {
+            GetOutpatientDTO dto = outpatientDTOList.get(i);
+            GetOutpatientDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getAppointmentReason(), res.getAppointmentReason());
+            assertEquals(dto.getArrivalTime(), res.getArrivalTime());
+            assertEquals(dto.getDate(), res.getDate());
+            assertEquals(dto.getOutpatientCondition(), res.getOutpatientCondition());
+            assertEquals(dto.getDoctor().getId(), res.getDoctor().getId());
+            assertEquals(dto.getDepartment(), res.getDepartment());
+            assertEquals(dto.getDiagnosis(), res.getDiagnosis());
+            assertEquals(dto.getPrescription(), res.getPrescription());
+            assertEquals(dto.getPatient().getId(), res.getPatient().getId());
+        }
     }
 }

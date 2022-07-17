@@ -87,7 +87,9 @@ public class ScheduleServiceImpl {
 
         ScheduleEntity savedSchedule = this.scheduleRepository.save(newSchedule);
 
-        return this.convertFromScheduleEntityToGetScheduleDTO(savedSchedule, this.mapper.map(existDoctor, GetDoctorDTO.class));
+        GetDoctorDTO getDoctorDTO = this.mapper.map(existDoctor, GetDoctorDTO.class);
+
+        return this.convertFromScheduleEntityToGetScheduleDTO(savedSchedule, getDoctorDTO);
     }
 
     public GetScheduleDTO updateSchedule(Long id,DoctorScheduleDTO doctorScheduleDTO) {
@@ -100,7 +102,9 @@ public class ScheduleServiceImpl {
 
         ScheduleEntity savedSchedule = this.scheduleRepository.save(schedule);
 
-        return this.convertFromScheduleEntityToGetScheduleDTO(savedSchedule, this.mapper.map(savedSchedule.getDoctor(), GetDoctorDTO.class));
+        GetDoctorDTO newDoctor = this.mapper.map(savedSchedule.getDoctor(), GetDoctorDTO.class);
+
+        return this.convertFromScheduleEntityToGetScheduleDTO(savedSchedule, newDoctor);
     }
 
     public void deleteSchedule(Long id){
