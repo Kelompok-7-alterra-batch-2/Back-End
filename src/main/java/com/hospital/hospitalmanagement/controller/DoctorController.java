@@ -116,13 +116,13 @@ public class DoctorController {
         return HttpStatus.OK;
     }
 
-    @GetMapping("/schedule/department/{id}")
+    @GetMapping("/schedule/departments/{id}")
     public ResponseEntity<List<GetScheduleDTO>> getScheduleByDepartment(@PathVariable("id") Long id){
         return ResponseEntity.ok().body(this.scheduleService.getScheduleByDepartment(id));
     }
 
-    @GetMapping("/schedule/doctor/{name}")
-    public ResponseEntity<List<GetScheduleDTO>> getScheduleByDoctorName(@PathVariable("name") String name){
+    @GetMapping("/schedule/doctor")
+    public ResponseEntity<List<GetScheduleDTO>> getScheduleByDoctorName(@RequestParam("name") String name){
         return ResponseEntity.ok().body(this.scheduleService.getScheduleByDoctorName(name));
     }
 
