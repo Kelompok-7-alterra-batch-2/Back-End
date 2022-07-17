@@ -78,7 +78,7 @@ public class ScheduleServiceImpl {
     public List<GetScheduleDTO> getScheduleByDepartment(Long departmentId){
         DepartmentEntity existDepartment = this.departmentService.getDepartmentById(departmentId);
 
-        List<ScheduleEntity> existSchedule = this.scheduleRepository.findByDepartment(existDepartment);
+        List<ScheduleEntity> existSchedule = this.scheduleRepository.findByDoctorDepartment(existDepartment);
 
         List<GetScheduleDTO> getScheduleDTOList = existSchedule.stream()
                 .map(schedule -> convertFromScheduleEntityToGetScheduleDTO(

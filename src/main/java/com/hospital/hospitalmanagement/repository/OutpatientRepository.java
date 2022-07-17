@@ -39,6 +39,4 @@ public interface OutpatientRepository extends JpaRepository<OutpatientEntity, Lo
     List<OutpatientEntity> findAllByPatientAndDate(PatientEntity patient, LocalDate date);
 
     List<OutpatientEntity> findAllByPatient(PatientEntity patient);
-
-    Page<OutpatientEntity> findAllByPaginate(Pageable pageable);
 }

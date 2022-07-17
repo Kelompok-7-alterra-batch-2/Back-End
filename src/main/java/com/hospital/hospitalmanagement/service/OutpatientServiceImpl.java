@@ -1,5 +1,6 @@
 package com.hospital.hospitalmanagement.service;
 
+import ch.qos.logback.core.pattern.Converter;
 import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
@@ -543,8 +544,6 @@ public class OutpatientServiceImpl {
 
         Page<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAll(PageRequest.of(index, element));
 
-//        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
-//
 //        for(OutpatientEntity outpatient : existOutpatientList){
 //            UserEntity doctor = outpatient.getDoctor();
 //            PatientEntity patient = outpatient.getPatient();

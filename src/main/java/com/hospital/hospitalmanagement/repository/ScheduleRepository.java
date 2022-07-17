@@ -12,7 +12,7 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> {
     List<ScheduleEntity> findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDoctorDepartment(LocalTime arrivalTime1, LocalTime arrivalTime2, DepartmentEntity department);
 
-    List<ScheduleEntity> findByDepartment(DepartmentEntity department);
+    List<ScheduleEntity> findByDoctorDepartment(DepartmentEntity department);
 
     List<ScheduleEntity> findByDoctor(String doctor);
 }
