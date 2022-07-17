@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class ScheduleServiceImplTest {
@@ -175,19 +175,21 @@ public class ScheduleServiceImplTest {
     public void updateSchedule() {
         // Given
         DoctorScheduleDTO doctorScheduleDTO = this.easyRandom.nextObject(DoctorScheduleDTO.class);
-        ScheduleEntity scheduleEntity = this.easyRandom.nextObject(ScheduleEntity.class);
-        GetScheduleDTO getScheduleDTO = this.mapper.map(scheduleEntity, GetScheduleDTO.class);
-        getScheduleDTO.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
-        getScheduleDTO.setAvailableFrom(doctorScheduleDTO.getAvailableTo());
-        GetDoctorDTO getDoctorDTO = getScheduleDTO.getDoctor();
-        UserEntity doctor = this.mapper.map(getDoctorDTO, UserEntity.class);
+        UserEntity doctor = this.easyRandom.nextObject(UserEntity.class);
+        ScheduleEntity schedule = this.easyRandom.nextObject(ScheduleEntity.class);
+        schedule.setDoctor(doctor);
+        schedule.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
+        schedule.setAvailableTo(doctorScheduleDTO.getAvailableTo());
 
+        GetDoctorDTO getDoctorDTO = this.mapper.map(doctor, GetDoctorDTO.class);
 
+        GetScheduleDTO getScheduleDTO = this.mapper.map(schedule, GetScheduleDTO.class);
+        getScheduleDTO.setDoctor(getDoctorDTO);
 
         when(this.userService.getDoctorById(doctorScheduleDTO.getDoctor_id())).thenReturn(doctor);
-        when(this.scheduleRepository.getById(id)).thenReturn(scheduleEntity);
-        when(this.scheduleRepository.save(any(ScheduleEntity.class))).thenReturn(scheduleEntity);
-        when(this.scheduleService.convertFromScheduleEntityToGetScheduleDTO(scheduleEntity, getDoctorDTO)).thenReturn(getScheduleDTO);
+        when(this.scheduleRepository.getById(id)).thenReturn(schedule);
+        when(this.scheduleRepository.save(any(ScheduleEntity.class))).thenReturn(schedule);
+        when(this.scheduleService.convertFromScheduleEntityToGetScheduleDTO(schedule, getDoctorDTO)).thenReturn(getScheduleDTO);
 
         // When
         var result = this.scheduleService.updateSchedule(id, doctorScheduleDTO);
@@ -202,5 +204,13 @@ public class ScheduleServiceImplTest {
 
     @Test
     public void deleteSchedule() {
+        // Given
+        ScheduleEntity schedule = this.easyRandom.nextObject(ScheduleEntity.class);
+
+        // When
+        this.scheduleRepository.delete(schedule);
+
+        // Then
+        verify(this.scheduleRepository, times(1)).delete(schedule);
     }
 }
