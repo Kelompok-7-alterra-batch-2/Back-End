@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -122,6 +123,16 @@ public class UserServiceImpl implements UserDetailsService {
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
 
         UserEntity unique = this.getUserByEmail(adminDTO.getEmail());
+
+        if(Objects.equals(adminDTO.getEmail(), existAdmin.getEmail())){
+            existAdmin.setName(adminDTO.getName());
+            existAdmin.setUsername(adminDTO.getEmail());
+            existAdmin.setDob(dob);
+            existAdmin.setEmail(adminDTO.getEmail());
+            existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
+
+            return this.userRepository.save(existAdmin);
+        }
 
         if (unique != null){
             throw new UnprocessableException("This Email Is Duplicate");
@@ -276,14 +287,25 @@ public class UserServiceImpl implements UserDetailsService {
     public UserEntity updateDoctor(Long id, UpdateDoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
-
+        UserEntity existDoctor = this.getDoctorById(id);
         UserEntity uniq = this.getUserByEmail(doctorDTO.getEmail());
+
+        if(Objects.equals(doctorDTO.getEmail(), existDoctor.getEmail())){
+            existDoctor.setName(doctorDTO.getName());
+            existDoctor.setDob(dob);
+            existDoctor.setUsername(doctorDTO.getEmail());
+            existDoctor.setEmail(doctorDTO.getEmail());
+            existDoctor.setDepartment(existDepartment);
+            existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
+            existDoctor.setNid(doctorDTO.getNid());
+
+            return this.userRepository.save(existDoctor);
+        }
 
         if (uniq != null){
             throw new UnprocessableException("This Email Is Duplicate");
         }
 
-        UserEntity existDoctor = this.getDoctorById(id);
         existDoctor.setName(doctorDTO.getName());
         existDoctor.setDob(dob);
         existDoctor.setUsername(doctorDTO.getEmail());
