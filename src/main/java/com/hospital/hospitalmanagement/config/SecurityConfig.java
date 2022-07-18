@@ -47,10 +47,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/admins").permitAll()
                 .antMatchers(HttpMethod.POST, "/roles").permitAll()
                 .antMatchers(HttpMethod.GET, "/hello").permitAll()
-                .antMatchers("/admins/**").permitAll()
-                .antMatchers("/users/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated();
+//                .antMatchers("/admins/**").permitAll()
+//                .antMatchers("/users/**").permitAll()
 //                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
         // remove session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
