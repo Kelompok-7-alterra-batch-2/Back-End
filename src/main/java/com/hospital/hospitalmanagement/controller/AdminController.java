@@ -2,6 +2,7 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
 import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.UpdateAdminDTO;
 import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
 import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.UserEntity;
@@ -50,7 +51,7 @@ public class AdminController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserEntity> updateAdminById(@Valid @RequestBody AdminDTO adminDTO, @PathVariable("id") Long id){
+    public ResponseEntity<UserEntity> updateAdminById(@Valid @RequestBody UpdateAdminDTO adminDTO, @PathVariable("id") Long id){
         return ResponseEntity.ok().body(this.userService.updateAdmin(id, adminDTO));
     }
 

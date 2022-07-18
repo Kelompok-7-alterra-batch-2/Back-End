@@ -1,9 +1,6 @@
 package com.hospital.hospitalmanagement.service;
 
-import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
-import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
@@ -119,7 +116,7 @@ public class UserServiceImpl implements UserDetailsService {
         return save;
     }
 
-    public UserEntity updateAdmin(Long id, AdminDTO adminDTO) {
+    public UserEntity updateAdmin(Long id, UpdateAdminDTO adminDTO) {
         UserEntity existAdmin = this.getAdminById(id);
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
@@ -134,7 +131,6 @@ public class UserServiceImpl implements UserDetailsService {
         existAdmin.setUsername(adminDTO.getEmail());
         existAdmin.setDob(dob);
         existAdmin.setEmail(adminDTO.getEmail());
-        existAdmin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
         existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
 
         return this.userRepository.save(existAdmin);
@@ -277,7 +273,7 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
 
-    public UserEntity updateDoctor(Long id, DoctorDTO doctorDTO) {
+    public UserEntity updateDoctor(Long id, UpdateDoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
 
@@ -292,7 +288,6 @@ public class UserServiceImpl implements UserDetailsService {
         existDoctor.setDob(dob);
         existDoctor.setUsername(doctorDTO.getEmail());
         existDoctor.setEmail(doctorDTO.getEmail());
-        existDoctor.setPassword(passwordEncoder.encode(doctorDTO.getPassword()));
         existDoctor.setDepartment(existDepartment);
         existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
         existDoctor.setNid(doctorDTO.getNid());
@@ -392,4 +387,17 @@ public class UserServiceImpl implements UserDetailsService {
         }
     }
 
+    public UserEntity resetPassword(Long userId, PasswordDTO passwordDTO) {
+        Optional<UserEntity> optionalUser = this.userRepository.findById(userId);
+
+        if(optionalUser.isEmpty()){
+            throw new UsernameNotFoundException("user not found");
+        }
+
+        UserEntity existUser = optionalUser.get();
+
+        existUser.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
+
+        return this.userRepository.save(existUser);
+    }
 }
