@@ -2,6 +2,7 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
+import com.hospital.hospitalmanagement.controller.dto.UpdateDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
 import com.hospital.hospitalmanagement.controller.response.GetScheduleDTO;
@@ -62,7 +63,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserEntity> updateDoctorById(@Valid @RequestBody DoctorDTO doctorDTO, @PathVariable("id") Long id){
+    public ResponseEntity<UserEntity> updateDoctorById(@Valid @RequestBody UpdateDoctorDTO doctorDTO, @PathVariable("id") Long id){
         return ResponseEntity.ok().body(this.userService.updateDoctor(id, doctorDTO));
     }
 
