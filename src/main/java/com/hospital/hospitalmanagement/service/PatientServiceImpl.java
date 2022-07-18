@@ -8,6 +8,7 @@ import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -64,7 +65,7 @@ public class PatientServiceImpl {
 //        return getOutpatientTwoDTO;
 //    }
 
-//    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+//    public OutpatientEntity convertOutpatient(GetPatientDTO outpatient){
 //        OutpatientEntity getOutpatient = OutpatientEntity.builder()
 //                .queue(outpatient.getQueue())
 //                .outpatientCondition(outpatient.getOutpatientCondition())
@@ -159,7 +160,27 @@ public class PatientServiceImpl {
         return this.patientRepository.findByNameContainsIgnoreCase(name);
     }
 
-    public Page<PatientEntity> getAllPatientPaginate(int index, int element) {
-        return this.patientRepository.findAll(PageRequest.of(index, element));
+    public Page<GetPatientDTO> getAllPatientPaginate(Pageable pageable) {
+        Page<PatientEntity> pagePatient = this.patientRepository.findAll(pageable);
+
+        Page<GetPatientDTO> dtoPage = pagePatient.map(entity -> {
+
+
+            GetPatientDTO dto = GetPatientDTO.builder()
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .dob(entity.getDob())
+                    .bloodType(entity.getBloodType())
+                    .gender(entity.getGender())
+                    .city(entity.getCity())
+                    .address(entity.getAddress())
+                    .phoneNumber(entity.getPhoneNumber())
+                    .createdAt(entity.getCreatedAt())
+                    .build();
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 }

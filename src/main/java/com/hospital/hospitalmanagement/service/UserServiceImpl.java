@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -304,9 +305,28 @@ public class UserServiceImpl implements UserDetailsService {
         this.userRepository.delete(existDoctor);
     }
 
-    public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
+    public Page<GetDoctorDTO> getAllDoctorPaginate(Pageable pageable) {
         RoleEntity role = roleService.getRoleById(2L);
-        return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
+        Page<UserEntity> pageDoctor = this.userRepository.findAllByRole(role, pageable);
+
+        Page<GetDoctorDTO> dtoPage = pageDoctor.map(entity -> {
+
+            GetDoctorDTO dto = GetDoctorDTO.builder()
+                    .email(entity.getEmail())
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .department(entity.getDepartment())
+                    .role(entity.getRole())
+                    .phoneNumber(entity.getPhoneNumber())
+                    .nid(entity.getNid())
+                    .createdAt(entity.getCreatedAt())
+                    .dob(entity.getDob())
+                    .build();
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 
     public Long countDoctor() {

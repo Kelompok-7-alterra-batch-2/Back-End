@@ -1,11 +1,13 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
+import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetPatientTwoDTO;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
 import com.hospital.hospitalmanagement.service.PatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,8 +52,8 @@ public class PatientController {
         return ResponseEntity.ok().body(this.patientService.getPatientByName(name));
     }
 
-    @GetMapping("/page/{index}/{element}")
-    public ResponseEntity<Page<PatientEntity>> getAllPatientPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
-        return ResponseEntity.ok().body(this.patientService.getAllPatientPaginate(index, element));
+    @GetMapping("/page")
+    public ResponseEntity<Page<GetPatientDTO>> getAllPatientPaginate(Pageable pageable){
+        return ResponseEntity.ok().body(this.patientService.getAllPatientPaginate(pageable));
     }
 }
