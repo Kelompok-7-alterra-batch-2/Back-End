@@ -14,5 +14,5 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     List<ScheduleEntity> findByDoctorDepartment(DepartmentEntity department);
 
-    List<ScheduleEntity> findByDoctor(String doctor);
+    List<ScheduleEntity> findByDoctorNameContainsIgnoreCase(String doctor);
 }

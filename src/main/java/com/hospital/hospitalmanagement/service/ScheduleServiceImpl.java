@@ -90,7 +90,7 @@ public class ScheduleServiceImpl {
 
     public List<GetScheduleDTO> getScheduleByDoctorName(String doctor){
 
-        List<ScheduleEntity> existSchedule = this.scheduleRepository.findByDoctor(doctor);
+        List<ScheduleEntity> existSchedule = this.scheduleRepository.findByDoctorNameContainsIgnoreCase(doctor);
 
         List<GetScheduleDTO> getScheduleDTOList = existSchedule.stream()
                 .map(schedule -> convertFromScheduleEntityToGetScheduleDTO(
