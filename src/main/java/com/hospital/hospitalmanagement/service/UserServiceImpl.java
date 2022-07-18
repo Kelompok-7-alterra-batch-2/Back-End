@@ -1,9 +1,6 @@
 package com.hospital.hospitalmanagement.service;
 
-import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
-import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.*;
 import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
@@ -14,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -118,7 +116,7 @@ public class UserServiceImpl implements UserDetailsService {
         return save;
     }
 
-    public UserEntity updateAdmin(Long id, AdminDTO adminDTO) {
+    public UserEntity updateAdmin(Long id, UpdateAdminDTO adminDTO) {
         UserEntity existAdmin = this.getAdminById(id);
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
@@ -133,7 +131,6 @@ public class UserServiceImpl implements UserDetailsService {
         existAdmin.setUsername(adminDTO.getEmail());
         existAdmin.setDob(dob);
         existAdmin.setEmail(adminDTO.getEmail());
-        existAdmin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
         existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
 
         return this.userRepository.save(existAdmin);
@@ -276,7 +273,7 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
 
-    public UserEntity updateDoctor(Long id, DoctorDTO doctorDTO) {
+    public UserEntity updateDoctor(Long id, UpdateDoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
 
@@ -291,7 +288,6 @@ public class UserServiceImpl implements UserDetailsService {
         existDoctor.setDob(dob);
         existDoctor.setUsername(doctorDTO.getEmail());
         existDoctor.setEmail(doctorDTO.getEmail());
-        existDoctor.setPassword(passwordEncoder.encode(doctorDTO.getPassword()));
         existDoctor.setDepartment(existDepartment);
         existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
         existDoctor.setNid(doctorDTO.getNid());
@@ -304,9 +300,28 @@ public class UserServiceImpl implements UserDetailsService {
         this.userRepository.delete(existDoctor);
     }
 
-    public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
+    public Page<GetDoctorDTO> getAllDoctorPaginate(Pageable pageable) {
         RoleEntity role = roleService.getRoleById(2L);
-        return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
+        Page<UserEntity> pageDoctor = this.userRepository.findAllByRole(role, pageable);
+
+        Page<GetDoctorDTO> dtoPage = pageDoctor.map(entity -> {
+
+            GetDoctorDTO dto = GetDoctorDTO.builder()
+                    .email(entity.getEmail())
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .department(entity.getDepartment())
+                    .role(entity.getRole())
+                    .phoneNumber(entity.getPhoneNumber())
+                    .nid(entity.getNid())
+                    .createdAt(entity.getCreatedAt())
+                    .dob(entity.getDob())
+                    .build();
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 
     public Long countDoctor() {
@@ -372,4 +387,17 @@ public class UserServiceImpl implements UserDetailsService {
         }
     }
 
+    public UserEntity resetPassword(Long userId, PasswordDTO passwordDTO) {
+        Optional<UserEntity> optionalUser = this.userRepository.findById(userId);
+
+        if(optionalUser.isEmpty()){
+            throw new UsernameNotFoundException("user not found");
+        }
+
+        UserEntity existUser = optionalUser.get();
+
+        existUser.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
+
+        return this.userRepository.save(existUser);
+    }
 }

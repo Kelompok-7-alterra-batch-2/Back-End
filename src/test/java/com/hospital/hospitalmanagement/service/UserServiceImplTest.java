@@ -181,21 +181,21 @@ public class UserServiceImplTest {
 
     }
 
-    @Test
-    public void updateAdmin() {
-        RoleEntity role = new RoleEntity(1L, "admin", LocalDateTime.now());
-        AdminDTO adminDTO = this.easyRandom.nextObject(AdminDTO.class);
-        adminDTO.setDob("2001-10-23");
-        UserEntity user = this.mapper.map(adminDTO, UserEntity.class);
-
-        when(this.roleService.getRoleById(1L)).thenReturn(role);
-        when(this.userRepository.findByIdAndRole(id, role)).thenReturn(user);
-        when(this.userRepository.save(any(UserEntity.class))).thenReturn(user);
-
-        var result = this.userService.updateAdmin(id, adminDTO);
-
-        assertEquals(user, result);
-    }
+//    @Test
+//    public void updateAdmin() {
+//        RoleEntity role = new RoleEntity(1L, "admin", LocalDateTime.now());
+//        AdminDTO adminDTO = this.easyRandom.nextObject(AdminDTO.class);
+//        adminDTO.setDob("2001-10-23");
+//        UserEntity user = this.mapper.map(adminDTO, UserEntity.class);
+//
+//        when(this.roleService.getRoleById(1L)).thenReturn(role);
+//        when(this.userRepository.findByIdAndRole(id, role)).thenReturn(user);
+//        when(this.userRepository.save(any(UserEntity.class))).thenReturn(user);
+//
+//        var result = this.userService.updateAdmin(id, adminDTO);
+//
+//        assertEquals(user, result);
+//    }
 
     @Test
     public void deleteAdmin() {
@@ -365,23 +365,23 @@ public class UserServiceImplTest {
         assertEquals(user, result);
     }
 
-    @Test
-    public void updateDoctor() {
-        RoleEntity role = new RoleEntity(2L, "doctor", LocalDateTime.now());
-        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
-        DoctorDTO doctorDTO = this.easyRandom.nextObject(DoctorDTO.class);
-        doctorDTO.setDob("2001-10-23");
-        UserEntity user = this.mapper.map(doctorDTO, UserEntity.class);
-
-        when(this.departmentService.getDepartmentById(doctorDTO.getDepartment_id())).thenReturn(department);
-        when(this.roleService.getRoleById(2L)).thenReturn(role);
-        when(this.userRepository.findByIdAndRole(id, role)).thenReturn(user);
-        when(this.userRepository.save(any(UserEntity.class))).thenReturn(user);
-
-        var result = this.userService.updateDoctor(id, doctorDTO);
-
-        assertEquals(user, result);
-    }
+//    @Test
+//    public void updateDoctor() {
+//        RoleEntity role = new RoleEntity(2L, "doctor", LocalDateTime.now());
+//        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+//        DoctorDTO doctorDTO = this.easyRandom.nextObject(DoctorDTO.class);
+//        doctorDTO.setDob("2001-10-23");
+//        UserEntity user = this.mapper.map(doctorDTO, UserEntity.class);
+//
+//        when(this.departmentService.getDepartmentById(doctorDTO.getDepartment_id())).thenReturn(department);
+//        when(this.roleService.getRoleById(2L)).thenReturn(role);
+//        when(this.userRepository.findByIdAndRole(id, role)).thenReturn(user);
+//        when(this.userRepository.save(any(UserEntity.class))).thenReturn(user);
+//
+//        var result = this.userService.updateDoctor(id, doctorDTO);
+//
+//        assertEquals(user, result);
+//    }
 
     @Test
     public void deleteDoctor() {

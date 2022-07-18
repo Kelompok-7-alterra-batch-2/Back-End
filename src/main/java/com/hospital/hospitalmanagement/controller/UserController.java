@@ -1,12 +1,16 @@
 package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.PasswordDTO;
 import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
+import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 @RestController
@@ -37,6 +41,16 @@ public class UserController {
     @GetMapping("/test")
     public String tes(){
         return "Tes Jing";
+    }
+
+    @PutMapping("/password/{userId}")
+    public ResponseEntity<UserEntity> resetPassword(@PathVariable("userId") Long userId ,@Valid @RequestBody PasswordDTO passwordDTO){
+        try {
+            UserEntity savedUser = this.userService.resetPassword(userId, passwordDTO);
+            return ResponseEntity.ok().body(savedUser);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }
