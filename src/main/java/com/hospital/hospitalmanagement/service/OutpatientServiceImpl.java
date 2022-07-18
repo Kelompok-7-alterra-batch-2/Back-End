@@ -1,6 +1,6 @@
 package com.hospital.hospitalmanagement.service;
 
-import ch.qos.logback.core.pattern.Converter;
+import com.fasterxml.jackson.databind.util.Converter;
 import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
@@ -12,6 +12,7 @@ import com.hospital.hospitalmanagement.repository.OutpatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class OutpatientServiceImpl {
@@ -540,22 +542,19 @@ public class OutpatientServiceImpl {
         return outpatientDTOList;
     }
 
-    public Page<OutpatientEntity> getAllOutpatientByPaginate(int index, int element) {
+    public Page<GetOutpatientDTO> getAllOutpatientByPaginate(Pageable pageable) {
 
-        Page<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAll(PageRequest.of(index, element));
+        Page<OutpatientEntity> entities = this.outpatientRepository.findAll(pageable);
+        Page<GetOutpatientDTO> dtoPage = entities.map(entity -> {
 
-//        for(OutpatientEntity outpatient : existOutpatientList){
-//            UserEntity doctor = outpatient.getDoctor();
-//            PatientEntity patient = outpatient.getPatient();
-//
-//            GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(doctor);
-//            GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
-//
-//            GetOutpatientDTO getOutpatientDTO = this.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO);
-//
-//            outpatientDTOList.add(getOutpatientDTO);
-//        }
+            GetDoctorDTO getDoctorDTO = convertDoctorEntityToResponse(entity.getDoctor());
+            GetPatientDTO getPatientDTO = convertPatientEntityToResponse(entity.getPatient());
 
-        return  existOutpatientList;
+            GetOutpatientDTO dto = convertOutpatientEntityToResponse(entity, getDoctorDTO, getPatientDTO);
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 }

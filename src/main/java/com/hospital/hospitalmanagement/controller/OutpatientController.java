@@ -9,6 +9,7 @@ import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -148,8 +149,8 @@ public class OutpatientController {
         return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientId(patientId));
     }
 
-    @GetMapping("/page/{index}/{element}")
-    public ResponseEntity<Page<OutpatientEntity>> getAllOutpatientPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
-        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPaginate(index, element));
+    @GetMapping("/page")
+    public ResponseEntity<Page<GetOutpatientDTO>> getAllOutpatientPaginate(Pageable pageable){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPaginate(pageable));
     }
 }
