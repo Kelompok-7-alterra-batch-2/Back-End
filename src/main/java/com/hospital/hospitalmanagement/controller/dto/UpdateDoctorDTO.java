@@ -12,7 +12,6 @@ public class UpdateDoctorDTO {
     @NotEmpty(message = "Name Is Required")
     private String name;
     private String dob;
-    @NotEmpty(message = "Email Is Required")
     @Email(message = "Invaild Email Format")
     private String email;
     private Long department_id;
