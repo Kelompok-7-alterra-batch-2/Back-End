@@ -175,21 +175,21 @@ public class UserServiceImpl implements UserDetailsService {
         return getOutpatientThreeDTO;
     }
 
-    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
-        OutpatientEntity getOutpatient = OutpatientEntity.builder()
-                .queue(outpatient.getQueue())
-                .outpatientCondition(outpatient.getOutpatientCondition())
-                .department(outpatient.getDepartment())
-                .date(outpatient.getDate())
-                .id(outpatient.getId())
-                .arrivalTime(outpatient.getArrivalTime())
-                .appointmentReason(outpatient.getAppointmentReason())
-                .diagnosis(outpatient.getDiagnosis())
-                .prescription(outpatient.getPrescription())
-                .build();
-
-        return getOutpatient;
-    }
+//    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+//        OutpatientEntity getOutpatient = OutpatientEntity.builder()
+//                .queue(outpatient.getQueue())
+//                .outpatientCondition(outpatient.getOutpatientCondition())
+//                .department(outpatient.getDepartment())
+//                .date(outpatient.getDate())
+//                .id(outpatient.getId())
+//                .arrivalTime(outpatient.getArrivalTime())
+//                .appointmentReason(outpatient.getAppointmentReason())
+//                .diagnosis(outpatient.getDiagnosis())
+//                .prescription(outpatient.getPrescription())
+//                .build();
+//
+//        return getOutpatient;
+//    }
 
     public List<GetDoctorTwoDTO> getAllDoctor(){
         RoleEntity role = this.roleService.getRoleById(2L);
@@ -334,15 +334,15 @@ public class UserServiceImpl implements UserDetailsService {
 //        return this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, existsDepartment);
 //    }
 
-    public void save(UserEntity user){
-        this.userRepository.save(user);
-    }
+//    public void save(UserEntity user){
+//        this.userRepository.save(user);
+//    }
 
-    public void creatOutpatient(OutpatientEntity savedOutpatient, Long doctor_id) {
-        UserEntity doctor = this.getUserById(doctor_id);
-        doctor.setOutpatient(List.of(savedOutpatient));
-        this.userRepository.save(doctor);
-    }
+//    public void creatOutpatient(OutpatientEntity savedOutpatient, Long doctor_id) {
+//        UserEntity doctor = this.getUserById(doctor_id);
+//        doctor.setOutpatient(List.of(savedOutpatient));
+//        this.userRepository.save(doctor);
+//    }
 
 //    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
 //        UserEntity existDoctor = this.getDoctorById(doctorId);

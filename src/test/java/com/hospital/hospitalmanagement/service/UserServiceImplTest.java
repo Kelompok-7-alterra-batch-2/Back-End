@@ -20,6 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,8 +32,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -232,14 +238,33 @@ public class UserServiceImplTest {
 
         List<UserEntity> userList = List.of(user1, user2);
 
+        GetDoctorTwoDTO getDoctorTwoDTO1 = this.mapper.map(user1, GetDoctorTwoDTO.class);
+        GetDoctorTwoDTO getDoctorTwoDTO2 = this.mapper.map(user2, GetDoctorTwoDTO.class);
+
+        List<GetDoctorTwoDTO> getDoctorTwoDTOList = List.of(getDoctorTwoDTO1, getDoctorTwoDTO2);
+
         when(this.roleService.getRoleById(2L)).thenReturn(role);
         when(this.userRepository.findAllByRole(role)).thenReturn(userList);
 
         // When
-        List<GetDoctorTwoDTO> allDoctor = this.userService.getAllDoctor();
+        var result = this.userService.getAllDoctor();
 
         // Then
-        verify(this.userService, times(2)).convertDoctorEntityToResponse(any(UserEntity.class));
+        for (int i = 0; i < getDoctorTwoDTOList.size(); i++) {
+            GetDoctorTwoDTO dto = getDoctorTwoDTOList.get(i);
+            GetDoctorTwoDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getEmail(), res.getEmail());
+            assertEquals(dto.getName(), res.getName());
+            assertEquals(dto.getDepartment(), res.getDepartment());
+            assertEquals(dto.getRole(), res.getRole());
+            assertEquals(dto.getAvailableFrom(), res.getAvailableFrom());
+            assertEquals(dto.getAvailableTo(), res.getAvailableTo());
+            assertEquals(dto.getCreatedAt(), res.getCreatedAt());
+            assertEquals(dto.getNid(), dto.getNid());
+            assertEquals(dto.getDob(), dto.getDob());
+        }
     }
 
     @Test
@@ -374,6 +399,106 @@ public class UserServiceImplTest {
 
     @Test
     public void getAllDoctorPaginate() {
+        // Given
+        RoleEntity role = new RoleEntity(2L, "doctor", LocalDateTime.now());
+        int index = 1;
+        int element = 2;
+
+        UserEntity user1 = this.easyRandom.nextObject(UserEntity.class);
+        UserEntity user2 = this.easyRandom.nextObject(UserEntity.class);
+
+        user1.setRole(role);
+        user2.setRole(role);
+
+        Page<UserEntity> page = new Page<UserEntity>() {
+            @Override
+            public int getTotalPages() {
+                return 0;
+            }
+
+            @Override
+            public long getTotalElements() {
+                return 0;
+            }
+
+            @Override
+            public <U> Page<U> map(Function<? super UserEntity, ? extends U> converter) {
+                return null;
+            }
+
+            @Override
+            public int getNumber() {
+                return 0;
+            }
+
+            @Override
+            public int getSize() {
+                return 0;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 0;
+            }
+
+            @Override
+            public List<UserEntity> getContent() {
+                return List.of(user1, user2);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return false;
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public Iterator<UserEntity> iterator() {
+                return null;
+            }
+        };
+
+        when(this.roleService.getRoleById(2L)).thenReturn(role);
+        when(this.userRepository.findAllByRole(role, PageRequest.of(index, element))).thenReturn(page);
+
+        var result = this.userService.getAllDoctorPaginate(index, element);
+
+        assertEquals(page, result);
+
     }
 
     @Test
@@ -421,4 +546,23 @@ public class UserServiceImplTest {
         assertEquals(user.getRole().getName(), result.getRole());
         assertNull(result.getMessage());
     }
+
+    @Test
+    public void getDoctorByEmail() {
+        // Given
+        RoleEntity role = new RoleEntity(2L, "doctor", LocalDateTime.now());
+        String email = "admin@gmail.com";
+
+        UserEntity user = this.easyRandom.nextObject(UserEntity.class);
+
+        when(this.roleService.getRoleById(2L)).thenReturn(role);
+        when(this.userRepository.findByEmailAndRole(email, role)).thenReturn(user);
+
+        // When
+        var result = this.userService.getDoctorByEmail(email);
+
+        // Then
+        assertEquals(user, result);
+    }
+
 }
