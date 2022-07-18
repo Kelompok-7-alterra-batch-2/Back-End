@@ -2,6 +2,7 @@ package com.hospital.hospitalmanagement.controller;
 
 import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
 import com.hospital.hospitalmanagement.controller.response.GetScheduleDTO;
 import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
@@ -11,6 +12,7 @@ import com.hospital.hospitalmanagement.service.ScheduleServiceImpl;
 import com.hospital.hospitalmanagement.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -80,9 +82,9 @@ public class DoctorController {
         return ResponseEntity.ok().body(this.userService.getDoctorByName(name));
     }
 
-    @GetMapping("/page/{index}/{element}")
-    public ResponseEntity<Page<UserEntity>> getAllDoctorPaginate(@PathVariable("index") int index, @PathVariable("element") int element){
-        return ResponseEntity.ok().body(this.userService.getAllDoctorPaginate(index, element));
+    @GetMapping("/page")
+    public ResponseEntity<Page<GetDoctorDTO>> getAllDoctorPaginate(Pageable pageable){
+        return ResponseEntity.ok().body(this.userService.getAllDoctorPaginate(pageable));
     }
 
     @GetMapping("/schedule/{id}")
