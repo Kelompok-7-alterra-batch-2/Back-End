@@ -259,8 +259,6 @@ public class UserServiceImplTest {
             assertEquals(dto.getName(), res.getName());
             assertEquals(dto.getDepartment(), res.getDepartment());
             assertEquals(dto.getRole(), res.getRole());
-            assertEquals(dto.getAvailableFrom(), res.getAvailableFrom());
-            assertEquals(dto.getAvailableTo(), res.getAvailableTo());
             assertEquals(dto.getCreatedAt(), res.getCreatedAt());
             assertEquals(dto.getNid(), dto.getNid());
             assertEquals(dto.getDob(), dto.getDob());
