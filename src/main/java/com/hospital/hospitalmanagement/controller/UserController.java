@@ -38,11 +38,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/test")
-    public String tes(){
-        return "Tes Jing";
-    }
-
     @PutMapping("/password/{userId}")
     public ResponseEntity<UserEntity> resetPassword(@PathVariable("userId") Long userId ,@Valid @RequestBody PasswordDTO passwordDTO){
         try {
