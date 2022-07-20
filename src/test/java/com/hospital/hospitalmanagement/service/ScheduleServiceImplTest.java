@@ -207,10 +207,73 @@ public class ScheduleServiceImplTest {
         // Given
         ScheduleEntity schedule = this.easyRandom.nextObject(ScheduleEntity.class);
 
+        when(this.scheduleRepository.getById(id)).thenReturn(schedule);
+
         // When
-        this.scheduleRepository.delete(schedule);
+        this.scheduleService.deleteSchedule(id);
 
         // Then
         verify(this.scheduleRepository, times(1)).delete(schedule);
+    }
+
+    @Test
+    public void getScheduleByDepartment() {
+        // Then
+        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+
+        ScheduleEntity schedule1 = this.easyRandom.nextObject(ScheduleEntity.class);
+        ScheduleEntity schedule2 = this.easyRandom.nextObject(ScheduleEntity.class);
+
+        List<ScheduleEntity> scheduleList = List.of(schedule1, schedule2);
+
+        GetScheduleDTO getSchedule1 = this.mapper.map(schedule1, GetScheduleDTO.class);
+        GetScheduleDTO getSchedule2 = this.mapper.map(schedule2, GetScheduleDTO.class);
+
+        List<GetScheduleDTO> getScheduleDTOList = List.of(getSchedule1, getSchedule2);
+
+        when(this.departmentService.getDepartmentById(id)).thenReturn(department);
+        when(this.scheduleRepository.findByDoctorDepartment(department)).thenReturn(scheduleList);
+
+        var result = this.scheduleService.getScheduleByDepartment(id);
+
+        for (int i = 0; i < getScheduleDTOList.size(); i++) {
+            GetScheduleDTO dto = getScheduleDTOList.get(i);
+            GetScheduleDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getAvailableFrom(), res.getAvailableFrom());
+            assertEquals(dto.getAvailableTo(), res.getAvailableTo());
+            assertEquals(dto.getDoctor().getId(), res.getDoctor().getId());
+            assertEquals(dto.getCreatedAt(), res.getCreatedAt());
+        }
+    }
+
+    @Test
+    public void getScheduleByDoctorName() {
+        // Then
+        ScheduleEntity schedule1 = this.easyRandom.nextObject(ScheduleEntity.class);
+        ScheduleEntity schedule2 = this.easyRandom.nextObject(ScheduleEntity.class);
+
+        List<ScheduleEntity> scheduleList = List.of(schedule1, schedule2);
+
+        GetScheduleDTO getSchedule1 = this.mapper.map(schedule1, GetScheduleDTO.class);
+        GetScheduleDTO getSchedule2 = this.mapper.map(schedule2, GetScheduleDTO.class);
+
+        List<GetScheduleDTO> getScheduleDTOList = List.of(getSchedule1, getSchedule2);
+
+        when(this.scheduleRepository.findByDoctorNameContainsIgnoreCase(anyString())).thenReturn(scheduleList);
+
+        var result = this.scheduleService.getScheduleByDoctorName(anyString());
+
+        for (int i = 0; i < getScheduleDTOList.size(); i++) {
+            GetScheduleDTO dto = getScheduleDTOList.get(i);
+            GetScheduleDTO res = result.get(i);
+
+            assertEquals(dto.getId(), res.getId());
+            assertEquals(dto.getAvailableFrom(), res.getAvailableFrom());
+            assertEquals(dto.getAvailableTo(), res.getAvailableTo());
+            assertEquals(dto.getDoctor().getId(), res.getDoctor().getId());
+            assertEquals(dto.getCreatedAt(), res.getCreatedAt());
+        }
     }
 }

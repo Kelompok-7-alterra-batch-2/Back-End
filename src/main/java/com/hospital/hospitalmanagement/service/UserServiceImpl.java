@@ -168,23 +168,23 @@ public class UserServiceImpl implements UserDetailsService {
         return getDoctorTwoDTO;
     }
 
-    public GetOutpatientThreeDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetPatientDTO getPatientDTO){
-        GetOutpatientThreeDTO getOutpatientThreeDTO = GetOutpatientThreeDTO.builder()
-                .queue(outpatient.getQueue())
-                .outpatientCondition(outpatient.getOutpatientCondition())
-                .patient(getPatientDTO)
-                .department(outpatient.getDepartment())
-                .createAt(outpatient.getCreatedAt())
-                .date(outpatient.getDate())
-                .id(outpatient.getId())
-                .arrivalTime(outpatient.getArrivalTime())
-                .appointmentReason(outpatient.getAppointmentReason())
-                .diagnosis(outpatient.getDiagnosis())
-                .prescription(outpatient.getPrescription())
-                .build();
-
-        return getOutpatientThreeDTO;
-    }
+//    public GetOutpatientThreeDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetPatientDTO getPatientDTO){
+//        GetOutpatientThreeDTO getOutpatientThreeDTO = GetOutpatientThreeDTO.builder()
+//                .queue(outpatient.getQueue())
+//                .outpatientCondition(outpatient.getOutpatientCondition())
+//                .patient(getPatientDTO)
+//                .department(outpatient.getDepartment())
+//                .createAt(outpatient.getCreatedAt())
+//                .date(outpatient.getDate())
+//                .id(outpatient.getId())
+//                .arrivalTime(outpatient.getArrivalTime())
+//                .appointmentReason(outpatient.getAppointmentReason())
+//                .diagnosis(outpatient.getDiagnosis())
+//                .prescription(outpatient.getPrescription())
+//                .build();
+//
+//        return getOutpatientThreeDTO;
+//    }
 
 //    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
 //        OutpatientEntity getOutpatient = OutpatientEntity.builder()

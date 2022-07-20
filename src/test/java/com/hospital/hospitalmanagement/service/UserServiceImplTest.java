@@ -1,12 +1,11 @@
 package com.hospital.hospitalmanagement.service;
 
 
-import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
-import com.hospital.hospitalmanagement.controller.dto.EmailPasswordDTO;
+import com.hospital.hospitalmanagement.controller.dto.*;
+import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorTwoDTO;
 import com.hospital.hospitalmanagement.controller.response.GetTokenDTO;
+import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.entities.RoleEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
@@ -18,8 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,8 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -211,18 +212,6 @@ public class UserServiceImplTest {
 
         // Then
         verify(this.userRepository, times(1)).delete(user);
-    }
-
-    @Test
-    public void convertDoctorEntityToResponse() {
-    }
-
-    @Test
-    public void convertOutpatientEntityToResponse() {
-    }
-
-    @Test
-    public void convertOutpatient() {
     }
 
     @Test
@@ -563,4 +552,103 @@ public class UserServiceImplTest {
         assertEquals(user, result);
     }
 
+    @Test
+    public void updateAdmin() {
+        UpdateAdminDTO updateAdminDTO = this.easyRandom.nextObject(UpdateAdminDTO.class);
+        updateAdminDTO.setDob("2001-10-23");
+        UserEntity admin = this.easyRandom.nextObject(UserEntity.class);
+
+        when(this.userService.getAdminById(id)).thenReturn(admin);
+        when(this.userRepository.save(any(UserEntity.class))).thenReturn(admin);
+
+        var result = this.userService.updateAdmin(id, updateAdminDTO);
+
+        assertEquals(admin, result);
+    }
+
+    @Test
+    public void updateAdmin_willFailed() {
+        UpdateAdminDTO updateAdminDTO = this.easyRandom.nextObject(UpdateAdminDTO.class);
+        updateAdminDTO.setDob("2001-10-23");
+        UserEntity admin = this.easyRandom.nextObject(UserEntity.class);
+        UserEntity admin2 = this.easyRandom.nextObject(UserEntity.class);
+
+        when(this.userService.getAdminById(id)).thenReturn(admin);
+        when(this.userService.getUserByEmail(updateAdminDTO.getEmail())).thenReturn(admin2);
+        when(this.userRepository.save(any(UserEntity.class))).thenReturn(admin);
+
+        assertThrows(UnprocessableException.class, () -> userService.updateAdmin(id,updateAdminDTO), "This Email Is Duplicate");
+    }
+
+    @Test
+    public void updateDoctor() {
+        UpdateDoctorDTO doctorDTO = this.easyRandom.nextObject(UpdateDoctorDTO.class);
+        doctorDTO.setDob("2001-10-23");
+        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+        UserEntity doctor = this.easyRandom.nextObject(UserEntity.class);
+
+        when(this.departmentService.getDepartmentById(doctorDTO.getDepartment_id())).thenReturn(department);
+        when(this.userService.getDoctorById(id)).thenReturn(doctor);
+        when(this.userRepository.save(any(UserEntity.class))).thenReturn(doctor);
+
+        var result = this.userService.updateDoctor(id, doctorDTO);
+
+        assertEquals(doctor, result);
+    }
+
+    @Test
+    public void updateDoctor_willFailed() {
+        UpdateDoctorDTO doctorDTO = this.easyRandom.nextObject(UpdateDoctorDTO.class);
+        doctorDTO.setDob("2001-10-23");
+        DepartmentEntity department = this.easyRandom.nextObject(DepartmentEntity.class);
+        UserEntity doctor = this.easyRandom.nextObject(UserEntity.class);
+        UserEntity doctor2 = this.easyRandom.nextObject(UserEntity.class);
+
+        when(this.userService.getUserByEmail(doctorDTO.getEmail())).thenReturn(doctor2);
+        when(this.departmentService.getDepartmentById(doctorDTO.getDepartment_id())).thenReturn(department);
+        when(this.userService.getDoctorById(id)).thenReturn(doctor);
+        when(this.userRepository.save(any(UserEntity.class))).thenReturn(doctor);
+
+//        var result = this.userService.updateDoctor(id, doctorDTO);
+
+        assertThrows(UnprocessableException.class, () -> userService.updateDoctor(id, doctorDTO), "This Email Is Duplicate");
+    }
+
+    @Test
+    public void getAllDoctorPaginate() {
+        RoleEntity role = new RoleEntity(2L, "doctor", LocalDateTime.now());
+        Page<UserEntity> doctors = mock(Page.class);
+
+        Page<GetDoctorDTO> dtoPage = doctors.map(entity -> GetDoctorDTO.builder()
+                .email(entity.getEmail())
+                .id(entity.getId())
+                .name(entity.getName())
+                .department(entity.getDepartment())
+                .role(entity.getRole())
+                .phoneNumber(entity.getPhoneNumber())
+                .nid(entity.getNid())
+                .createdAt(entity.getCreatedAt())
+                .dob(entity.getDob())
+                .build());
+
+        when(this.roleService.getRoleById(2L)).thenReturn(role);
+        when(this.userRepository.findAllByRole(any(RoleEntity.class), any())).thenReturn(doctors);
+
+        var result = this.userService.getAllDoctorPaginate(any());
+
+        assertEquals(dtoPage, result);
+    }
+
+    @Test
+    public void resetPassword() {
+        UserEntity user = this.easyRandom.nextObject(UserEntity.class);
+        PasswordDTO passwordDTO = this.easyRandom.nextObject(PasswordDTO.class);
+
+        when(this.userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(this.userRepository.save(any(UserEntity.class))).thenReturn(user);
+
+        var result = this.userService.resetPassword(id, passwordDTO);
+
+        assertEquals(user, result);
+    }
 }
