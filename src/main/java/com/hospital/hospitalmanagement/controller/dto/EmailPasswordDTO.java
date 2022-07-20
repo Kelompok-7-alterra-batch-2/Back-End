@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QueueDTO {
-    private Integer queueNumber;
+public class EmailPasswordDTO {
+    private String email;
+    private String password;
 }

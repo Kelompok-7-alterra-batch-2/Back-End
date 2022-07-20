@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
@@ -22,7 +23,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByNameContains(String name);
 
-    List<UserEntity> findByNameContainsAndRole(String name, RoleEntity role);
+    UserEntity findByEmail(String name);
+
+    List<UserEntity> findByNameContainsIgnoreCaseAndRole(String name, RoleEntity role);
 
     Page<UserEntity> findAllByRole(RoleEntity role, Pageable pageable);
 
@@ -30,10 +33,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Long countByRole(RoleEntity role);
 
+    UserEntity getDistinctTopByUsername(String username);
 
-    @Query(
-            value = "SELECT * FROM user u WHERE u.available_from < ?1 AND u.available_to > ?1 AND u.department_id = ?2",
-            nativeQuery = true
-    )
-    List<UserEntity> findAllAvailableDoctor(LocalTime time, Long department_id);
+//    List<UserEntity> findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(LocalTime time1, LocalTime time2, DepartmentEntity department_id);
 }

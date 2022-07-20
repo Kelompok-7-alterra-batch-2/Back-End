@@ -1,25 +1,27 @@
 package com.hospital.hospitalmanagement.service;
 
+import com.fasterxml.jackson.databind.util.Converter;
 import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.GetDoctorDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.OutpatientRepository;
-import org.apache.catalina.User;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 @Service
 public class OutpatientServiceImpl {
@@ -43,8 +45,6 @@ public class OutpatientServiceImpl {
                 .name(doctor.getName())
                 .id(doctor.getId())
                 .email(doctor.getEmail())
-                .availableTo(doctor.getAvailableTo())
-                .availableFrom(doctor.getAvailableFrom())
                 .dob(doctor.getDob())
                 .role(doctor.getRole())
                 .nid(doctor.getNid())
@@ -115,7 +115,7 @@ public class OutpatientServiceImpl {
         Optional<OutpatientEntity> data = this.outpatientRepository.findById(id);
 
         if (data.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
 
         OutpatientEntity existOutpatient = data.get();
@@ -132,7 +132,7 @@ public class OutpatientServiceImpl {
         Optional<OutpatientEntity> optionalOutpatient = this.outpatientRepository.findById(id);
 
         if (optionalOutpatient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalOutpatient.get();
     }
@@ -226,13 +226,14 @@ public class OutpatientServiceImpl {
         return this.outpatientRepository.countByDate(now);
     }
 
-    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
-        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
-    }
+//    public List<UserEntity> getAllAvailableDoctor(String arrivalTime, Long department_id) {
+//        return this.userService.findAllAvailableDoctor(LocalTime.parse(arrivalTime), department_id);
+//    }
 
-    public List<GetOutpatientDTO> getAllPendingOutpatient(){
+    public List<GetOutpatientDTO> getAllPendingOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(1L);
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDateOrderByQueueAsc(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -288,9 +289,10 @@ public class OutpatientServiceImpl {
         return this.convertOutpatientEntityToResponse(savedOutpatient, getDoctorDTO, getPatientDTO);
     }
 
-    public List<GetOutpatientDTO> getAllProcessOutpatient(){
+    public List<GetOutpatientDTO> getAllProcessOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(2L);
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDateOrderByQueueAsc(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -346,9 +348,10 @@ public class OutpatientServiceImpl {
         return this.convertOutpatientEntityToResponse(savedOutpatient, getDoctorDTO, getPatientDTO);
     }
 
-    public List<GetOutpatientDTO> getAllDoneOutpatient(){
+    public List<GetOutpatientDTO> getAllDoneOutpatientToday(){
         OutpatientConditionEntity existCondition = this.outpatientConditionService.getOutpatientById(3L);
-        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientCondition(existCondition);
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByOutpatientConditionAndDateOrderByQueueAsc(existCondition, now);
 
         List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
 
@@ -471,5 +474,87 @@ public class OutpatientServiceImpl {
     @Transactional
     public void truncateOutpatientTable(){
         this.outpatientRepository.truncateMyTable();
+    }
+
+    public List<GetOutpatientDTO> getAllOutpatientByPatientName(String name){
+        LocalDate now = LocalDate.now();
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientNameContainsIgnoreCaseAndDate(name, now);
+
+        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
+
+        for(OutpatientEntity outpatient : existOutpatientList){
+            UserEntity doctor = outpatient.getDoctor();
+            PatientEntity patient = outpatient.getPatient();
+
+            GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(doctor);
+            GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
+
+            GetOutpatientDTO getOutpatientDTO = this.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO);
+
+            outpatientDTOList.add(getOutpatientDTO);
+        }
+
+        return outpatientDTOList;
+    }
+
+    public List<GetOutpatientDTO> getAllOutpatientByPatientIdToday(Long patientId) {
+        PatientEntity existPatient = this.patientService.getPatientById(patientId);
+        LocalDate now = LocalDate.now();
+
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatientAndDate(existPatient, now);
+
+        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
+
+        for(OutpatientEntity outpatient : existOutpatientList){
+            UserEntity doctor = outpatient.getDoctor();
+            PatientEntity patient = outpatient.getPatient();
+
+            GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(doctor);
+            GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
+
+            GetOutpatientDTO getOutpatientDTO = this.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO);
+
+            outpatientDTOList.add(getOutpatientDTO);
+        }
+
+        return outpatientDTOList;
+    }
+
+    public List<GetOutpatientDTO> getAllOutpatientByPatientId(Long patientId) {
+        PatientEntity existPatient = this.patientService.getPatientById(patientId);
+
+        List<OutpatientEntity> existOutpatientList = this.outpatientRepository.findAllByPatient(existPatient);
+
+        List<GetOutpatientDTO> outpatientDTOList = new ArrayList<>();
+
+        for(OutpatientEntity outpatient : existOutpatientList){
+            UserEntity doctor = outpatient.getDoctor();
+            PatientEntity patient = outpatient.getPatient();
+
+            GetDoctorDTO getDoctorDTO = this.convertDoctorEntityToResponse(doctor);
+            GetPatientDTO getPatientDTO = this.convertPatientEntityToResponse(patient);
+
+            GetOutpatientDTO getOutpatientDTO = this.convertOutpatientEntityToResponse(outpatient, getDoctorDTO, getPatientDTO);
+
+            outpatientDTOList.add(getOutpatientDTO);
+        }
+
+        return outpatientDTOList;
+    }
+
+    public Page<GetOutpatientDTO> getAllOutpatientByPaginate(Pageable pageable) {
+
+        Page<OutpatientEntity> entities = this.outpatientRepository.findAll(pageable);
+        Page<GetOutpatientDTO> dtoPage = entities.map(entity -> {
+
+            GetDoctorDTO getDoctorDTO = convertDoctorEntityToResponse(entity.getDoctor());
+            GetPatientDTO getPatientDTO = convertPatientEntityToResponse(entity.getPatient());
+
+            GetOutpatientDTO dto = convertOutpatientEntityToResponse(entity, getDoctorDTO, getPatientDTO);
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 }

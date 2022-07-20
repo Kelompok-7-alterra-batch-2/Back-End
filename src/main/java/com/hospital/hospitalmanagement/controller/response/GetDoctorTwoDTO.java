@@ -19,8 +19,6 @@ public class GetDoctorTwoDTO {
     private String name;
     private LocalDate dob;
     private String email;
-    private LocalTime availableFrom;
-    private LocalTime availableTo;
     private DepartmentEntity department;
     private RoleEntity role;
     private String nid;

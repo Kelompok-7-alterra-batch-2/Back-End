@@ -1,6 +1,7 @@
 package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.DepartmentDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.DepartmentEntity;
 import com.hospital.hospitalmanagement.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class DepartmentServiceImpl {
         Optional<DepartmentEntity> optionalDepartment = this.departmentRepository.findById(id);
 
         if(optionalDepartment.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
 
         return optionalDepartment.get();

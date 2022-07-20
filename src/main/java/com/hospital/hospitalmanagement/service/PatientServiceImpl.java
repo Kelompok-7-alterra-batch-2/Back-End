@@ -2,11 +2,13 @@ package com.hospital.hospitalmanagement.service;
 
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
 import com.hospital.hospitalmanagement.controller.response.*;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -63,7 +65,7 @@ public class PatientServiceImpl {
 //        return getOutpatientTwoDTO;
 //    }
 
-//    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+//    public OutpatientEntity convertOutpatient(GetPatientDTO outpatient){
 //        OutpatientEntity getOutpatient = OutpatientEntity.builder()
 //                .queue(outpatient.getQueue())
 //                .outpatientCondition(outpatient.getOutpatientCondition())
@@ -99,7 +101,7 @@ public class PatientServiceImpl {
         Optional<PatientEntity> patient = this.patientRepository.findById(id);
 
         if (patient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         PatientEntity data = patient.get();
 
@@ -110,7 +112,7 @@ public class PatientServiceImpl {
         Optional<PatientEntity> optionalPatient = this.patientRepository.findById(id);
 
         if (optionalPatient.isEmpty()){
-            return null;
+            throw new NotFoundException("Data Not Found");
         }
         return optionalPatient.get();
     }
@@ -155,19 +157,30 @@ public class PatientServiceImpl {
     }
 
     public List<PatientEntity> getPatientByName(String name) {
-        return this.patientRepository.findByNameContains(name);
+        return this.patientRepository.findByNameContainsIgnoreCase(name);
     }
 
-    public Page<PatientEntity> getAllPatientPaginate(int index, int element) {
-        return this.patientRepository.findAll(PageRequest.of(index, element));
-    }
+    public Page<GetPatientDTO> getAllPatientPaginate(Pageable pageable) {
+        Page<PatientEntity> pagePatient = this.patientRepository.findAll(pageable);
 
-    public void save(PatientEntity patient){
-        this.patientRepository.save(patient);
-    }
+        Page<GetPatientDTO> dtoPage = pagePatient.map(entity -> {
 
-    public void createOutpatient(OutpatientEntity savedOutpatient, Long patient_id) {
-        PatientEntity patient = this.getPatientById(patient_id);
-        patient.setOutpatient(List.of(savedOutpatient));
+
+            GetPatientDTO dto = GetPatientDTO.builder()
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .dob(entity.getDob())
+                    .bloodType(entity.getBloodType())
+                    .gender(entity.getGender())
+                    .city(entity.getCity())
+                    .address(entity.getAddress())
+                    .phoneNumber(entity.getPhoneNumber())
+                    .createdAt(entity.getCreatedAt())
+                    .build();
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 }

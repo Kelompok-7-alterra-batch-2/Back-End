@@ -4,6 +4,7 @@ import com.hospital.hospitalmanagement.controller.dto.OutpatientConditionDTO;
 import com.hospital.hospitalmanagement.entities.OutpatientConditionEntity;
 import com.hospital.hospitalmanagement.service.OutpatientConditionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,12 @@ public class OutpatientConditionController {
     OutpatientConditionServiceImpl outpatientCondition;
 
     @GetMapping
-    public List<OutpatientConditionEntity> getAllOutpatientCondition(){
-        return this.outpatientCondition.getAllOutpatientCondition();
+    public ResponseEntity<List<OutpatientConditionEntity>> getAllOutpatientCondition(){
+        return ResponseEntity.ok().body(this.outpatientCondition.getAllOutpatientCondition());
     }
 
     @PostMapping
-    public OutpatientConditionEntity createOutpatientCondition(@RequestBody OutpatientConditionDTO outpatientConditionDTO){
-        return this.outpatientCondition.createOutpatientCondition(outpatientConditionDTO);
+    public ResponseEntity<OutpatientConditionEntity> createOutpatientCondition(@RequestBody OutpatientConditionDTO outpatientConditionDTO){
+        return ResponseEntity.ok().body(this.outpatientCondition.createOutpatientCondition(outpatientConditionDTO));
     }
 }

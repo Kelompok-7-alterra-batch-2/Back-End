@@ -4,9 +4,14 @@ import com.hospital.hospitalmanagement.controller.dto.AvailDoctorDTO;
 import com.hospital.hospitalmanagement.controller.dto.DiagnosisDTO;
 import com.hospital.hospitalmanagement.controller.dto.OutpatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetOutpatientDTO;
+import com.hospital.hospitalmanagement.entities.OutpatientEntity;
 import com.hospital.hospitalmanagement.entities.UserEntity;
 import com.hospital.hospitalmanagement.service.OutpatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -21,110 +26,131 @@ public class OutpatientController {
     OutpatientServiceImpl outpatientService;
 
     @GetMapping("/today")
-    public List<GetOutpatientDTO> getAllTodayOutpatient(){
-        return this.outpatientService.findAllTodayOutpatient();
+    public ResponseEntity<List<GetOutpatientDTO>> getAllTodayOutpatient(){
+        return ResponseEntity.ok().body(this.outpatientService.findAllTodayOutpatient());
     }
 
     @GetMapping("/count/today")
-    public Long countTodayOutpatient(){
-        return this.outpatientService.countTodayOutpatient();
+    public ResponseEntity<Long> countTodayOutpatient(){
+        return ResponseEntity.ok().body(this.outpatientService.countTodayOutpatient());
     }
 
-    @GetMapping("/doctors")
-    public List<UserEntity> getAllAvailableDoctor(
-            @RequestParam(name = "arrival_time") String arrival_time,
-            @RequestParam(name = "department_id") Long department_id){
-        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
-    }
+//    @GetMapping("/doctors")
+//    public List<UserEntity> getAllAvailableDoctor(
+//            @RequestParam(name = "arrival_time") String arrival_time,
+//            @RequestParam(name = "department_id") Long department_id){
+//        return this.outpatientService.getAllAvailableDoctor(arrival_time, department_id);
+//    }
 
     @GetMapping
-    public List<GetOutpatientDTO> getAllOutpatient(){
-        return this.outpatientService.getAllOutpatient();
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatient(){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatient());
     }
 
     @GetMapping("/{id}")
-    public GetOutpatientDTO getOutpatientById(@PathVariable("id") Long id){
-        return this.outpatientService.getOutpatientById(id);
+    public ResponseEntity<GetOutpatientDTO> getOutpatientById(@PathVariable("id") Long id){
+        return ResponseEntity.ok().body(this.outpatientService.getOutpatientById(id));
     }
 
     @PostMapping
-    public GetOutpatientDTO createOutpatient(@RequestBody OutpatientDTO outpatientDTO){
-        return this.outpatientService.createOutpatient(outpatientDTO);
+    public ResponseEntity<GetOutpatientDTO> createOutpatient(@RequestBody OutpatientDTO outpatientDTO){
+        return ResponseEntity.ok().body(this.outpatientService.createOutpatient(outpatientDTO));
     }
 
     @PutMapping("/{id}")
-    public GetOutpatientDTO updateOutpatient(@RequestBody OutpatientDTO outpatientDTO, @PathVariable("id")Long id){
-        return this.outpatientService.updateOutpatient(id,outpatientDTO);
+    public ResponseEntity<GetOutpatientDTO> updateOutpatient(@RequestBody OutpatientDTO outpatientDTO, @PathVariable("id")Long id){
+        return ResponseEntity.ok().body(this.outpatientService.updateOutpatient(id,outpatientDTO));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOutpatient(@PathVariable("id") Long id){
+    public HttpStatus deleteOutpatient(@PathVariable("id") Long id){
         this.outpatientService.deleteOutpatient(id);
+        return HttpStatus.OK;
     }
 
 
-    @GetMapping("/pending")
-    public List<GetOutpatientDTO> getAllPendingOutpatient(){
-        return this.outpatientService.getAllPendingOutpatient();
+    @GetMapping("/pending/today")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllPendingOutpatientToday(){
+        return ResponseEntity.ok().body(this.outpatientService.getAllPendingOutpatientToday());
     }
 
     @GetMapping("/pending/doctors/{doctorId}/today")
-    public List<GetOutpatientDTO> getAllPendingOutpatientToday(@PathVariable("doctorId") Long doctorId){
-        return this.outpatientService.findAllTodayPendingOutpatientByDoctor(doctorId);
+    public ResponseEntity<List<GetOutpatientDTO>> getAllPendingOutpatientToday(@PathVariable("doctorId") Long doctorId){
+        return ResponseEntity.ok().body(this.outpatientService.findAllTodayPendingOutpatientByDoctor(doctorId));
     }
 
-    @GetMapping("/process")
-    public List<GetOutpatientDTO> getAllProcessOutpatient(){
-        return this.outpatientService.getAllProcessOutpatient();
+    @GetMapping("/process/today")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllProcessOutpatientToday(){
+        return ResponseEntity.ok().body(this.outpatientService.getAllProcessOutpatientToday());
     }
 
     @GetMapping("/process/doctors/{doctorId}/today")
-    public List<GetOutpatientDTO> getAllProcessOutpatientToday(@PathVariable("doctorId") Long doctorId){
-        return this.outpatientService.findAllTodayProcessOutpatientByDoctor(doctorId);
+    public ResponseEntity<List<GetOutpatientDTO>> getAllProcessOutpatientToday(@PathVariable("doctorId") Long doctorId){
+        return ResponseEntity.ok().body(this.outpatientService.findAllTodayProcessOutpatientByDoctor(doctorId));
     }
 
     @PutMapping("/process/{id}")
-    public GetOutpatientDTO updateOutpatientConditionToProcess(@PathVariable("id") Long condition_id){
-        return this.outpatientService.processOutpatient(condition_id);
+    public ResponseEntity<GetOutpatientDTO> updateOutpatientConditionToProcess(@PathVariable("id") Long condition_id){
+        return ResponseEntity.ok().body(this.outpatientService.processOutpatient(condition_id));
     }
 
-    @GetMapping("/done")
-    public List<GetOutpatientDTO> getAllDoneOutpatient(){
-        return this.outpatientService.getAllDoneOutpatient();
+    @GetMapping("/done/today")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllDoneOutpatientToday(){
+        return ResponseEntity.ok().body(this.outpatientService.getAllDoneOutpatientToday());
     }
 
     @GetMapping("/done/doctors/{doctorId}/today")
-    public List<GetOutpatientDTO> getAllDoneOutpatientToday(@PathVariable("doctorId") Long doctorId){
-        return this.outpatientService.findAllTodayDoneOutpatientByDoctor(doctorId);
+    public ResponseEntity<List<GetOutpatientDTO>> getAllDoneOutpatientToday(@PathVariable("doctorId") Long doctorId){
+        return ResponseEntity.ok().body(this.outpatientService.findAllTodayDoneOutpatientByDoctor(doctorId));
     }
 
     @PutMapping("/done/{id}")
-    public GetOutpatientDTO updateOutpatientConditionToDone(@PathVariable("id") Long outpatient_id){
-        return this.outpatientService.doneOutpatient(outpatient_id);
+    public ResponseEntity<GetOutpatientDTO> updateOutpatientConditionToDone(@PathVariable("id") Long outpatient_id){
+        return ResponseEntity.ok().body(this.outpatientService.doneOutpatient(outpatient_id));
     }
 
     @GetMapping("/departments/{id}")
-    public List<GetOutpatientDTO> getAllOutpatientByDepartment(@PathVariable("id") Long department_id){
-        return this.outpatientService.getAllTodayOutpatientByDepartment(department_id);
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByDepartment(@PathVariable("id") Long department_id){
+        return ResponseEntity.ok().body(this.outpatientService.getAllTodayOutpatientByDepartment(department_id));
     }
 
     @PutMapping("/diagnosis/{id}")
-    public GetOutpatientDTO updateDiagnosisOutpatient(@PathVariable("id") Long outpatient_id, @RequestBody DiagnosisDTO diagnosisDTO){
-        return this.outpatientService.diagnosisOutpatient(outpatient_id, diagnosisDTO);
+    public ResponseEntity<GetOutpatientDTO> updateDiagnosisOutpatient(@PathVariable("id") Long outpatient_id, @RequestBody DiagnosisDTO diagnosisDTO){
+        return ResponseEntity.ok().body(this.outpatientService.diagnosisOutpatient(outpatient_id, diagnosisDTO));
     }
 
     @GetMapping("/doctors/{id}")
-    public List<GetOutpatientDTO> getAllOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
-        return this.outpatientService.getAllOutpatientByDoctor(doctor_id);
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByDoctor(doctor_id));
     }
 
     @GetMapping("/doctors/{id}/today")
-    public List<GetOutpatientDTO> getAllTodayOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
-        return this.outpatientService.getAllTodayOutpatientByDoctor(doctor_id);
+    public ResponseEntity<List<GetOutpatientDTO>> getAllTodayOutpatientByDoctorASC(@PathVariable("id") Long doctor_id){
+        return ResponseEntity.ok().body(this.outpatientService.getAllTodayOutpatientByDoctor(doctor_id));
     }
 
     @PutMapping("/truncate")
     public void truncateOutpatientTable(){
         this.outpatientService.truncateOutpatientTable();
+    }
+
+    @GetMapping("/patients/today")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientNameToday(@RequestParam("name") String name){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientName(name));
+    }
+
+    @GetMapping("/patients/today/{patientId}")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientIdToday(@PathVariable("patientId") Long patientId){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientIdToday(patientId));
+    }
+
+    @GetMapping("/patients/{patientId}")
+    public ResponseEntity<List<GetOutpatientDTO>> getAllOutpatientByPatientId(@PathVariable("patientId") Long patientId){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPatientId(patientId));
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<GetOutpatientDTO>> getAllOutpatientPaginate(Pageable pageable){
+        return ResponseEntity.ok().body(this.outpatientService.getAllOutpatientByPaginate(pageable));
     }
 }

@@ -1,14 +1,26 @@
 package com.hospital.hospitalmanagement.service;
 
-import com.hospital.hospitalmanagement.controller.dto.AdminDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorDTO;
-import com.hospital.hospitalmanagement.controller.dto.DoctorScheduleDTO;
+import com.hospital.hospitalmanagement.controller.dto.*;
 import com.hospital.hospitalmanagement.controller.response.*;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
+import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
 import com.hospital.hospitalmanagement.entities.*;
 import com.hospital.hospitalmanagement.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hospital.hospitalmanagement.security.JwtProvider;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,21 +28,38 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl {
-    @Autowired
-    UserRepository userRepository;
+@Log4j2
+public class UserServiceImpl implements UserDetailsService {
 
-    @Autowired
-    DepartmentServiceImpl departmentService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    RoleServiceImpl roleService;
+    private final DepartmentServiceImpl departmentService;
 
-    @Autowired
-    private OutpatientServiceImpl outpatientService;
+    private final RoleServiceImpl roleService;
+
+    private final JwtProvider jwtProvider;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    public UserServiceImpl(@Lazy UserRepository userRepository,
+                           @Lazy DepartmentServiceImpl departmentService,
+                           @Lazy RoleServiceImpl roleService,
+                           @Lazy JwtProvider jwtProvider,
+                           @Lazy PasswordEncoder passwordEncoder,
+                           @Lazy AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.departmentService = departmentService;
+        this.roleService = roleService;
+        this.jwtProvider = jwtProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
 
     public List<UserEntity> getAllUser(){
         return this.userRepository.findAll();
@@ -58,33 +87,61 @@ public class UserServiceImpl {
         return this.userRepository.findByEmailAndRole(email, existRole);
     }
 
+    public UserEntity getUserByEmail(String email){
+         return this.userRepository.findByEmail(email);
+    }
+
     public UserEntity createAdmin(AdminDTO adminDTO) {
         RoleEntity existRole = this.roleService.getRoleById(1L);
+
+        UserEntity unique = this.getUserByEmail(adminDTO.getEmail());
+
+        if (unique != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
 
         UserEntity newAdmin = UserEntity.builder()
                 .name(adminDTO.getName())
+                .username(adminDTO.getEmail())
                 .dob(dob)
                 .email(adminDTO.getEmail())
-                .password(adminDTO.getPassword())
+                .password(passwordEncoder.encode(adminDTO.getPassword()))
                 .phoneNumber(adminDTO.getPhoneNumber())
                 .role(existRole)
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return this.userRepository.save(newAdmin);
+        UserEntity save = this.userRepository.save(newAdmin);
+        return save;
     }
 
-    public UserEntity updateAdmin(Long id, AdminDTO adminDTO) {
+    public UserEntity updateAdmin(Long id, UpdateAdminDTO adminDTO) {
         UserEntity existAdmin = this.getAdminById(id);
 
         LocalDate dob = LocalDate.parse(adminDTO.getDob());
 
+        UserEntity unique = this.getUserByEmail(adminDTO.getEmail());
+
+        if(Objects.equals(adminDTO.getEmail(), existAdmin.getEmail())){
+            existAdmin.setName(adminDTO.getName());
+            existAdmin.setUsername(adminDTO.getEmail());
+            existAdmin.setDob(dob);
+            existAdmin.setEmail(adminDTO.getEmail());
+            existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
+
+            return this.userRepository.save(existAdmin);
+        }
+
+        if (unique != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
+
         existAdmin.setName(adminDTO.getName());
+        existAdmin.setUsername(adminDTO.getEmail());
         existAdmin.setDob(dob);
         existAdmin.setEmail(adminDTO.getEmail());
-        existAdmin.setPassword(adminDTO.getPassword());
         existAdmin.setPhoneNumber(adminDTO.getPhoneNumber());
 
         return this.userRepository.save(existAdmin);
@@ -100,8 +157,6 @@ public class UserServiceImpl {
                 .name(doctor.getName())
                 .id(doctor.getId())
                 .email(doctor.getEmail())
-                .availableTo(doctor.getAvailableTo())
-                .availableFrom(doctor.getAvailableFrom())
                 .dob(doctor.getDob())
                 .role(doctor.getRole())
                 .nid(doctor.getNid())
@@ -113,39 +168,39 @@ public class UserServiceImpl {
         return getDoctorTwoDTO;
     }
 
-    public GetOutpatientThreeDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetPatientDTO getPatientDTO){
-        GetOutpatientThreeDTO getOutpatientThreeDTO = GetOutpatientThreeDTO.builder()
-                .queue(outpatient.getQueue())
-                .outpatientCondition(outpatient.getOutpatientCondition())
-                .patient(getPatientDTO)
-                .department(outpatient.getDepartment())
-                .createAt(outpatient.getCreatedAt())
-                .date(outpatient.getDate())
-                .id(outpatient.getId())
-                .arrivalTime(outpatient.getArrivalTime())
-                .appointmentReason(outpatient.getAppointmentReason())
-                .diagnosis(outpatient.getDiagnosis())
-                .prescription(outpatient.getPrescription())
-                .build();
+//    public GetOutpatientThreeDTO convertOutpatientEntityToResponse(OutpatientEntity outpatient, GetPatientDTO getPatientDTO){
+//        GetOutpatientThreeDTO getOutpatientThreeDTO = GetOutpatientThreeDTO.builder()
+//                .queue(outpatient.getQueue())
+//                .outpatientCondition(outpatient.getOutpatientCondition())
+//                .patient(getPatientDTO)
+//                .department(outpatient.getDepartment())
+//                .createAt(outpatient.getCreatedAt())
+//                .date(outpatient.getDate())
+//                .id(outpatient.getId())
+//                .arrivalTime(outpatient.getArrivalTime())
+//                .appointmentReason(outpatient.getAppointmentReason())
+//                .diagnosis(outpatient.getDiagnosis())
+//                .prescription(outpatient.getPrescription())
+//                .build();
+//
+//        return getOutpatientThreeDTO;
+//    }
 
-        return getOutpatientThreeDTO;
-    }
-
-    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
-        OutpatientEntity getOutpatient = OutpatientEntity.builder()
-                .queue(outpatient.getQueue())
-                .outpatientCondition(outpatient.getOutpatientCondition())
-                .department(outpatient.getDepartment())
-                .date(outpatient.getDate())
-                .id(outpatient.getId())
-                .arrivalTime(outpatient.getArrivalTime())
-                .appointmentReason(outpatient.getAppointmentReason())
-                .diagnosis(outpatient.getDiagnosis())
-                .prescription(outpatient.getPrescription())
-                .build();
-
-        return getOutpatient;
-    }
+//    public OutpatientEntity convertOutpatient(GetOutpatientDTO outpatient){
+//        OutpatientEntity getOutpatient = OutpatientEntity.builder()
+//                .queue(outpatient.getQueue())
+//                .outpatientCondition(outpatient.getOutpatientCondition())
+//                .department(outpatient.getDepartment())
+//                .date(outpatient.getDate())
+//                .id(outpatient.getId())
+//                .arrivalTime(outpatient.getArrivalTime())
+//                .appointmentReason(outpatient.getAppointmentReason())
+//                .diagnosis(outpatient.getDiagnosis())
+//                .prescription(outpatient.getPrescription())
+//                .build();
+//
+//        return getOutpatient;
+//    }
 
     public List<GetDoctorTwoDTO> getAllDoctor(){
         RoleEntity role = this.roleService.getRoleById(2L);
@@ -167,6 +222,10 @@ public class UserServiceImpl {
         RoleEntity existRole = this.roleService.getRoleById(2L);
         Optional<UserEntity> doctor = Optional.ofNullable(this.userRepository.findByIdAndRole(id, existRole));
 
+        if (doctor.isEmpty()){
+            throw new NotFoundException("Data Not Found");
+        }
+
         UserEntity existDoctor = doctor.get();
 
         return convertDoctorEntityToResponse(existDoctor);
@@ -187,7 +246,13 @@ public class UserServiceImpl {
     public List<UserEntity> getDoctorByName(String name){
         RoleEntity existRole = this.roleService.getRoleById(2L);
 
-        return this.userRepository.findByNameContainsAndRole(name, existRole);
+        return this.userRepository.findByNameContainsIgnoreCaseAndRole(name, existRole);
+    }
+
+    public UserEntity getDoctorByEmail(String email){
+        RoleEntity existRole = this.roleService.getRoleById(2L);
+
+        return this.userRepository.findByEmailAndRole(email, existRole);
     }
 
 
@@ -196,12 +261,18 @@ public class UserServiceImpl {
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
         RoleEntity role = roleService.getRoleById(2L);
 
+        UserEntity uniq = this.getUserByEmail(doctorDTO.getEmail());
+
+        if (uniq != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
 
         UserEntity newDoctor = UserEntity.builder()
                 .name(doctorDTO.getName())
                 .dob(dob)
                 .email(doctorDTO.getEmail())
-                .password(doctorDTO.getPassword())
+                .username(doctorDTO.getEmail())
+                .password(passwordEncoder.encode(doctorDTO.getPassword()))
                 .role(role)
                 .department(existDepartment)
                 .nid(doctorDTO.getNid())
@@ -213,15 +284,32 @@ public class UserServiceImpl {
     }
 
 
-    public UserEntity updateDoctor(Long id, DoctorDTO doctorDTO) {
+    public UserEntity updateDoctor(Long id, UpdateDoctorDTO doctorDTO) {
         LocalDate dob = LocalDate.parse(doctorDTO.getDob());
         DepartmentEntity existDepartment = departmentService.getDepartmentById(doctorDTO.getDepartment_id());
-
         UserEntity existDoctor = this.getDoctorById(id);
+        UserEntity uniq = this.getUserByEmail(doctorDTO.getEmail());
+
+        if(Objects.equals(doctorDTO.getEmail(), existDoctor.getEmail())){
+            existDoctor.setName(doctorDTO.getName());
+            existDoctor.setDob(dob);
+            existDoctor.setUsername(doctorDTO.getEmail());
+            existDoctor.setEmail(doctorDTO.getEmail());
+            existDoctor.setDepartment(existDepartment);
+            existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
+            existDoctor.setNid(doctorDTO.getNid());
+
+            return this.userRepository.save(existDoctor);
+        }
+
+        if (uniq != null){
+            throw new UnprocessableException("This Email Is Duplicate");
+        }
+
         existDoctor.setName(doctorDTO.getName());
         existDoctor.setDob(dob);
+        existDoctor.setUsername(doctorDTO.getEmail());
         existDoctor.setEmail(doctorDTO.getEmail());
-        existDoctor.setPassword(doctorDTO.getPassword());
         existDoctor.setDepartment(existDepartment);
         existDoctor.setPhoneNumber(doctorDTO.getPhoneNumber());
         existDoctor.setNid(doctorDTO.getNid());
@@ -234,9 +322,28 @@ public class UserServiceImpl {
         this.userRepository.delete(existDoctor);
     }
 
-    public Page<UserEntity> getAllDoctorPaginate(int index, int element) {
+    public Page<GetDoctorDTO> getAllDoctorPaginate(Pageable pageable) {
         RoleEntity role = roleService.getRoleById(2L);
-        return this.userRepository.findAllByRole(role, PageRequest.of(index, element));
+        Page<UserEntity> pageDoctor = this.userRepository.findAllByRole(role, pageable);
+
+        Page<GetDoctorDTO> dtoPage = pageDoctor.map(entity -> {
+
+            GetDoctorDTO dto = GetDoctorDTO.builder()
+                    .email(entity.getEmail())
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .department(entity.getDepartment())
+                    .role(entity.getRole())
+                    .phoneNumber(entity.getPhoneNumber())
+                    .nid(entity.getNid())
+                    .createdAt(entity.getCreatedAt())
+                    .dob(entity.getDob())
+                    .build();
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 
     public Long countDoctor() {
@@ -244,25 +351,75 @@ public class UserServiceImpl {
         return this.userRepository.countByRole(role);
     }
 
-    public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
-        return this.userRepository.findAllAvailableDoctor(arrivalTime, department_id);
+//    public List<UserEntity> findAllAvailableDoctor(LocalTime arrivalTime, Long department_id) {
+//        DepartmentEntity existsDepartment = this.departmentService.getDepartmentById(department_id);
+//        return this.userRepository.findAllByAvailableFromLessThanAndAvailableToGreaterThanAndDepartment(arrivalTime, arrivalTime, existsDepartment);
+//    }
+
+//    public void save(UserEntity user){
+//        this.userRepository.save(user);
+//    }
+
+//    public void creatOutpatient(OutpatientEntity savedOutpatient, Long doctor_id) {
+//        UserEntity doctor = this.getUserById(doctor_id);
+//        doctor.setOutpatient(List.of(savedOutpatient));
+//        this.userRepository.save(doctor);
+//    }
+
+//    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
+//        UserEntity existDoctor = this.getDoctorById(doctorId);
+//        existDoctor.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
+//        existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
+//
+//        return this.userRepository.save(existDoctor);
+//    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity existUser = this.userRepository.getDistinctTopByUsername(username);
+        if(existUser == null){
+            throw new UsernameNotFoundException("Username Not Found");
+        }
+        return existUser;
     }
 
-    public void save(UserEntity user){
-        this.userRepository.save(user);
+    public GetTokenDTO generateToken(EmailPasswordDTO usernamePasswordDTO) {
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            usernamePasswordDTO.getEmail(),
+                            usernamePasswordDTO.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtProvider.generateToken(authentication);
+            UserEntity existUser = this.userRepository.getDistinctTopByUsername(usernamePasswordDTO.getEmail());
+            GetTokenDTO getTokenDTO = new GetTokenDTO();
+            getTokenDTO.setToken(jwt);
+            getTokenDTO.setRole(existUser.getRole().getName());
+            getTokenDTO.setEmail(existUser.getEmail());
+            return getTokenDTO;
+        }catch (BadCredentialsException e){
+            log.error("Bad Credential ", e);
+            throw new RuntimeException(e.getMessage(), e);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
-    public void creatOutpatient(OutpatientEntity savedOutpatient, Long doctor_id) {
-        UserEntity doctor = this.getUserById(doctor_id);
-        doctor.setOutpatient(List.of(savedOutpatient));
-        this.userRepository.save(doctor);
-    }
+    public UserEntity resetPassword(Long userId, PasswordDTO passwordDTO) {
+        Optional<UserEntity> optionalUser = this.userRepository.findById(userId);
 
-    public UserEntity updateDoctorSchedule(Long doctorId, DoctorScheduleDTO doctorScheduleDTO) {
-        UserEntity existDoctor = this.getDoctorById(doctorId);
-        existDoctor.setAvailableFrom(doctorScheduleDTO.getAvailableFrom());
-        existDoctor.setAvailableTo(doctorScheduleDTO.getAvailableTo());
+        if(optionalUser.isEmpty()){
+            throw new UsernameNotFoundException("user not found");
+        }
 
-        return this.userRepository.save(existDoctor);
+        UserEntity existUser = optionalUser.get();
+
+        existUser.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
+
+        return this.userRepository.save(existUser);
     }
 }
