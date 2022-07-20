@@ -3,6 +3,8 @@ package com.hospital.hospitalmanagement.service;
 import com.hospital.hospitalmanagement.controller.dto.PatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetPatientDTO;
 import com.hospital.hospitalmanagement.controller.response.GetPatientTwoDTO;
+import com.hospital.hospitalmanagement.controller.validation.NotFoundException;
+import com.hospital.hospitalmanagement.controller.validation.UnprocessableException;
 import com.hospital.hospitalmanagement.entities.BloodTypeEntity;
 import com.hospital.hospitalmanagement.entities.GenderEntity;
 import com.hospital.hospitalmanagement.entities.PatientEntity;
@@ -18,6 +20,7 @@ import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -62,13 +66,31 @@ public class PatientServiceImplTest {
 
         List<PatientEntity> patientList = List.of(patient1, patient2);
 
+        GetPatientTwoDTO patientDTO1 = this.mapper.map(patient1, GetPatientTwoDTO.class);
+        GetPatientTwoDTO patientDTO2 = this.mapper.map(patient2, GetPatientTwoDTO.class);
+
+        List<GetPatientTwoDTO> patientDTOList = List.of(patientDTO1, patientDTO2);
+
         when(this.patientRepository.findAll()).thenReturn(patientList);
 
         // When
         var result = this.patientService.getAllPatient();
 
         // Then
-        verify(this.patientRepository, times(1)).findAll();
+        for (int i = 0; i < patientDTOList.size(); i++) {
+            PatientEntity patient = patientList.get(i);
+            GetPatientTwoDTO patientDTO = patientDTOList.get(i);
+
+            assertEquals(patient.getName(), patientDTO.getName());
+            assertEquals(patient.getAddress(), patientDTO.getAddress());
+            assertEquals(patient.getCity(), patientDTO.getCity());
+            assertEquals(patient.getGender().getType(), patientDTO.getGender().getType());
+            assertEquals(patient.getBloodType().getType(), patientDTO.getBloodType().getType());
+            assertEquals(patient.getDob(), patientDTO.getDob());
+            assertEquals(patient.getId(), patientDTO.getId());
+            assertEquals(patient.getPhoneNumber(), patientDTO.getPhoneNumber());
+            assertEquals(patient.getCreatedAt(), patientDTO.getCreatedAt());
+        }
     }
 
     @Test
@@ -88,6 +110,18 @@ public class PatientServiceImplTest {
     }
 
     @Test
+    public void getById_willFailed(){
+        // Given
+        PatientEntity patient = this.easyRandom.nextObject(PatientEntity.class);
+        GetPatientTwoDTO patientDTO = this.mapper.map(patient, GetPatientTwoDTO.class);
+
+        when(this.patientRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Then
+        assertThrows(NotFoundException.class, () -> this.patientService.getById(id), "Data Not Found");
+    }
+
+    @Test
     public void getPatientById_willSuccess(){
         // Given
         PatientEntity patient = this.easyRandom.nextObject(PatientEntity.class);
@@ -99,6 +133,17 @@ public class PatientServiceImplTest {
 
         // Then
         assertEquals(patient, result);
+    }
+
+    @Test
+    public void getPatientById_willFailed(){
+        // Given
+        PatientEntity patient = this.easyRandom.nextObject(PatientEntity.class);
+
+        when(this.patientRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Then
+        assertThrows(NotFoundException.class, () -> this.patientService.getPatientById(id), "Data Not Found");
     }
 
     @Test
@@ -176,17 +221,31 @@ public class PatientServiceImplTest {
         assertEquals(patientList, result);
     }
 
-//    @Test
-//    public void getAllPatientPaginate_willSuccess(){
-//        // Given
-//        int index = this.easyRandom.nextInt(10);
-//        int element = this.easyRandom.nextInt(10);
-//
-//        // When
-//        this.patientService.getAllPatientPaginate(index, element);
-//
-//        // Then
-//        verify(this.patientRepository, times(1)).findAll(PageRequest.of(index, element));
-//    }
+    @Test
+    public void getAllPatientPaginate_willSuccess(){
+        // Given
+        Page<PatientEntity> pagePatient = mock(Page.class);
+        Pageable pageable = mock(Pageable.class);
+
+        when(this.patientRepository.findAll(pageable)).thenReturn(pagePatient);
+
+        Page<GetPatientDTO> dtoPage = pagePatient.map(entity -> GetPatientDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .dob(entity.getDob())
+                .bloodType(entity.getBloodType())
+                .gender(entity.getGender())
+                .city(entity.getCity())
+                .address(entity.getAddress())
+                .phoneNumber(entity.getPhoneNumber())
+                .createdAt(entity.getCreatedAt())
+                .build());
+
+        // When
+        var result = this.patientService.getAllPatientPaginate(pageable);
+
+        // Then
+        assertEquals(dtoPage, result);
+    }
 
 }
